@@ -130,14 +130,20 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
-
+    public enum RotateType
+    {
+        A,
+        B
+    }
+    public RotateType rotateType;
     void SetDirection(Vector3 _direction)
     {
         Vector3 temp = mainCamera.transform.TransformDirection(_direction);
         direction = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
         guide.transform.position = direction;
         Moving();
-        Rotate();
+        if (rotateType == RotateType.B)
+            Rotate();
     }
 
     void Moving()
@@ -155,13 +161,16 @@ public class GameManager : MonoBehaviour
 
     void RotateFront()
     {
-        Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
-        Vector3 front = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
-        guide.transform.position = front;
+        if (rotateType == RotateType.A)
+        {
+            Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
+            Vector3 front = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
+            guide.transform.position = front;
 
-        Vector3 offset = (front - unit.transform.position).normalized;
-        Quaternion rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-        unit.transform.rotation = rotatePoint;
+            Vector3 offset = (front - unit.transform.position).normalized;
+            Quaternion rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
+            unit.transform.rotation = rotatePoint;
+        }
     }
 
 
