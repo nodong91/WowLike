@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using static GameManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,16 +43,21 @@ public class GameManager : MonoBehaviour
 
         Singleton_Controller.INSTANCE.key_Tab = NextTarget;
 
-        CameraManager.current.rotateDelegate = RotateFront;
+        //CameraManager.current.rotateDelegate = RotateFront;
     }
 
     void InputMouseLeft(bool _input)
     {
-
+        focusMode = _input;
+        if (_input == true)
+            rotateType = RotateType.A;
+        CameraManager.current.InputRotate(_input);
     }
 
     void InputMouseRight(bool _input)
     {
+        if (_input == true)
+            rotateType = RotateType.B;
         CameraManager.current.InputRotate(_input);
     }
 
@@ -136,14 +142,18 @@ public class GameManager : MonoBehaviour
         B
     }
     public RotateType rotateType;
+    bool focusMode;
+
     void SetDirection(Vector3 _direction)
     {
         Vector3 temp = mainCamera.transform.TransformDirection(_direction);
         direction = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
         guide.transform.position = direction;
         Moving();
-        if (rotateType == RotateType.B)
+        if (focusMode == false)
             Rotate();
+        else
+            RotateFront();
     }
 
     void Moving()
@@ -161,7 +171,7 @@ public class GameManager : MonoBehaviour
 
     void RotateFront()
     {
-        if (rotateType == RotateType.A)
+        if (focusMode == true)
         {
             Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
             Vector3 front = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;

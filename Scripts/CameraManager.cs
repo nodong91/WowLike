@@ -14,7 +14,8 @@ public class CameraManager : MonoBehaviour
     float currentX, currentY;
     const float rotateSpeed = 0.1f;
 
-    Coroutine rotating, zooming, shaking;
+    Coroutine stoping, zooming, shaking;
+    Coroutine onRotate;
     float x, y;
     public float smoothSpeed = 10f;
     public float shakeValue = 5f;
@@ -45,7 +46,7 @@ public class CameraManager : MonoBehaviour
     {
         cinemachineCamera.Target.TrackingTarget = _trans;
     }
-    Coroutine onRotate;
+
     public void InputRotate(bool _input)
     {
         if (onRotate != null)
@@ -60,7 +61,7 @@ public class CameraManager : MonoBehaviour
         {
             InputRotate();
             yield return null;
-            rotateDelegate();
+            rotateDelegate?.Invoke();
         }
         StopRotate();
     }
@@ -83,9 +84,9 @@ public class CameraManager : MonoBehaviour
 
     void StopRotate()
     {
-        if (rotating != null)
-            StopCoroutine(rotating);
-        rotating = StartCoroutine(StopRotating());
+        if (stoping != null)
+            StopCoroutine(stoping);
+        stoping = StartCoroutine(StopRotating());
     }
 
     IEnumerator StopRotating()
@@ -101,7 +102,7 @@ public class CameraManager : MonoBehaviour
             }
             yield return null;
 
-            rotateDelegate();
+            rotateDelegate?.Invoke();
             Rotate();
         }
         Debug.LogWarning("StopRotating ½÷ֵי!!");

@@ -740,9 +740,10 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   unit: {fileID: 296430390}
   guide: {fileID: 1807361540}
-  moveSpeed: 1
+  moveSpeed: 3
   rotateSpeed: 10
   inputDir: 0
+  focus: 0
   target: {fileID: 0}
   targetGuide: {fileID: 42474246}
   targetIndex: 0

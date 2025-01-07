@@ -40,10 +40,10 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
             { KeyCode.Escape, Key_Esc },
             { KeyCode.LeftShift, Key_LeftShift },
             { KeyCode.Space, Key_SpaceBar },
-            //{ KeyCode.Alpha1, QuickSlot_01 },
-            //{ KeyCode.Alpha2, QuickSlot_02 },
-            //{ KeyCode.Alpha3, QuickSlot_03 },
-            //{ KeyCode.Alpha4, QuickSlot_04 },
+            { KeyCode.Alpha1, Key_1 },
+            { KeyCode.Alpha2, Key_2 },
+            { KeyCode.Alpha3, Key_3 },
+            { KeyCode.Alpha4, Key_4 },
             //{ KeyCode.Alpha5, QuickSlot_05 },
             //{ KeyCode.Alpha6, QuickSlot_06 },
             //{ KeyCode.Alpha7, QuickSlot_07 },
@@ -68,6 +68,10 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
     public Key_Bool key_MouseLeft;
     public Key_Bool key_MouseRight;
     public Key_Bool key_MouseWheel;
+    public Key_Bool key_1;
+    public Key_Bool key_2;
+    public Key_Bool key_3;
+    public Key_Bool key_4;
 
     void Key_Q(bool _input) { key_Q?.Invoke(_input); }
 
@@ -96,6 +100,14 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
     void Mouse_Left(bool _input) { key_MouseLeft?.Invoke(_input); }
 
     void Mouse_Right(bool _input) { key_MouseRight?.Invoke(_input); }
+
+    void Key_1(bool _input) { key_1?.Invoke(_input); }
+
+    void Key_2(bool _input) { key_2?.Invoke(_input); }
+
+    void Key_3(bool _input) { key_3?.Invoke(_input); }
+
+    void Key_4(bool _input) { key_4?.Invoke(_input); }
 
     void Mouse_Wheel(float _value)
     {
