@@ -84,9 +84,9 @@ public class CameraManager : MonoBehaviour
 
     void StopRotate()
     {
-        if (stoping != null)
-            StopCoroutine(stoping);
-        stoping = StartCoroutine(StopRotating());
+        if (onRotate != null)
+            StopCoroutine(onRotate);
+        onRotate = StartCoroutine(StopRotating());
     }
 
     IEnumerator StopRotating()

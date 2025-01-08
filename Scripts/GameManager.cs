@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public Transform unit;
     public Transform guide;
 
-    Vector3 direction;
+   [SerializeField] Vector3 direction;
     public float moveSpeed = 1f;
     public float rotateSpeed = 10f;
     Coroutine inputDirection;
@@ -27,9 +27,8 @@ public class GameManager : MonoBehaviour
     public InputDir inputDir;
     public enum RotateType
     {
-        None = 0,
-        Normal = 1,
-        Focus = 2
+        Normal ,
+        Focus 
     }
     public RotateType rotateType;
 
@@ -56,13 +55,13 @@ public class GameManager : MonoBehaviour
 
     void InputMouseLeft(bool _input)
     {
-        rotateType = _input == true ? RotateType.Focus : RotateType.None;
+        rotateType = _input == true ? RotateType.Focus : RotateType.Normal;
         CameraManager.current.InputRotate(_input);
     }
 
     void InputMouseRight(bool _input)
     {
-        rotateType = _input == true ? RotateType.Normal : RotateType.None;
+        rotateType = _input == true ? RotateType.Normal : RotateType.Normal;
         CameraManager.current.InputRotate(_input);
     }
 
@@ -162,6 +161,9 @@ public class GameManager : MonoBehaviour
         switch (rotateType)
         {
             case RotateType.Normal:
+                if (direction == Vector3.zero)
+                    return;
+
                 Vector3 offset = (direction - unit.transform.position).normalized;
                 Quaternion rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
                 unit.transform.rotation = rotatePoint;
@@ -182,7 +184,7 @@ public class GameManager : MonoBehaviour
     void StopRotate()
     {
         if (inputDir == 0)
-            rotateType = RotateType.None;
+            rotateType = RotateType.Normal;
     }
 
 
