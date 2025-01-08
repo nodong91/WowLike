@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using static GameManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +25,13 @@ public class GameManager : MonoBehaviour
     }
     [EnumFlags]
     public InputDir inputDir;
+    public enum RotateType
+    {
+        None = 0,
+        Normal = 1,
+        Focus = 2
+    }
+    public RotateType rotateType;
 
     void Start()
     {
@@ -42,22 +50,19 @@ public class GameManager : MonoBehaviour
 
         Singleton_Controller.INSTANCE.key_Tab = NextTarget;
 
-        CameraManager.current.rotateDelegate = RotateFront;
+        CameraManager.current.rotateDelegate = Rotate;
         CameraManager.current.stopRotateDelegate = StopRotate;
     }
 
     void InputMouseLeft(bool _input)
     {
-        focusMode = true;
-        if (_input == true)
-            rotateType = RotateType.A;
+        rotateType = _input == true ? RotateType.Focus : RotateType.None;
         CameraManager.current.InputRotate(_input);
     }
 
     void InputMouseRight(bool _input)
     {
-        if (_input == true)
-            rotateType = RotateType.B;
+        rotateType = _input == true ? RotateType.Normal : RotateType.None;
         CameraManager.current.InputRotate(_input);
     }
 
@@ -136,13 +141,6 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
-    public enum RotateType
-    {
-        A,
-        B
-    }
-    public RotateType rotateType;
-    bool focusMode;
 
     void SetDirection(Vector3 _direction)
     {
@@ -150,10 +148,7 @@ public class GameManager : MonoBehaviour
         direction = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
         guide.transform.position = direction;
         Moving();
-        if (focusMode == false)
-            Rotate();
-        else
-            RotateFront();
+        Rotate();
     }
 
     void Moving()
@@ -164,28 +159,30 @@ public class GameManager : MonoBehaviour
 
     void Rotate()
     {
-        Vector3 offset = (direction - unit.transform.position).normalized;
-        Quaternion rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-        unit.transform.rotation = rotatePoint;
-    }
-
-    void RotateFront()
-    {
-        if (focusMode == true)
+        switch (rotateType)
         {
-            Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
-            Vector3 front = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
-            guide.transform.position = front;
+            case RotateType.Normal:
+                Vector3 offset = (direction - unit.transform.position).normalized;
+                Quaternion rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
+                unit.transform.rotation = rotatePoint;
+                break;
 
-            Vector3 offset = (front - unit.transform.position).normalized;
-            Quaternion rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-            unit.transform.rotation = rotatePoint;
+            case RotateType.Focus:
+                Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
+                Vector3 front = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
+                guide.transform.position = front;
+
+                offset = (front - unit.transform.position).normalized;
+                rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
+                unit.transform.rotation = rotatePoint;
+                break;
         }
     }
 
     void StopRotate()
     {
-        focusMode = false;
+        if (inputDir == 0)
+            rotateType = RotateType.None;
     }
 
 
