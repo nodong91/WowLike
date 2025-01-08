@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using static GameManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -43,12 +42,13 @@ public class GameManager : MonoBehaviour
 
         Singleton_Controller.INSTANCE.key_Tab = NextTarget;
 
-        //CameraManager.current.rotateDelegate = RotateFront;
+        CameraManager.current.rotateDelegate = RotateFront;
+        CameraManager.current.stopRotateDelegate = StopRotate;
     }
 
     void InputMouseLeft(bool _input)
     {
-        focusMode = _input;
+        focusMode = true;
         if (_input == true)
             rotateType = RotateType.A;
         CameraManager.current.InputRotate(_input);
@@ -183,6 +183,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void StopRotate()
+    {
+        focusMode = false;
+    }
 
 
 

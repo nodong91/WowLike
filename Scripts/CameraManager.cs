@@ -22,7 +22,7 @@ public class CameraManager : MonoBehaviour
     public float shakeTime = 1f;
 
     public delegate void RotateDelegate();
-    public RotateDelegate rotateDelegate;
+    public RotateDelegate rotateDelegate, stopRotateDelegate;
 
     public delegate void DelegateInputScroll(float _input);
     public DelegateInputScroll delegateInputScroll;
@@ -105,6 +105,7 @@ public class CameraManager : MonoBehaviour
             rotateDelegate?.Invoke();
             Rotate();
         }
+        stopRotateDelegate?.Invoke();
         Debug.LogWarning("StopRotating ½÷ֵי!!");
     }
 
