@@ -46,11 +46,41 @@ public class GameManager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_A = InputLeft;
         Singleton_Controller.INSTANCE.key_S = InputDown;
         Singleton_Controller.INSTANCE.key_D = InputRight;
+        SetSkillSlot();
 
         Singleton_Controller.INSTANCE.key_Tab = NextTarget;
 
         CameraManager.current.rotateDelegate = Rotate;
         CameraManager.current.stopRotateDelegate = StopRotate;
+    }
+    public Skill_Slot slot;
+    void SetSkillSlot()
+    {
+        Singleton_Controller.INSTANCE.key_1 = InputKey01;
+        slot.dele_Action = InputKey01;
+        Singleton_Controller.INSTANCE.key_2 = InputKey02;
+        Singleton_Controller.INSTANCE.key_3 = InputKey03;
+        Singleton_Controller.INSTANCE.key_4 = InputKey04;
+    }
+
+    void InputKey01(bool _input)
+    {
+        Debug.LogWarning(_input);
+    }
+
+    void InputKey02(bool _input)
+    {
+
+    }
+
+    void InputKey03(bool _input)
+    {
+
+    }
+
+    void InputKey04(bool _input)
+    {
+
     }
 
     void InputMouseLeft(bool _input)

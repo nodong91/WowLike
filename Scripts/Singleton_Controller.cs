@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Singleton_Controller : MonoSingleton<Singleton_Controller>
 {
@@ -61,13 +62,16 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
     public Key_Bool key_S;
     public Key_Bool key_D;
     public Key_Bool key_F;
+
     public Key_Bool key_Tab;
     public Key_Bool key_Esc;
     public Key_Bool key_LeftShift;
     public Key_Bool key_SpaceBar;
+
     public Key_Bool key_MouseLeft;
     public Key_Bool key_MouseRight;
     public Key_Bool key_MouseWheel;
+
     public Key_Bool key_1;
     public Key_Bool key_2;
     public Key_Bool key_3;
@@ -97,10 +101,6 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
 
     void Key_SpaceBar(bool _input) { key_SpaceBar?.Invoke(_input); }
 
-    void Mouse_Left(bool _input) { key_MouseLeft?.Invoke(_input); }
-
-    void Mouse_Right(bool _input) { key_MouseRight?.Invoke(_input); }
-
     void Key_1(bool _input) { key_1?.Invoke(_input); }
 
     void Key_2(bool _input) { key_2?.Invoke(_input); }
@@ -109,15 +109,30 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
 
     void Key_4(bool _input) { key_4?.Invoke(_input); }
 
+    void Mouse_Left(bool _input)
+    {
+        if (EventSystem.current.IsPointerOverGameObject() == false)
+            key_MouseLeft?.Invoke(_input);
+    }
+
+    void Mouse_Right(bool _input)
+    {
+        if (EventSystem.current.IsPointerOverGameObject() == false)
+            key_MouseRight?.Invoke(_input);
+    }
+
     void Mouse_Wheel(float _value)
     {
-        if (_value > 0)
+        if (EventSystem.current.IsPointerOverGameObject() == false)
         {
-            key_MouseWheel?.Invoke(true);
-        }
-        else if (_value < 0)
-        {
-            key_MouseWheel?.Invoke(false);
+            if (_value > 0)
+            {
+                key_MouseWheel?.Invoke(true);
+            }
+            else if (_value < 0)
+            {
+                key_MouseWheel?.Invoke(false);
+            }
         }
     }
 }
