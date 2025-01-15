@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using static GameManager;
 
-public class GameManager : MonoBehaviour
+public class Game_Manager : MonoBehaviour
 {
-    public Camera mainCamera;
+    private Camera mainCamera;
     public Transform unit;
     public Transform guide;
 
-   [SerializeField] Vector3 direction;
+    [SerializeField] Vector3 direction;
     public float moveSpeed = 1f;
     public float rotateSpeed = 10f;
     Coroutine inputDirection;
@@ -27,10 +26,13 @@ public class GameManager : MonoBehaviour
     public InputDir inputDir;
     public enum RotateType
     {
-        Normal ,
-        Focus 
+        Normal,
+        Focus
     }
     public RotateType rotateType;
+    public Skill_Slot slot;
+    public Transform slotParent;
+    public Skill_Slot[] slotArray;
 
     void Start()
     {
@@ -38,34 +40,72 @@ public class GameManager : MonoBehaviour
 
         Singleton_Controller.INSTANCE.SetController();
 
-        Singleton_Controller.INSTANCE.key_MouseLeft = InputMouseLeft;
-        Singleton_Controller.INSTANCE.key_MouseRight = InputMouseRight;
-        Singleton_Controller.INSTANCE.key_MouseWheel = InputMouseWheel;
-
-        Singleton_Controller.INSTANCE.key_W = InputUp;
-        Singleton_Controller.INSTANCE.key_A = InputLeft;
-        Singleton_Controller.INSTANCE.key_S = InputDown;
-        Singleton_Controller.INSTANCE.key_D = InputRight;
+        SetMouse();
         SetSkillSlot();
-
-        Singleton_Controller.INSTANCE.key_Tab = NextTarget;
+        SetETC();
 
         CameraManager.current.rotateDelegate = Rotate;
         CameraManager.current.stopRotateDelegate = StopRotate;
     }
-    public Skill_Slot slot;
+
+    void SetMouse()
+    {
+        Singleton_Controller.INSTANCE.key_MouseLeft = InputMouseLeft;
+        Singleton_Controller.INSTANCE.key_MouseRight = InputMouseRight;
+        Singleton_Controller.INSTANCE.key_MouseWheel = InputMouseWheel;
+    }
+
     void SetSkillSlot()
     {
+        slotArray = new Skill_Slot[4];
+        for (int i = 0; i < slotArray.Length; i++)
+        {
+            int index = i;
+            slotArray[index] = Instantiate(slot, slotParent);
+            slotArray[index].button.onClick.AddListener(delegate { InputSlot(index); });
+        }
         Singleton_Controller.INSTANCE.key_1 = InputKey01;
-        slot.dele_Action = InputKey01;
         Singleton_Controller.INSTANCE.key_2 = InputKey02;
         Singleton_Controller.INSTANCE.key_3 = InputKey03;
         Singleton_Controller.INSTANCE.key_4 = InputKey04;
     }
 
+    void SetETC()
+    {
+        Singleton_Controller.INSTANCE.key_W = InputUp;
+        Singleton_Controller.INSTANCE.key_A = InputLeft;
+        Singleton_Controller.INSTANCE.key_S = InputDown;
+        Singleton_Controller.INSTANCE.key_D = InputRight;
+
+        Singleton_Controller.INSTANCE.key_Tab = NextTarget;
+    }
+
+    void InputSlot(int _index)
+    {
+        Debug.LogWarning(_index);
+        switch (_index)
+        {
+            case 0:
+                InputKey01(true);
+                break;
+
+            case 1:
+                InputKey02(true);
+                break;
+
+            case 2:
+                InputKey03(true);
+                break;
+
+            case 3:
+                InputKey04(true);
+                break;
+        }
+    }
+
     void InputKey01(bool _input)
     {
-        Debug.LogWarning(_input);
+
     }
 
     void InputKey02(bool _input)
@@ -85,13 +125,69 @@ public class GameManager : MonoBehaviour
 
     void InputMouseLeft(bool _input)
     {
-        rotateType = _input == true ? RotateType.Focus : RotateType.Normal;
+        if (clickLefting != null)
+            StopCoroutine(clickLefting);
+
+        if (_input == true)
+        {
+            clickLeft = false;
+            clickTime = Time.time;
+            clickPosition = mainCamera.ScreenToViewportPoint(Input.mousePosition);
+            adfdf.position = Input.mousePosition;
+        }
+        else if (isDrag == false)
+        {
+            clickTime = Time.time - clickTime;
+            if (clickTime < 0.15f)
+            {
+                clickLeft = true;
+                LeftRayCasting();
+            }
+        }
+        clickLefting = StartCoroutine(MouseLeftDrag(_input));
+    }
+    public bool clickLeft, isDrag;
+    public float clickTime;
+    public Vector2 clickPosition;
+    public Coroutine clickLefting;
+    public Transform adfdf;
+    IEnumerator MouseLeftDrag(bool _input)
+    {
+        rotateType = RotateType.Normal;
         CameraManager.current.InputRotate(_input);
+        if (_input == true)
+        {
+            isDrag = false;
+            while (isDrag == false)
+            {
+                Vector2 tempPosition = mainCamera.ScreenToViewportPoint(Input.mousePosition);
+                float dist = (tempPosition - clickPosition).magnitude;
+                if (dist > 0.01f)
+                {
+                    isDrag = true;
+                }
+                yield return null;
+            }
+        }
+    }
+    public Transform jjjeffie;
+    public LayerMask layerMask;
+    void LeftRayCasting()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //int layerMask = 1 << 8;
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~layerMask))
+        {
+            Debug.LogWarning("Hit Green " + hit.collider.gameObject.name);
+            //Debug.DrawRay(mainCamera.transform.position, hit.transform.position, Color.red,1f);
+            Debug.DrawLine(mainCamera.transform.position, hit.point, Color.red, 0.3f);
+            jjjeffie.position = hit.point;
+        }
     }
 
     void InputMouseRight(bool _input)
     {
-        rotateType = _input == true ? RotateType.Normal : RotateType.Normal;
+        rotateType = _input == true ? RotateType.Focus : RotateType.Normal;
         CameraManager.current.InputRotate(_input);
     }
 
