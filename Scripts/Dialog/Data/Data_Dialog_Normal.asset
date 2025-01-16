@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29f8ba1bb74f56540b51006da8d09f47, type: 3}
+  m_Name: Data_Dialog_Normal
+  m_EditorClassIdentifier: 
+  afterType: 0
+  ID: IDIDIDID
+  dialogInfos:
+  - dialogType: 0
+    speech: 
+    textStruct:
+    - text: "\uD070\uB9D8\uBA39\uACE0 \uD611\uC870\uD588\uB294\uB370"
+      lineEnd: 0
+      size: 15
+      color: {r: 0, g: 0, b: 0, a: 0}
+      textType: 0
+      actionAngle: {x: 0, y: 0}
+      length: 0
+      animSpeed: 0
+    - text: "\"\uB450 \uC0AC\uB78C \uC544\uC9C1..\""
+      lineEnd: 0
+      size: 30
+      color: {r: 0, g: 0.15156436, b: 1, a: 0}
+      textType: 1
+      actionAngle: {x: 0, y: 1.4}
+      length: 8.91
+      animSpeed: 8.1
+    - text: "\uACBD\uD638\uCC98\uBC1C SOS"
+      lineEnd: 0
+      size: 15
+      color: {r: 0, g: 0, b: 0, a: 0}
+      textType: 0
+      actionAngle: {x: 0, y: 5}
+      length: 5
+      animSpeed: 10
+    focusTarget: 0
+    animatingTextCount: []
+  - dialogType: 0
+    speech: 
+    textStruct:
+    - text: grgsdfser
+      lineEnd: 0
+      size: 25
+      color: {r: 1, g: 0, b: 0, a: 0}
+      textType: 3
+      actionAngle: {x: -0.17, y: 17.27}
+      length: 2.8
+      animSpeed: 4.69
+    focusTarget: 0
+    animatingTextCount: []
+  itemValue: {x: 1, y: 3}
+  limit: {x: 0, y: 10}
+  dialogOptions: []
+  boxSize: {x: 0, y: 0}

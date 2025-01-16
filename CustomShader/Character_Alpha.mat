@@ -47,7 +47,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Alpha: 0.512
-    - _Distortion: 0.382
+    - _Distortion: 0.41
     - _MatCap_Amount: 0
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -55,7 +55,7 @@ Material:
     - _Specular_Strength: 0.914
     m_Colors:
     - _Main_Color: {r: 1, g: 0, b: 0, a: 0.38431373}
-    - _Shadow_Color: {r: 0.5471698, g: 0.2650353, b: 0.13679239, a: 0}
+    - _Shadow_Color: {r: 0.5471698, g: 0.26503527, b: 0.13679236, a: 0}
     - _Specular_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

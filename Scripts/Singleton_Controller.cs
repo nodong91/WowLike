@@ -19,7 +19,7 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
             else if (Input.GetKeyDown(dic.Key))
             {
                 dic.Value(true);
-                Debug.LogWarning(dic.Key);
+                Debug.Log(dic.Key);
             }
         }
         Mouse_Wheel(Input.GetAxis("Mouse ScrollWheel"));
