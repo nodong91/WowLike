@@ -22,7 +22,7 @@ public class CameraManager : MonoBehaviour
     public float shakeTime = 1f;
 
     public delegate void RotateDelegate();
-    public RotateDelegate rotateDelegate, stopRotateDelegate;
+    public RotateDelegate rotateDelegate;
 
     public delegate void DelegateInputScroll(float _input);
     public DelegateInputScroll delegateInputScroll;
@@ -51,7 +51,11 @@ public class CameraManager : MonoBehaviour
     {
         if (onRotate != null)
             StopCoroutine(onRotate);
-        onRotate = StartCoroutine(OnRotate(_input));
+
+        if (_input == true)
+            onRotate = StartCoroutine(OnRotate(_input));
+        else
+            onRotate = StartCoroutine(StopRotating());
     }
 
     IEnumerator OnRotate(bool _input)
@@ -63,7 +67,7 @@ public class CameraManager : MonoBehaviour
             yield return null;
             rotateDelegate?.Invoke();
         }
-        StopRotate();
+        //StopRotate();
     }
 
     void SetPrevMousePosition()
@@ -96,7 +100,7 @@ public class CameraManager : MonoBehaviour
         {
             float distX = orbitalFollow.HorizontalAxis.Value - x;
             float distY = orbitalFollow.VerticalAxis.Value - y;
-            if (Mathf.Abs(distX) < 0.1f && Mathf.Abs(distY) < 0.1f)
+            if (Mathf.Abs(distX) < 0.01f && Mathf.Abs(distY) < 0.01f)
             {
                 stopRotate = false;
             }
@@ -105,7 +109,6 @@ public class CameraManager : MonoBehaviour
             rotateDelegate?.Invoke();
             Rotate();
         }
-        stopRotateDelegate?.Invoke();
         Debug.LogWarning("StopRotating ½÷ֵי!!");
     }
 

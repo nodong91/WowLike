@@ -6,7 +6,7 @@ using UnityEditor;
 public class Game_Manager : MonoBehaviour
 {
     private Camera mainCamera;
-    public Transform unit;
+    public Transform player;
     public Transform guide;
 
     [SerializeField] Vector3 direction;
@@ -45,7 +45,6 @@ public class Game_Manager : MonoBehaviour
         SetETC();
 
         CameraManager.current.rotateDelegate = Rotate;
-        CameraManager.current.stopRotateDelegate = StopRotate;
     }
 
     void SetMouse()
@@ -78,11 +77,11 @@ public class Game_Manager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_D = InputRight;
 
         Singleton_Controller.INSTANCE.key_Tab = NextTarget;
+        //Singleton_Controller.INSTANCE.key_SpaceBar = Fire;
     }
 
     void InputSlot(int _index)
     {
-        Debug.LogWarning(_index);
         switch (_index)
         {
             case 0:
@@ -105,22 +104,27 @@ public class Game_Manager : MonoBehaviour
 
     void InputKey01(bool _input)
     {
-
+        if (_input == false)
+            Fire();
+        Debug.LogWarning("InputKey01");
     }
 
     void InputKey02(bool _input)
     {
 
+        Debug.LogWarning("InputKey02");
     }
 
     void InputKey03(bool _input)
     {
 
+        Debug.LogWarning("InputKey03");
     }
 
     void InputKey04(bool _input)
     {
 
+        Debug.LogWarning("InputKey04");
     }
 
     void InputMouseLeft(bool _input)
@@ -133,9 +137,8 @@ public class Game_Manager : MonoBehaviour
             clickLeft = false;
             clickTime = Time.time;
             clickPosition = mainCamera.ScreenToViewportPoint(Input.mousePosition);
-            adfdf.position = Input.mousePosition;
         }
-        else if (isDrag == false)
+        else if (isLeftDrag == false)
         {
             clickTime = Time.time - clickTime;
             if (clickTime < 0.15f)
@@ -146,25 +149,24 @@ public class Game_Manager : MonoBehaviour
         }
         clickLefting = StartCoroutine(MouseLeftDrag(_input));
     }
-    public bool clickLeft, isDrag;
+    public bool clickLeft, isLeftDrag, inputMouseRight;
     public float clickTime;
     public Vector2 clickPosition;
     public Coroutine clickLefting;
-    public Transform adfdf;
     IEnumerator MouseLeftDrag(bool _input)
     {
         rotateType = RotateType.Normal;
         CameraManager.current.InputRotate(_input);
         if (_input == true)
         {
-            isDrag = false;
-            while (isDrag == false)
+            isLeftDrag = false;
+            while (isLeftDrag == false)
             {
                 Vector2 tempPosition = mainCamera.ScreenToViewportPoint(Input.mousePosition);
                 float dist = (tempPosition - clickPosition).magnitude;
                 if (dist > 0.01f)
                 {
-                    isDrag = true;
+                    isLeftDrag = true;
                 }
                 yield return null;
             }
@@ -178,16 +180,25 @@ public class Game_Manager : MonoBehaviour
         //int layerMask = 1 << 8;
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~layerMask))
         {
-            Debug.LogWarning("Hit Green " + hit.collider.gameObject.name);
-            //Debug.DrawRay(mainCamera.transform.position, hit.transform.position, Color.red,1f);
+            Debug.LogWarning("히트!! " + hit.collider.gameObject.name);
             Debug.DrawLine(mainCamera.transform.position, hit.point, Color.red, 0.3f);
-            jjjeffie.position = hit.point;
+
+            target = hit.transform;
+            targetGuide.transform.position = target.position;
         }
     }
 
     void InputMouseRight(bool _input)
     {
-        rotateType = _input == true ? RotateType.Focus : RotateType.Normal;
+        inputMouseRight = _input;
+        if (_input == true)
+        {
+            rotateType = RotateType.Focus;
+        }
+        else if (inputDir != 0)
+        {
+            rotateType = RotateType.Normal;
+        }
         CameraManager.current.InputRotate(_input);
     }
 
@@ -260,7 +271,7 @@ public class Game_Manager : MonoBehaviour
 
     IEnumerator Co_OutputDirection(Vector2 _direction)
     {
-        while (direction != Vector3.zero)
+        while (inputDir != 0)
         {
             SetDirection(_direction);
             yield return null;
@@ -270,7 +281,7 @@ public class Game_Manager : MonoBehaviour
     void SetDirection(Vector3 _direction)
     {
         Vector3 temp = mainCamera.transform.TransformDirection(_direction);
-        direction = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
+        direction = player.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
         guide.transform.position = direction;
         Moving();
         Rotate();
@@ -278,8 +289,8 @@ public class Game_Manager : MonoBehaviour
 
     void Moving()
     {
-        Vector3 movePoint = Vector3.Lerp(unit.transform.position, direction, Time.deltaTime * moveSpeed);
-        unit.transform.position = movePoint;
+        Vector3 movePoint = Vector3.Lerp(player.transform.position, direction, Time.deltaTime * moveSpeed);
+        player.transform.position = movePoint;
     }
 
     void Rotate()
@@ -290,27 +301,26 @@ public class Game_Manager : MonoBehaviour
                 if (direction == Vector3.zero)
                     return;
 
-                Vector3 offset = (direction - unit.transform.position).normalized;
-                Quaternion rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-                unit.transform.rotation = rotatePoint;
+                Vector3 offset = (direction - player.transform.position).normalized;
+                Quaternion rotatePoint = Quaternion.Lerp(player.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
+                player.transform.rotation = rotatePoint;
                 break;
 
             case RotateType.Focus:
                 Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
-                Vector3 front = unit.transform.position + new Vector3(temp.x, unit.transform.position.y, temp.z).normalized;
+                Vector3 front = player.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
                 guide.transform.position = front;
 
-                offset = (front - unit.transform.position).normalized;
-                rotatePoint = Quaternion.Lerp(unit.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-                unit.transform.rotation = rotatePoint;
+                offset = (front - player.transform.position).normalized;
+                rotatePoint = Quaternion.Lerp(player.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
+                player.transform.rotation = rotatePoint;
+
+                if (inputMouseRight == false && inputDir != 0)
+                {
+                    rotateType = RotateType.Normal;
+                }
                 break;
         }
-    }
-
-    void StopRotate()
-    {
-        if (inputDir == 0)
-            rotateType = RotateType.Normal;
     }
 
 
@@ -335,15 +345,15 @@ public class Game_Manager : MonoBehaviour
         if (_input == false)
         {
             visibleTargets.Clear();
-            Collider[] targetsInViewRadius = Physics.OverlapSphere(unit.transform.position, viewRadius, targetMask);
+            Collider[] targetsInViewRadius = Physics.OverlapSphere(player.transform.position, viewRadius, targetMask);
             for (int i = 0; i < targetsInViewRadius.Length; i++)
             {
                 Transform temp = targetsInViewRadius[i].transform;
-                Vector3 dirToTarget = (temp.position - unit.transform.position).normalized;
-                if (Vector3.Angle(unit.transform.forward, dirToTarget) < viewAngle * 0.5f)
+                Vector3 dirToTarget = (temp.position - player.transform.position).normalized;
+                if (Vector3.Angle(player.transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
                 {
-                    float dstToTarget = Vector3.Distance(unit.transform.position, temp.position);
-                    if (Physics.Raycast(unit.transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
+                    float dstToTarget = (player.transform.position - temp.position).magnitude;
+                    if (Physics.Raycast(player.transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
                     {
                         visibleTargets.Add(temp);
                     }
@@ -367,20 +377,56 @@ public class Game_Manager : MonoBehaviour
     {
         if (_angleIsGlobal == false)
         {
-            _angleInDegrees += unit.transform.eulerAngles.y;
+            _angleInDegrees += player.transform.eulerAngles.y;
         }
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
 
     private void OnDrawGizmos()
     {
-        Handles.color = Color.red;
-        Handles.DrawWireArc(unit.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
+        if (player != null)
+        {
+            Handles.color = Color.red;
+            Handles.DrawWireArc(player.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
 
-        Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
-        Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
+            Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
+            Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
 
-        Handles.DrawLine(unit.transform.position, unit.transform.position + viewAngleA * viewRadius);
-        Handles.DrawLine(unit.transform.position, unit.transform.position + viewAngleB * viewRadius);
+            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleA * viewRadius);
+            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
+        }
+    }
+
+    //public Transform ijijfeiifej, damageEffect;
+    //public float unitSize;
+    //private void Update()
+    //{
+    //    if (target != null)
+    //    {
+    //        Vector3 targetPosition = new Vector3(target.position.x, damageEffect.transform.position.y, target.position.z);
+    //        if ((targetPosition - damageEffect.transform.position).magnitude < unitSize)
+    //        {
+    //            damageEffect.gameObject.SetActive(false);
+    //            ijijfeiifej.gameObject.SetActive(true);
+    //        }
+    //        else
+    //        {
+    //            damageEffect.gameObject.SetActive(true);
+    //            ijijfeiifej.gameObject.SetActive(false);
+    //        }
+    //        Vector3 offset = (targetPosition - damageEffect.transform.position).normalized;
+    //        ijijfeiifej.rotation = Quaternion.LookRotation(offset);
+    //        ijijfeiifej.position = targetPosition - offset * unitSize;
+    //    }
+    //}
+    public Skill_Bullet bullet;
+    public float unitSize = 1f;
+    private void Fire()
+    {
+        if (target == null)
+            return;
+        Skill_Bullet instBullet = Instantiate(bullet);
+        instBullet.transform.position = player.position;
+        instBullet.SetTarget(target, unitSize);
     }
 }

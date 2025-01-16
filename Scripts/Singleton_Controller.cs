@@ -111,13 +111,15 @@ public class Singleton_Controller : MonoSingleton<Singleton_Controller>
 
     void Mouse_Left(bool _input)
     {
-        if (EventSystem.current.IsPointerOverGameObject() == false)
+        if (EventSystem.current.IsPointerOverGameObject() == false || _input == false)
+        {
             key_MouseLeft?.Invoke(_input);
+        }
     }
 
     void Mouse_Right(bool _input)
     {
-        if (EventSystem.current.IsPointerOverGameObject() == false)
+        if (EventSystem.current.IsPointerOverGameObject() == false || _input == false)
             key_MouseRight?.Invoke(_input);
     }
 
