@@ -1,0 +1,6 @@
+ID,Text,ColorHex,Size,LineEnd,AnimationType,AngleX,AngleY,Length,Speed
+Dialog001_01,토트넘에 실망한 여러분,#000000,15,FALSE,None,,,,
+Dialog001_02,탈트넘,#0027FF,20,FALSE,Jitter,,,,2
+Dialog001_03,방법과,#000000,15,TRUE,None,,,,
+Dialog001_04,손흥민,#FF1200,20,FALSE,Wave,,1.5,8,8
+Dialog001_05,이적 추천팀 [피터지는PL],#000000,15,FALSE,None,,,,

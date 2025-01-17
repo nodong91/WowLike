@@ -29,11 +29,11 @@ MonoBehaviour:
     - text: "\"\uB450 \uC0AC\uB78C \uC544\uC9C1..\""
       lineEnd: 0
       size: 30
-      color: {r: 0, g: 0.15156436, b: 1, a: 0}
-      textType: 1
-      actionAngle: {x: 0, y: 1.4}
-      length: 8.91
-      animSpeed: 8.1
+      color: {r: 1, g: 0.0698705, b: 0, a: 0}
+      textType: 3
+      actionAngle: {x: 0, y: 0}
+      length: 0
+      animSpeed: 2
     - text: "\uACBD\uD638\uCC98\uBC1C SOS"
       lineEnd: 0
       size: 15
