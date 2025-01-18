@@ -5,6 +5,7 @@ using UnityEngine.Splines;
 
 public class Data_Parse : MonoBehaviour
 {
+    public List<AudioClip> audioClip = new List<AudioClip>();
 
 #if UNITY_EDITOR
     [Header(" [ EDITOR ] ")]
@@ -14,7 +15,7 @@ public class Data_Parse : MonoBehaviour
     /* 구글 스플레트 시트에서 "파일 - 다운로드 - 쉼표로 구분된 값" 으로 저장*/
     public TextAsset[] CSV_Data;
 
-    public void PropSetting()
+    public virtual void DataSetting()
     {
         if (ResourceFolders.Count == 0)
         {
@@ -23,7 +24,7 @@ public class Data_Parse : MonoBehaviour
         }
         //prop = new List<GameObject>();
         //sprite = new List<Sprite>();
-        //audioClip = new List<AudioClip>();
+        audioClip = new List<AudioClip>();
         //defaultItem = new List<Data_ItemSet>();
 
         string[] paths = new string[ResourceFolders.Count];
@@ -58,7 +59,7 @@ public class Data_Parse : MonoBehaviour
         {
             var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(AudioClip));
             AudioClip audioClipData = data as AudioClip;
-            //audioClip.Add(audioClipData);
+            audioClip.Add(audioClipData);
             EditorUtility.SetDirty(data);
         }
 

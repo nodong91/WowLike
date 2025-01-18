@@ -33,7 +33,14 @@ public class Dialog_Test : MonoBehaviour
     {
         TMP_Text component = dialogText;
         //component.text = GetDialog().Replace("/n", "\n");
-        StartCoroutine(Test(component));
+        //StartCoroutine(Test(component));
+        if (typing != null)
+            StopCoroutine(typing);
+
+        if (animating != null)
+            StopCoroutine(animating);
+        ResetTextAnimation(component.textInfo);
+        component.UpdateVertexData();
     }
     public float ddffff;
     IEnumerator Test(TMP_Text component)
@@ -74,7 +81,6 @@ public class Dialog_Test : MonoBehaviour
 
     void ResetTextAnimation(TMP_TextInfo _textInfo)
     {
-        Debug.LogWarning(_textInfo.characterInfo.Length);
         TMP_MeshInfo[] cachedMeshInfo = _textInfo.CopyMeshInfoVertexData();
         for (int characterIndex = 0; characterIndex < animatingTextCount.Count; characterIndex++)
         {
@@ -89,12 +95,10 @@ public class Dialog_Test : MonoBehaviour
             if (cachedMeshInfo.Length > materialIndex)
             {
                 // 원래 정점정보
-                Vector3[] sourceVertices = originVertices[materialIndex];
+                Vector3[] sourceVertices = originVertices[materialIndex].vertices;
 
                 // 현재 정점 정보를 얻고 덮어쓰기
                 var destinationVertices = _textInfo.meshInfo[materialIndex].vertices;
-                int textType = animatingTextCount[characterIndex].y;
-                Data_Manager.DialogInfoamtion textStruct = dialogInfoamtions[textType];
 
                 Color32[] vertexColors = _textInfo.meshInfo[materialIndex].colors32;
                 for (int i = 0; i < 4; i++)
@@ -104,6 +108,7 @@ public class Dialog_Test : MonoBehaviour
                     {
                         destinationVertices[index][j] = sourceVertices[index][j];
                     }
+                    //destinationVertices[index] = sourceVertices[index];
                     vertexColors[index].a = (byte)(255f / ddffff);// 투명화
                 }
             }
@@ -112,6 +117,37 @@ public class Dialog_Test : MonoBehaviour
 
 
 
+
+    [System.Serializable]
+    public class djdjdj
+    {
+        public Vector3[] vertices;
+    }
+    public List<djdjdj> originVertices = new List<djdjdj>();
+    void SetAniFontOrigin()
+    {
+        originVertices.Clear();
+        TMP_MeshInfo[] cachedMeshInfo = dialogText.textInfo.CopyMeshInfoVertexData();
+
+        for (int i = 0; i < animatingTextCount.Count; i++)
+        {
+            int queueIndex = animatingTextCount[i].x;
+            var charInfo = dialogText.textInfo.characterInfo[queueIndex];
+            if (charInfo.isVisible == false)
+                continue;
+
+            int materialIndex = charInfo.materialReferenceIndex;
+            int vertexIndex = charInfo.vertexIndex;
+
+            if (cachedMeshInfo.Length > materialIndex)
+            {
+                // 원래 정점정보
+                Vector3[] sourceVertices = cachedMeshInfo[materialIndex].vertices;
+                djdjdj jjjj = new djdjdj { vertices = sourceVertices };
+                originVertices.Add(jjjj);
+            }
+        }
+    }
     void StartDialog()
     {
         if (typing != null)
@@ -127,6 +163,7 @@ public class Dialog_Test : MonoBehaviour
         //component.textWrappingMode = TextWrappingModes.PreserveWhitespace;
 
         yield return null;
+        SetAniFontOrigin();
         OnPreHideText(component.textInfo);
         component.UpdateVertexData();
         //component.ForceMeshUpdate();
@@ -142,16 +179,16 @@ public class Dialog_Test : MonoBehaviour
             StopCoroutine(animating);
         animating = StartCoroutine(TextAnimation());
     }
-
+    public int ininininn;
     string GetDialog()
     {
         string setSpeech = "";
         int animIndex = 0;
         animatingTextCount.Clear();
         dialogInfoamtions.Clear();
-        for (int i = 0; i < dialogID.Length; i++)
-        {
-            Data_Manager.DialogInfoamtion dialogInfoamtion = Singleton_Data.INSTANCE.Dict_Dialog[dialogID[i]];
+        //for (int i = 0; i < dialogID.Length; i++)
+        //{
+            Data_Manager.DialogInfoamtion dialogInfoamtion = Singleton_Data.INSTANCE.Dict_Dialog[dialogID[ininininn]];
             dialogInfoamtions.Add(dialogInfoamtion);
             if (dialogInfoamtion.animType != Data_Manager.DialogInfoamtion.AnimType.None)// 애니메이션 문자열
             {
@@ -159,7 +196,7 @@ public class Dialog_Test : MonoBehaviour
                 int end = animIndex + dialogInfoamtion.text.Length;
                 for (int c = start; c < end; c++)
                 {
-                    Vector2Int textAnimation = new Vector2Int(c, i);
+                    Vector2Int textAnimation = new Vector2Int(c, ininininn);
                     animatingTextCount.Add(textAnimation);
                 }
             }
@@ -173,7 +210,7 @@ public class Dialog_Test : MonoBehaviour
             animIndex += dialogInfoamtion.text.Length;
             string colorHex = ColorUtility.ToHtmlStringRGB(dialogInfoamtion.color);
             setSpeech += $"<color=#{colorHex}><size={dialogInfoamtion.size}>{textStr}</size></color>";
-        }
+        //}
         return setSpeech;
     }
 
@@ -237,7 +274,6 @@ public class Dialog_Test : MonoBehaviour
         TMP_TextInfo textInfo = component.textInfo;
 
         TMP_MeshInfo[] cachedMeshInfo = textInfo.CopyMeshInfoVertexData();
-        List<Vector2Int> aniTextCount = animatingTextCount;
 
         while (true)
         {
@@ -249,10 +285,9 @@ public class Dialog_Test : MonoBehaviour
             yield return new WaitForSeconds(interval);
         }
     }
-    public List<Vector3[]> originVertices = new List<Vector3[]>();
+
     void TextAnimation(TMP_TextInfo _textInfo, TMP_MeshInfo[] _cachedMeshInfo)
     {
-        originVertices.Clear();
         for (int characterIndex = 0; characterIndex < animatingTextCount.Count; characterIndex++)
         {
             int queueIndex = animatingTextCount[characterIndex].x;
@@ -267,11 +302,11 @@ public class Dialog_Test : MonoBehaviour
             {
                 // 원래 정점정보
                 Vector3[] sourceVertices = _cachedMeshInfo[materialIndex].vertices;
-                originVertices.Add(sourceVertices);
                 // 현재 정점 정보를 얻고 덮어쓰기
                 Vector3[] destinationVertices = _textInfo.meshInfo[materialIndex].vertices;
                 int textType = animatingTextCount[characterIndex].y;
-                Data_Manager.DialogInfoamtion textStruct = dialogInfoamtions[textType];
+                Debug.LogWarning($"{dialogInfoamtions.Count}  {textType}" );
+                Data_Manager.DialogInfoamtion textStruct = dialogInfoamtions[materialIndex];
                 float animSpeed = textStruct.speed;
 
                 switch (textStruct.animType)

@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c0dab16d0ca77440b6b931403781880, type: 3}
+  m_Name: Data_DialogType
+  m_EditorClassIdentifier: 
+  actionType:
+  - id: A
+    type: 1
+    speed: 5
+    range: 5
+    angle: {x: 1, y: 1}
+  - id: B
+    type: 2
+    speed: 3
+    range: 5
+    angle: {x: 0, y: 5}
+  - id: C
+    type: 4
+    speed: 5
+    range: 5
+    angle: {x: 0, y: 10}
+  - id: D
+    type: 3
+    speed: 3
+    range: 5
+    angle: {x: 5.21, y: 0}
+  - id: E
+    type: 1
+    speed: 5
+    range: 3
+    angle: {x: 0, y: 1}
+  - id: F
+    type: 5
+    speed: 0
+    range: 3
+    angle: {x: 0, y: 0}
+  - id: G
+    type: 1
+    speed: 100
+    range: 1
+    angle: {x: 1, y: 1}

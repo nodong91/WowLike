@@ -36,8 +36,9 @@ public class Data_Manager : Data_Parse
         DataSetting();
     }
 
-    void DataSetting()
+    public override void DataSetting()
     {
+        base.DataSetting();
         TextAsset[] csv_data = CSV_Data;
         for (int i = 0; i < csv_data.Length; i++)
         {
@@ -132,5 +133,6 @@ public class Data_Manager : Data_Parse
     private void Awake()
     {
         Singleton_Data.INSTANCE.SetDictionary_Dialog(dialog);
+        Singleton_Data.INSTANCE.SetDictionary_Audio(audioClip);
     }
 }
