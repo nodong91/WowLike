@@ -85,19 +85,19 @@ public class Game_Manager : MonoBehaviour
         switch (_index)
         {
             case 0:
-                InputKey01(true);
+                InputKey01(false);
                 break;
 
             case 1:
-                InputKey02(true);
+                InputKey02(false);
                 break;
 
             case 2:
-                InputKey03(true);
+                InputKey03(false);
                 break;
 
             case 3:
-                InputKey04(true);
+                InputKey04(false);
                 break;
         }
     }

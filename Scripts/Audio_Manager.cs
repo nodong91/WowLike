@@ -1,77 +1,41 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Audio_Manager : MonoBehaviour
 {
-    public AudioSource bgmSource;
-    public AudioSource fxSource;
+    public Slider bgmSlider;
+    public Slider fxSlider;
 
-    public bool BGMMute;
-    public float BGMVolume;
-    public bool fxMute;
-    public float fxVolume;
+    public Button button;
 
-    public static Audio_Manager current;
-
-    void Awake()
+    void Start()
     {
-        current = this;
+        button.onClick.AddListener(CloseWindow);
+        SetAudioManager();
     }
 
-    public void BackGroundMusic(string BGM)
+    void CloseWindow()
     {
-        if (bgmSource == null)
-        {
-            bgmSource = gameObject.AddComponent<AudioSource>();
-
-            bgmSource.Stop();
-            bgmSource.clip = Singleton_Data.INSTANCE.Dict_Audio[BGM];
-            bgmSource.loop = true;
-
-            bgmSource.mute = BGMMute;
-            bgmSource.volume = BGMVolume;
-
-            bgmSource.Play();
-        }
-        else
-        {
-            //  추가 음악 변경
-            AudioSource addSource = gameObject.AddComponent<AudioSource>();
-            addSource.clip = Singleton_Data.INSTANCE.Dict_Audio[BGM];
-            addSource.loop = true;
-
-            addSource.Play();
-            StartCoroutine(CrossFadeAudio(addSource));
-        }
+        gameObject.SetActive(false);
     }
 
-    IEnumerator CrossFadeAudio(AudioSource newSource)
+    public void SetAudioManager()
     {
-        newSource.mute = BGMMute;
-        float normalize = 0.0f;
-        while (normalize < 1.0f)
-        {
-            normalize += Time.fixedDeltaTime * 0.5f;
-            newSource.volume = Mathf.Lerp(0.0f, BGMVolume, normalize);
-            bgmSource.volume = BGMVolume - newSource.volume;
-            yield return null;
-        }
-        Destroy(bgmSource);
-        bgmSource = newSource;
+        Singleton_Audio.INSTANCE.SetAudio();
+
+        bgmSlider.onValueChanged.AddListener(BGMValue);
+        fxSlider.onValueChanged.AddListener(FXValue);
+        bgmSlider.value = 0.3f;
+        fxSlider.value = 1.0f;
     }
 
-    public void FXAudio(string audio)
+    void BGMValue(float _value)
     {
-        if (fxSource == null)
-        {
-            fxSource = gameObject.AddComponent<AudioSource>();
+        Singleton_Audio.INSTANCE.SetBGMVolume(_value);
+    }
 
-            fxSource.mute = fxMute;
-            fxSource.volume = fxVolume;
-        }
-        fxSource.Stop();
-        fxSource.pitch = Random.Range(0.7f, 1.3f);
-        fxSource.clip = Singleton_Data.INSTANCE.Dict_Audio[audio];
-        fxSource.Play();
+    void FXValue(float _value)
+    {
+        Singleton_Audio.INSTANCE.SetFXVolume(_value);
     }
 }

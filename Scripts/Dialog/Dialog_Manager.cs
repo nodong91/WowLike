@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class Dialog_Word : MonoBehaviour
+public class Dialog_Manager : MonoBehaviour
 {
     public bool typing;
     public TMP_Text dialogText;
@@ -26,6 +26,7 @@ public class Dialog_Word : MonoBehaviour
             public float typingSpeed;
         }
     }
+
     public int defaultSize;
     public string defaultColor;
     const float defaultTypingSpeed = 0.1f;
@@ -36,14 +37,13 @@ public class Dialog_Word : MonoBehaviour
     public float interval;
     public List<DialogText> dialogInfoamtions = new List<DialogText>();
 
-    public Color dialogID;
+    public Image nextMark;
     public Button button;
     [SerializeField] private List<Vector3Int> dialogActions = new List<Vector3Int>();
 
-
     void Start()
     {
-        Audio_Manager.current.BackGroundMusic(BGMSound);
+        Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);
         typingSpeed = defaultTypingSpeed;
         button.onClick.AddListener(SetTest);
     }
@@ -53,17 +53,18 @@ public class Dialog_Word : MonoBehaviour
         if (typing == true)
         {
             StartTyping(false);// 스킵
-            typingCoroutine = StartCoroutine(Typing());
         }
         else
         {
-            dialogIndex++;
-            if (dialogIndex >= dialogInfoamtions.Count)
+            if (dialogIndex < dialogInfoamtions.Count)
             {
-                dialogIndex = 0;
+                StopAllCoroutines();
+                StartCoroutine(SetText());
             }
-            StopAllCoroutines();
-            StartCoroutine(SetText());
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 
@@ -77,6 +78,7 @@ public class Dialog_Word : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         StartTyping(true);
+        StartAction();
     }
     //===========================================================================================================
     // 대화 세팅
@@ -93,6 +95,7 @@ public class Dialog_Word : MonoBehaviour
             int subSize = subDialogs[i].size;
             subText = SetSizeColor(subText, subSize, subColor);
             textStr = textStr.Replace(temp, subText);
+            textStr = textStr.Replace("`", "\n");
         }
         textStr = SetSizeColor(textStr, defaultSize, defaultColor);
         Debug.LogWarning(textStr);
@@ -128,9 +131,10 @@ public class Dialog_Word : MonoBehaviour
         SetActionRange();
         dialogText.UpdateVertexData();
     }
-
+    bool actionText;
     void SetActionRange()
     {
+        actionText = false;
         dialogActions.Clear();
         string textStr = dialogInfoamtions[dialogIndex].text;
         DialogText.SubDialog[] subDialogs = dialogInfoamtions[dialogIndex].subDialogs;
@@ -144,6 +148,8 @@ public class Dialog_Word : MonoBehaviour
             int type = (int)subDialogs[i].style - 1;// 액션 스타일 (None 0 제거)
             Vector3Int vector = new Vector3Int(start, end, type);
             dialogActions.Add(vector);
+            if (type > 0)
+                actionText = true;
             textStr = textStr.Replace(temp, subText);// 변경
         }
     }
@@ -154,11 +160,15 @@ public class Dialog_Word : MonoBehaviour
     void StartTyping(bool _typing)
     {
         typing = _typing;
+        nextMark.gameObject.SetActive(!_typing);
 
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(Typing());
+    }
 
+    void StartAction()
+    {
         if (actionCoroutine != null)
             StopCoroutine(actionCoroutine);
         actionCoroutine = StartCoroutine(TextAction());
@@ -204,12 +214,32 @@ public class Dialog_Word : MonoBehaviour
                 int index = vertexIndex + i;
                 vertexColors[index].a = (byte)255;// 활성화
             }
-            Audio_Manager.current.FXAudio(FXSound);
             if (typing == true)
+            {
+                Singleton_Audio.INSTANCE.Audio_SetFX(FXSound);
+                dialogText.UpdateVertexData();
                 yield return new WaitForSeconds(typingSpeed);
-            dialogText.UpdateVertexData();
+            }
         }
+        dialogText.UpdateVertexData();
         typing = false;
+        nextMark.gameObject.SetActive(true);
+
+        StartCoroutine(WaitingNext());
+    }
+
+
+    IEnumerator WaitingNext()
+    {
+        dialogIndex++;
+
+        float normalize = 0f;
+        while (normalize < 1f && typing == false)
+        {
+            normalize += Time.deltaTime / 3f;
+            nextMark.fillAmount = normalize;
+            yield return null;
+        }
     }
     public string BGMSound, FXSound;
     //===========================================================================================================
@@ -220,7 +250,7 @@ public class Dialog_Word : MonoBehaviour
         TMP_Text component = dialogText;
         TMP_MeshInfo[] cachedMeshInfo = component.textInfo.CopyMeshInfoVertexData();
 
-        while (dialogActions.Count > 0)
+        while (actionText == true)
         {
             yield return new WaitForSeconds(interval);
             for (int i = 0; i < dialogActions.Count; i++)
