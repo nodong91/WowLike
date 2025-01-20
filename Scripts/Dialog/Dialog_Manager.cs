@@ -6,7 +6,7 @@ using TMPro;
 
 public class Dialog_Manager : MonoBehaviour
 {
-    public bool typing;
+    public bool typing, actionText;
     public TMP_Text dialogText;
     public Data_DialogType dialogType;
     [System.Serializable]
@@ -23,13 +23,15 @@ public class Dialog_Manager : MonoBehaviour
             public Data_DialogType.TextStyle style;
             public int size;
             public string color;
+            public bool bold;
             public float typingSpeed;
         }
     }
+    const float defaultTypingSpeed = 0.1f;
+    const string lineEnd = "`";
 
     public int defaultSize;
     public string defaultColor;
-    const float defaultTypingSpeed = 0.1f;
     public float typingSpeed;
     Coroutine typingCoroutine, actionCoroutine;
 
@@ -43,7 +45,7 @@ public class Dialog_Manager : MonoBehaviour
 
     void Start()
     {
-        Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);
+        //Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);
         typingSpeed = defaultTypingSpeed;
         button.onClick.AddListener(SetTest);
     }
@@ -56,6 +58,7 @@ public class Dialog_Manager : MonoBehaviour
         }
         else
         {
+            nextMark.gameObject.SetActive(false);
             if (dialogIndex < dialogInfoamtions.Count)
             {
                 StopAllCoroutines();
@@ -72,13 +75,15 @@ public class Dialog_Manager : MonoBehaviour
     {
         TMP_Text component = dialogText;
         component.text = GetText();
+        dialogText.ForceMeshUpdate(true);// 메쉬 재 생성 (리셋)
         yield return new WaitForEndOfFrame();
 
-        PreSetHide();
-        yield return new WaitForEndOfFrame();
+        PreSetHide();// 글자 숨김
+        SetActionRange();// 움직여야 할 글자 체크
+        yield return new WaitForSeconds(defaultTypingSpeed);
 
-        StartTyping(true);
-        StartAction();
+        StartTyping(true);// 타이핑 시작
+        StartAction();// 움직임 시작
     }
     //===========================================================================================================
     // 대화 세팅
@@ -89,23 +94,27 @@ public class Dialog_Manager : MonoBehaviour
         DialogText.SubDialog[] subDialogs = dialogInfoamtions[dialogIndex].subDialogs;
         for (int i = 0; i < subDialogs.Length; i++)
         {
-            string temp = "{" + i + "}";
             string subText = subDialogs[i].text;
             string subColor = subDialogs[i].color;
             int subSize = subDialogs[i].size;
-            subText = SetSizeColor(subText, subSize, subColor);
+            bool subBold = subDialogs[i].bold;
+            subText = SetSizeColor(subText, subSize, subColor, subBold);
+
+            string temp = "{" + i + "}";
             textStr = textStr.Replace(temp, subText);
-            textStr = textStr.Replace("`", "\n");
         }
-        textStr = SetSizeColor(textStr, defaultSize, defaultColor);
+        textStr = textStr.Replace(lineEnd, "\n");
+        textStr = SetSizeColor(textStr, defaultSize, defaultColor, false);
         Debug.LogWarning(textStr);
 
         return textStr;
     }
 
-    string SetSizeColor(string _text, int _size, string _color)
+    string SetSizeColor(string _text, int _size, string _color, bool _bold)
     {
-        string temp = $"<color=#{_color}><size={_size}>{_text}</size></color>"; ;
+        string temp = $"<color=#{_color}><size={_size}>{_text}</size></color>";
+        if (_bold == true)
+            temp = $"<b>{temp}</b>";
         return temp;
     }
 
@@ -120,18 +129,25 @@ public class Dialog_Manager : MonoBehaviour
                 continue;
 
             int materialIndex = charInfo.materialReferenceIndex;
-            int vertexIndex = charInfo.vertexIndex;
             Color32[] vertexColors = textInfo.meshInfo[materialIndex].colors32;
+            int vertexIndex = charInfo.vertexIndex;
             for (int i = 0; i < 4; i++)
             {
                 int index = vertexIndex + i;
                 vertexColors[index].a = 0;// 투명화
             }
         }
-        SetActionRange();
-        dialogText.UpdateVertexData();
+
+        // 메쉬 업데이트
+        for (int i = 0; i < textInfo.materialCount; i++)
+        {
+            if (textInfo.meshInfo[i].mesh == null) { continue; }
+            textInfo.meshInfo[i].mesh.colors32 = textInfo.meshInfo[i].colors32;
+            textInfo.meshInfo[i].mesh.vertices = textInfo.meshInfo[i].vertices;   // 변경
+            dialogText.UpdateGeometry(textInfo.meshInfo[i].mesh, i);
+        }
     }
-    bool actionText;
+
     void SetActionRange()
     {
         actionText = false;
@@ -146,10 +162,11 @@ public class Dialog_Manager : MonoBehaviour
             int start = textStr.IndexOf(temp, 0, textStr.Length);// 시작 위치
             int end = start + subText.Length;// 끝 포지션
             int type = (int)subDialogs[i].style - 1;// 액션 스타일 (None 0 제거)
-            Vector3Int vector = new Vector3Int(start, end, type);
-            dialogActions.Add(vector);
             if (type > 0)
                 actionText = true;
+            Vector3Int vector = new Vector3Int(start, end, type);
+            dialogActions.Add(vector);
+
             textStr = textStr.Replace(temp, subText);// 변경
         }
     }
@@ -160,8 +177,6 @@ public class Dialog_Manager : MonoBehaviour
     void StartTyping(bool _typing)
     {
         typing = _typing;
-        nextMark.gameObject.SetActive(!_typing);
-
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(Typing());
@@ -176,7 +191,7 @@ public class Dialog_Manager : MonoBehaviour
 
     IEnumerator Typing()
     {
-        int daIndex = 0;
+        int subIndex = 0;
         TMP_TextInfo textInfo = dialogText.textInfo;
         for (int c = 0; c < textInfo.characterCount; c++)
         {
@@ -184,26 +199,26 @@ public class Dialog_Manager : MonoBehaviour
             if (sub.Length > 0)
             {
                 // 타이핑 속도 조절
-                float speed = sub[daIndex].typingSpeed;
-                if (c == dialogActions[daIndex].x)
+                float speed = sub[subIndex].typingSpeed;
+                if (c == dialogActions[subIndex].x)
                 {
                     if (speed > 0)// 타이핑 스피드가 0 이상이라면..
                         typingSpeed = speed;
                 }
 
-                if (c == dialogActions[daIndex].y)
+                if (c == dialogActions[subIndex].y)
                 {
-                    if (daIndex + 1 < sub.Length)
+                    if (subIndex + 1 < sub.Length)
                     {
-                        daIndex++;
-                        speed = sub[daIndex].typingSpeed;
+                        subIndex++;
+                        speed = sub[subIndex].typingSpeed;
                     }
                     typingSpeed = defaultTypingSpeed;// 기본 속도
                 }
             }
 
             var charInfo = textInfo.characterInfo[c];
-            if (!charInfo.isVisible)
+            if (charInfo.isVisible == false)
                 continue;
 
             int materialIndex = charInfo.materialReferenceIndex;
@@ -223,6 +238,7 @@ public class Dialog_Manager : MonoBehaviour
         }
         dialogText.UpdateVertexData();
         typing = false;
+        typingSpeed = defaultTypingSpeed;// 기본 속도
         nextMark.gameObject.SetActive(true);
 
         StartCoroutine(WaitingNext());
@@ -351,5 +367,17 @@ public class Dialog_Manager : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    private void Update()
+    {
+        FollowUI();
+    }
+    public Transform target;
+    public Vector3 offset;
+    void FollowUI()
+    {
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(target.position + offset);
+        transform.position = screenPosition;
     }
 }

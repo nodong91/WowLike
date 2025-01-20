@@ -60,13 +60,12 @@ public class Data_Manager : Data_Parse
             {
                 ID = elements[0].Trim(),
                 text = elements[1],
-                color = HexToColor(elements[2]),
-                size = FloatTryParse(elements[3]),
-                lineEnd = elements[4] == "TRUE" ? true : false,
-                animType = (DialogInfoamtion.AnimType)Enum.Parse(typeof(DialogInfoamtion.AnimType), elements[5]),
-                angle = new Vector2(FloatTryParse(elements[6]), FloatTryParse(elements[7])),
-                length = FloatTryParse(elements[8]),
-                speed = FloatTryParse(elements[9].Trim()),
+                //text = elements[2],
+                animType = (DialogInfoamtion.AnimType)Enum.Parse(typeof(DialogInfoamtion.AnimType), elements[3]),
+                size = FloatTryParse(elements[4]),
+                color = elements[5],
+                lineEnd = elements[6] == "TRUE" ? true : false,
+                speed = FloatTryParse(elements[7].Trim()),
             };
             dialog.Add(tempData);
         }
@@ -113,7 +112,7 @@ public class Data_Manager : Data_Parse
     {
         public string ID;
         public string text;
-        public Color color;
+        public string color;
         public float size;
         public bool lineEnd;
         public enum AnimType
