@@ -302,7 +302,7 @@ MonoBehaviour:
   BGMSound: Untitled (1)
   FXSound: Tennis Ball Bouncing on Pavement
   target: {fileID: 296430390}
-  offset: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 2.5, z: 0}
 --- !u!1 &24543533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1037,7 +1037,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.19740912, y: 0.000000025017945, z: -0.0000000050379096, w: 0.9803212}
+  m_LocalRotation: {x: 0.19740914, y: -0.0000000073039637, z: 0.0000000014708129, w: 0.9803212}
   m_LocalPosition: {x: 0, y: 2.25, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2447,7 +2447,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996229995}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.19740906, y: 0.000000025017941, z: -0.0000000050379083, w: 0.9803212}
+  m_LocalRotation: {x: 0.1974091, y: -0.0000000073039623, z: 0.0000000014708122, w: 0.9803212}
   m_LocalPosition: {x: 0, y: 2.25, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3123,7 +3123,7 @@ MonoBehaviour:
   dialog:
   - ID: Dialog001_01
     text: "\uD1A0\uD2B8\uB118\uC5D0 \uC2E4\uB9DD\uD55C \uC5EC\uB7EC\uBD84"
-    color: {r: 0, g: 0, b: 0, a: 1}
+    color: 
     size: 15
     lineEnd: 0
     animType: 0
@@ -3132,7 +3132,7 @@ MonoBehaviour:
     speed: 0
   - ID: Dialog001_02
     text: "\uD0C8\uD2B8\uB118"
-    color: {r: 0, g: 0.15294118, b: 1, a: 1}
+    color: 
     size: 20
     lineEnd: 0
     animType: 3
@@ -3141,7 +3141,7 @@ MonoBehaviour:
     speed: 2
   - ID: Dialog001_03
     text: "\uBC29\uBC95\uACFC"
-    color: {r: 0, g: 0, b: 0, a: 1}
+    color: 
     size: 15
     lineEnd: 1
     animType: 0
@@ -3150,7 +3150,7 @@ MonoBehaviour:
     speed: 0
   - ID: Dialog001_04
     text: "\uC190\uD765\uBBFC"
-    color: {r: 1, g: 0.07058824, b: 0, a: 1}
+    color: 
     size: 20
     lineEnd: 0
     animType: 2
@@ -3159,7 +3159,7 @@ MonoBehaviour:
     speed: 8
   - ID: Dialog001_05
     text: "\uC774\uC801 \uCD94\uCC9C\uD300 [\uD53C\uD130\uC9C0\uB294PL]"
-    color: {r: 0, g: 0, b: 0, a: 1}
+    color: 
     size: 15
     lineEnd: 0
     animType: 0
@@ -4160,10 +4160,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cinemachineCamera: {fileID: 996229996}
   target: {fileID: 296430390}
+  offset: {x: 0, y: 1, z: 0}
   smoothSpeed: 10
   shakeValue: 5
   shakeTime: 1
-  offset: {x: 0, y: 0, z: 0}
 --- !u!4 &1968437031
 Transform:
   m_ObjectHideFlags: 0

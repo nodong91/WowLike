@@ -6,7 +6,9 @@ public class CameraManager : MonoBehaviour
 {
     public CinemachineCamera cinemachineCamera;
     public Transform target;
-    CinemachineFollow cinemachineFollow;
+    public Vector3 offset;
+    CinemachineRotationComposer rotationComposer;
+    //CinemachineFollow cinemachineFollow;
     CinemachineOrbitalFollow orbitalFollow;
     CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin;
 
@@ -40,14 +42,14 @@ public class CameraManager : MonoBehaviour
     {
         orbitalFollow = cinemachineCamera.GetComponent<CinemachineOrbitalFollow>();
         cinemachineBasicMultiChannelPerlin = cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
-        cinemachineFollow = cinemachineCamera.GetComponent<CinemachineFollow>();
+        rotationComposer = cinemachineCamera.GetComponent<CinemachineRotationComposer>();
         GetTarget(target);
     }
-    public Vector3 offset;
+
     public void GetTarget(Transform _trans)
     {
         cinemachineCamera.Target.TrackingTarget = _trans;
-        orbitalFollow.TargetOffset = offset;
+        rotationComposer.TargetOffset = offset;
     }
 
     public void InputRotate(bool _input)
