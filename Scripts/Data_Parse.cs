@@ -81,7 +81,7 @@ public class Data_Parse : MonoBehaviour
     {
         if (int.TryParse(_str, out int value))
             return value;
-        return 1;
+        return 0;
     }
 
     public float FloatTryParse(string _str)

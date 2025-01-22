@@ -55,16 +55,21 @@ public class Data_Manager : Data_Parse
         string[] data = _textAsset.text.Split(new char[] { '\n' });
         for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
         {
+
             string[] elements = data[i].Split(new char[] { ',' });
+            if (elements[0].Trim().Length == 0)
+                continue;
+
             DialogInfoamtion tempData = new DialogInfoamtion
             {
                 ID = elements[0].Trim(),
                 text = elements[1],
-                //text = elements[2],
-                animType = (DialogInfoamtion.AnimType)Enum.Parse(typeof(DialogInfoamtion.AnimType), elements[3]),
-                size = FloatTryParse(elements[4]),
+                text1 = elements[2],
+                textStyle = elements[3].Trim().Length > 0 ?
+            (Data_DialogType.TextStyle)Enum.Parse(typeof(Data_DialogType.TextStyle), elements[3]) : 0,
+                size = IntTryParse(elements[4]),
                 color = elements[5],
-                lineEnd = elements[6] == "TRUE" ? true : false,
+                bold = elements[6] == "TRUE" ? true : false,
                 speed = FloatTryParse(elements[7].Trim()),
             };
             dialog.Add(tempData);
@@ -112,19 +117,22 @@ public class Data_Manager : Data_Parse
     {
         public string ID;
         public string text;
+        public string text1;
         public string color;
-        public float size;
+        public int size;
         public bool lineEnd;
-        public enum AnimType
+        public bool bold;
+
+        public enum TextType
         {
             None,
-            Moving,
+            Move,
+            MoveAll,
             Wave,
-            Jitter
+            Squash,
+            Jitter,
         }
-        public AnimType animType;
-        public Vector2 angle;
-        public float length;
+        public Data_DialogType.TextStyle textStyle;
         public float speed;
     }
     public List<DialogInfoamtion> dialog;

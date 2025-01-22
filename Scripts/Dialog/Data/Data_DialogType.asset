@@ -48,8 +48,3 @@ MonoBehaviour:
     speed: 1
     range: 1
     angle: {x: 3.69, y: 13.5}
-  - id: G
-    type: 1
-    speed: 100
-    range: 1
-    angle: {x: 1, y: 1}

@@ -45,16 +45,7 @@ public class Data_DialogType : ScriptableObject
     {
         [HideInInspector]
         public string id;
-        public enum TextType
-        {
-            None,
-            Move,
-            MoveAll,
-            Wave,
-            Squash,
-            Jitter,
-        }
-        public TextType type;
+        public Data_Manager.DialogInfoamtion.TextType type;
         public float speed;
         public float range;
         public Vector2 angle;

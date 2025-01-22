@@ -1,6 +1,9 @@
-ID,Text,ColorHex,Size,LineEnd,AnimationType,AngleX,AngleY,Length,Speed
-Dialog001_01,토트넘에 실망한 여러분,#000000,15,FALSE,None,,,,
-Dialog001_02,탈트넘,#0027FF,20,FALSE,Jitter,,,,2
-Dialog001_03,방법과,#000000,15,TRUE,None,,,,
-Dialog001_04,손흥민,#FF1200,20,FALSE,Wave,,1.5,8,8
-Dialog001_05,이적 추천팀 [피터지는PL],#000000,15,FALSE,None,,,,
+ID,KR,JP,AnimationType,Size,ColorHex,Bold,Speed
+50010,{50011}이 {50012},,None,,,,
+50011,김지영,,A,25,00FF20,TRUE,0.5
+50012,죽어버렸어!!!,,E,25,FF0000,FALSE,0
+,,,,,,,
+11,{50011}와 {1}의 {2}이잖아,,None,,00FF20,,
+0,할망구,,C,,,,
+1,할망구,,D,,,,
+2,격돌,,F,,,,
