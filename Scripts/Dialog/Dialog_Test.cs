@@ -2,24 +2,21 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using System.Drawing;
 
 public class Dialog_Test : MonoBehaviour
 {
     const string inID = "{";
     const string outID = "}";
-    public string setID;
 
     const float defaultTypingSpeed = 0.1f;
     const int defaultSize = 15;
     const string defaultColor = "000000";
 
-    bool actionBool = false;
-
-    private List<Vector3Int> actionList = new List<Vector3Int>();
+    public List<Vector3Int> actionList = new List<Vector3Int>();
 
     public TMP_Text dialogText;
 
+    public DialogInfoamtion.TextType textStyle;
     public float speed;
     public float range;
     public Vector2 angle;
@@ -32,7 +29,6 @@ public class Dialog_Test : MonoBehaviour
         public string japanese;
         public string color;
         public int size;
-        public bool lineEnd;
         public bool bold;
 
         public enum TextType
@@ -44,8 +40,8 @@ public class Dialog_Test : MonoBehaviour
             Squash,
             Jitter,
         }
-        public Data_DialogType.TextStyle textStyle;
-        public float speed;
+        //public Data_DialogType.TextStyle textStyle;
+        //public float speed;
     }
     public List<DialogInfoamtion> dialog;
     public DialogInfoamtion mainText;
@@ -64,19 +60,21 @@ public class Dialog_Test : MonoBehaviour
             korean = "{50011}이 {50012}",
             color = "000000"
         };
-
+        mainText = temp0;
         dialog = new List<DialogInfoamtion>();
         DialogInfoamtion temp1 = new DialogInfoamtion
         {
             ID = "50011",
             korean = "김지영",
-            color = "00FF20"
+            color = "00FF20",
+            size = 20
         }; 
         DialogInfoamtion temp2 = new DialogInfoamtion
         {
             ID = "50012",
             korean = "죽어버렸어!!!",
-            color = "FF0000"
+            color = "FF0000",
+            size = 25
         };
         dialog.Add(temp1);
         dialog.Add(temp2);
@@ -89,7 +87,6 @@ public class Dialog_Test : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         //PreSetHide();// 글자 숨김
-        //SetActionRange();// 움직여야 할 글자 체크
         yield return new WaitForSeconds(defaultTypingSpeed);
 
         StartCoroutine(TextAction(actionList));
@@ -100,7 +97,6 @@ public class Dialog_Test : MonoBehaviour
         //Data_Manager.DialogInfoamtion mainDialog = Singleton_Data.INSTANCE.Dict_Dialog[_string];
         DialogInfoamtion mainDialog = mainText;
         string mainString = mainDialog.korean;
-        actionBool = false;
         List<string> id = new List<string>();
         string[] start = mainString.Split(inID);// id추출
         for (int i = 0; i < start.Length; i++)
@@ -119,16 +115,15 @@ public class Dialog_Test : MonoBehaviour
         for (int i = 0; i < id.Count; i++)
         {
             string setting = inID + id[i] + outID;
-            Data_Manager.DialogInfoamtion temp = Singleton_Data.INSTANCE.Dict_Dialog[id[i]];
-            if (temp.textStyle != Data_DialogType.TextStyle.None)
-                actionBool = true;
+            //DialogInfoamtion temp = Singleton_Data.INSTANCE.Dict_Dialog[id[i]];
+            DialogInfoamtion temp = dialog[i];
             int startPoint = setIndex.IndexOf(setting, 0, setIndex.Length);// 시작 위치
-            int endPoint = startPoint + temp.text.Length;
-            Vector3Int actionVector = new Vector3Int(startPoint, endPoint, (int)temp.textStyle - 1);
+            int endPoint = startPoint + temp.korean.Length;
+            Vector3Int actionVector = new Vector3Int(startPoint, endPoint, 0);
             actionList.Add(actionVector);
 
-            setIndex = setIndex.Replace(setting, temp.text);
-            string richString = SetRichText(temp.text, temp.size, temp.color, temp.bold);
+            setIndex = setIndex.Replace(setting, temp.korean);
+            string richString = SetRichText(temp.korean, temp.size, temp.color, temp.bold);
             setText = setText.Replace(setting, richString);
 
             Debug.LogWarning($"{setting}, {setText}");
@@ -145,7 +140,7 @@ public class Dialog_Test : MonoBehaviour
         TMP_Text component = dialogText;
         TMP_MeshInfo[] cachedMeshInfo = component.textInfo.CopyMeshInfoVertexData();
 
-        while (actionBool == true)
+        while ( true)
         {
             for (int i = 0; i < _actionText.Count; i++)
             {
@@ -189,72 +184,66 @@ public class Dialog_Test : MonoBehaviour
 
     void SetActionType(int vertexIndex, Vector3[] sourceVertices, Vector3[] destinationVertices, int _index)
     {
-        Vector3 offset = Wobble(Time.time * speed + _index, angle, range);
-        for (int v = 0; v < 4; v++)
+        switch (textStyle)
         {
-            int index = vertexIndex + v;
-            destinationVertices[index] = sourceVertices[index] + offset;
+            case DialogInfoamtion.TextType.None:
+
+                break;
+
+            case DialogInfoamtion.TextType.Move:
+                Vector3 offset = Wobble(Time.time * speed + _index, angle, range);
+                for (int v = 0; v < 4; v++)
+                {
+                    int index = vertexIndex + v;
+                    destinationVertices[index] = sourceVertices[index] + offset;
+                }
+                break;
+
+            case DialogInfoamtion.TextType.MoveAll:
+                offset = Wobble(Time.time * speed, angle, range);
+                for (int v = 0; v < 4; v++)
+                {
+                    int index = vertexIndex + v;
+                    destinationVertices[index] = sourceVertices[index] + offset;
+                }
+                break;
+
+            case DialogInfoamtion.TextType.Wave:
+                for (int v = 0; v < 4; v++)
+                {
+                    int index = vertexIndex + v;
+                    float actionRange = range * 0.01f;
+                    float animTime = Time.time * speed;
+                    float x = Mathf.Sin(animTime + sourceVertices[index].x * actionRange) * angle.x;
+                    float y = Mathf.Cos(animTime + sourceVertices[index].y * actionRange) * angle.y;
+                    destinationVertices[index] = sourceVertices[index] + new Vector3(y, x, 0f);
+                }
+                break;
+
+            case DialogInfoamtion.TextType.Squash:
+                for (int v = 0; v < 4; v++)
+                {
+                    int index = vertexIndex + v;
+                    float actionRange = range * 0.01f;
+                    float animTime = Time.time * speed + _index;
+                    float x = Mathf.Sin(animTime + sourceVertices[index].x * actionRange) * angle.x;
+                    float y = Mathf.Cos(animTime + sourceVertices[index].y * actionRange) * angle.y;
+                    destinationVertices[index] = sourceVertices[index] + new Vector3(x, y, 0f);
+                }
+                break;
+
+            case DialogInfoamtion.TextType.Jitter:
+                for (int v = 0; v < 4; v++)
+                {
+                    int index = vertexIndex + v;
+                    for (int j = 0; j < 2; j++)
+                    {
+                        float randomIndex = Random.Range(-range, range);
+                        destinationVertices[index][j] = sourceVertices[index][j] + randomIndex;
+                    }
+                }
+                break;
         }
-        //switch (type.type)
-        //{
-        //    case Data_Manager.DialogInfoamtion.TextType.None:
-
-        //        break;
-
-        //    case Data_Manager.DialogInfoamtion.TextType.Move:
-        //Vector3 offset = Wobble(Time.time * speed + _index, angle, range);
-        //for (int v = 0; v < 4; v++)
-        //{
-        //    int index = vertexIndex + v;
-        //    destinationVertices[index] = sourceVertices[index] + offset;
-        //}
-        //        break;
-
-        //    case Data_Manager.DialogInfoamtion.TextType.MoveAll:
-        //        offset = Wobble(Time.time * type.speed, type.angle, type.range);
-        //        for (int v = 0; v < 4; v++)
-        //        {
-        //            int index = vertexIndex + v;
-        //            destinationVertices[index] = sourceVertices[index] + offset;
-        //        }
-        //        break;
-
-        //    case Data_Manager.DialogInfoamtion.TextType.Wave:
-        //        for (int v = 0; v < 4; v++)
-        //        {
-        //            int index = vertexIndex + v;
-        //            float actionRange = type.range * 0.01f;
-        //            float animTime = Time.time * type.speed;
-        //            float x = Mathf.Sin(animTime + sourceVertices[index].x * actionRange) * type.angle.x;
-        //            float y = Mathf.Cos(animTime + sourceVertices[index].y * actionRange) * type.angle.y;
-        //            destinationVertices[index] = sourceVertices[index] + new Vector3(y, x, 0f);
-        //        }
-        //        break;
-
-        //    case Data_Manager.DialogInfoamtion.TextType.Squash:
-        //        for (int v = 0; v < 4; v++)
-        //        {
-        //            int index = vertexIndex + v;
-        //            float actionRange = type.range * 0.01f;
-        //            float animTime = Time.time * type.speed + _index;
-        //            float x = Mathf.Sin(animTime + sourceVertices[index].x * actionRange) * type.angle.x;
-        //            float y = Mathf.Cos(animTime + sourceVertices[index].y * actionRange) * type.angle.y;
-        //            destinationVertices[index] = sourceVertices[index] + new Vector3(x, y, 0f);
-        //        }
-        //        break;
-
-        //    case Data_Manager.DialogInfoamtion.TextType.Jitter:
-        //        for (int v = 0; v < 4; v++)
-        //        {
-        //            int index = vertexIndex + v;
-        //            for (int j = 0; j < 2; j++)
-        //            {
-        //                float randomIndex = Random.Range(-type.range, type.range);
-        //                destinationVertices[index][j] = sourceVertices[index][j] + randomIndex;
-        //            }
-        //        }
-        //        break;
-        //}
     }
     Vector2 Wobble(float _time, Vector2 _angle, float _length)
     {
