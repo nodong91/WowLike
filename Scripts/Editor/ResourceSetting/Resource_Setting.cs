@@ -1,17 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-
-
 
 #if UNITY_EDITOR
 using UnityEditor;
 
-namespace P01
+namespace P01.Editor
 {
     public class Resource_Setting : Resource_Renderer
     {
-        [MenuItem("Graphics Tool/Resource_Setting")]
+        [MenuItem("Graphics Tool/01. Resource_Setting")]
         public static void OpenWindow()
         {
             Resource_Setting window = EditorWindow.GetWindow<Resource_Setting>("Resource_Setting");

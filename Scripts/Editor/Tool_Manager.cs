@@ -5,11 +5,11 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 
-namespace P01
+namespace P01.Editor
 {
     public class Tool_Manager : EditorWindow
     {
-        [MenuItem("Graphics Tool/Tool_Manger")]
+        [MenuItem("Graphics Tool/00. Tool_Manger")]
         public static void OpenWindow()
         {
             Tool_Manager window = GetWindow<Tool_Manager>("Tool_Manager");

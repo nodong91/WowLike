@@ -5,11 +5,11 @@ using System.Linq;
 # if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;  // EditorSceneManager를 사용하기 위해 추가
-namespace P01
+namespace P01.Editor
 {
     public class SearchForResource : EditorWindow
     {
-        [MenuItem("Graphics Tool/Search For Resource")]
+        [MenuItem("Graphics Tool/04. Search For Resource")]
         public static void OpenWindow()
         {
             SearchForResource window = GetWindow<SearchForResource>("SearchForResource"); // 클래스 이름과 일치

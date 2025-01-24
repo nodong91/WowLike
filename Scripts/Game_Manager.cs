@@ -344,6 +344,8 @@ public class Game_Manager : MonoBehaviour
     {
         if (_input == false)
         {
+            CameraManager.current.InputShake();
+
             visibleTargets.Clear();
             Collider[] targetsInViewRadius = Physics.OverlapSphere(player.transform.position, viewRadius, targetMask);
             for (int i = 0; i < targetsInViewRadius.Length; i++)

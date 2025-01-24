@@ -8,11 +8,11 @@ using System.Reflection;
 //using static UnityEditor.Rendering.CameraUI;
 //using UnityEngine.UI.Extensions;
 
-namespace P01
+namespace P01.Editor
 {
     public class FullScreenSetting : EditorWindow
     {
-        [MenuItem("Graphics Tool/FullScreenSetting")]
+        [MenuItem("Graphics Tool/03. FullScreenSetting")]
         public static void ShowWindow()
         {
             FullScreenSetting window = GetWindow<FullScreenSetting>("FullScreenSetting");

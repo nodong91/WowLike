@@ -7,11 +7,11 @@ using UnityEngine.Playables;
 #if UNITY_EDITOR
 //using UnityEditor;
 
-namespace P01
+namespace P01.Editor
 {
     public class Editor_TimelinePlayer : EditorWindow
     {
-        [MenuItem("Graphics Tool/TimelinePlayer")]
+        [MenuItem("Graphics Tool/06. TimelinePlayer")]
         public static void OpenWindow()
         {
             Editor_TimelinePlayer window = EditorWindow.GetWindow<Editor_TimelinePlayer>("Editor_TimelinePlayer");

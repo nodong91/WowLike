@@ -43,7 +43,24 @@ public class CameraManager : MonoBehaviour
         orbitalFollow = cinemachineCamera.GetComponent<CinemachineOrbitalFollow>();
         cinemachineBasicMultiChannelPerlin = cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
         rotationComposer = cinemachineCamera.GetComponent<CinemachineRotationComposer>();
+        SetDefault();
         GetTarget(target);
+    }
+
+    void SetDefault()
+    {
+        Vector2 zoomLimit = new Vector2(0.3f, 1.0f);
+        orbitalFollow.RadialAxis.Range = zoomLimit;
+        orbitalFollow.RadialAxis.Value = (zoomLimit.x + zoomLimit.y) * 0.5f;
+        orbitalFollow.OrbitStyle = CinemachineOrbitalFollow.OrbitStyles.ThreeRing;
+        Cinemachine3OrbitRig.Settings newSetting = new Cinemachine3OrbitRig.Settings
+        {
+            SplineCurvature = 0.5f,
+            Top = new Cinemachine3OrbitRig.Orbit { Height = 7, Radius = 2 },
+            Center = new Cinemachine3OrbitRig.Orbit { Height = 4f, Radius = 4 },
+            Bottom = new Cinemachine3OrbitRig.Orbit { Height = 1f, Radius = 2.5f }
+        };
+        orbitalFollow.Orbits = newSetting;
     }
 
     public void GetTarget(Transform _trans)
@@ -147,14 +164,14 @@ public class CameraManager : MonoBehaviour
             normalize += Time.deltaTime * smoothSpeed;
             yield return null;
 
-            float asdf = Mathf.Lerp(originValue, targetValue, normalize);
-            zoom = Mathf.Clamp(asdf, limit.x, limit.y);
+            float value = Mathf.Lerp(originValue, targetValue, normalize);
+            zoom = Mathf.Clamp(value, limit.x, limit.y);
             orbitalFollow.RadialAxis.Value = zoom;
         }
         Debug.LogWarning("ScrollWheeling ½÷ֵי!!");
     }
 
-    void InputShake()
+    public void InputShake()
     {
         if (shaking != null)
             StopCoroutine(shaking);

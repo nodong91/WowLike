@@ -45,10 +45,10 @@ public class Data_DialogType : ScriptableObject
     {
         [HideInInspector]
         public string id;
-        public Data_Manager.DialogInfoamtion.TextType type;
         public float speed;
-        public float range;
+        public float interval;
         public Vector2 angle;
+        public AnimationCurve curve;
     }
     public List<ActionType> actionType = new List<ActionType>();
 

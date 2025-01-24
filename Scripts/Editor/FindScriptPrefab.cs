@@ -8,11 +8,11 @@ using System.Reflection;
 using UnityEditor;
 using System.Linq;
 
-namespace P01
+namespace P01.Editor
 {
     public class FindScriptPrefab : EditorWindow
     {
-        [MenuItem("Graphics Tool/FindScriptPrefab")]
+        [MenuItem("Graphics Tool/02. FindScriptPrefab")]
         public static void OpenWindow()
         {
             FindScriptPrefab window = EditorWindow.GetWindow<FindScriptPrefab>("FindScriptPrefab");

@@ -14,37 +14,171 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionType:
   - id: A
-    type: 1
-    speed: 5
-    range: 5
-    angle: {x: 1, y: 1}
-  - id: B
-    type: 2
-    speed: 5
-    range: 1
+    speed: 2
+    interval: 0.5
     angle: {x: 0, y: 5}
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: -0.5191823
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0.48081768
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 0
+      m_RotationOrder: 4
+  - id: B
+    speed: 5
+    interval: 0
+    angle: {x: 0, y: 5}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
   - id: C
-    type: 4
     speed: 5
-    range: 5
+    interval: 0
     angle: {x: 0, y: 10}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
   - id: D
-    type: 3
     speed: 3
-    range: 5
+    interval: 0
     angle: {x: 5.21, y: 0}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
   - id: E
-    type: 1
     speed: 5
-    range: 3
+    interval: 0
     angle: {x: 0, y: 1}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
   - id: F
-    type: 5
-    speed: 0
-    range: 3
-    angle: {x: 0, y: 0}
+    speed: 15
+    interval: 0.5
+    angle: {x: 5, y: 5}
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0.027374446
+        value: 0.15625447
+        inSlope: 0
+        outSlope: 3.2362847
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.8747675
+      - serializedVersion: 3
+        time: 0.15996923
+        value: 0.677273
+        inSlope: 5.0568223
+        outSlope: -14.3725605
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.5594833
+        outWeight: 0.33621693
+      - serializedVersion: 3
+        time: 0.27354223
+        value: -0.8431575
+        inSlope: -12.333442
+        outSlope: 17.796274
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.3434953
+        outWeight: 0.61212885
+      - serializedVersion: 3
+        time: 0.3286618
+        value: 0.48861498
+        inSlope: 10.635653
+        outSlope: -10.33791
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.95354056
+        outWeight: 0.6833302
+      - serializedVersion: 3
+        time: 0.41905144
+        value: -0.5682953
+        inSlope: -12.759992
+        outSlope: 5.700896
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.5466333
+        outWeight: 0.553009
+      - serializedVersion: 3
+        time: 0.6022144
+        value: 0.41144162
+        inSlope: 5.083585
+        outSlope: -7.148241
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.6455903
+        outWeight: 0.8290493
+      - serializedVersion: 3
+        time: 0.7729891
+        value: -0.84409624
+        inSlope: -6.679259
+        outSlope: 24.128735
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.59696263
+        outWeight: 0.47902963
+      - serializedVersion: 3
+        time: 0.8422225
+        value: 0.61426884
+        inSlope: 21.318363
+        outSlope: -6.7820444
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.44591078
+        outWeight: 0.77633554
+      - serializedVersion: 3
+        time: 0.98988056
+        value: -0.45416158
+        inSlope: -6.5249734
+        outSlope: 0
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.6459843
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 0
+      m_RotationOrder: 4
   - id: G
-    type: 1
     speed: 1
-    range: 1
+    interval: 0
     angle: {x: 3.69, y: 13.5}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
