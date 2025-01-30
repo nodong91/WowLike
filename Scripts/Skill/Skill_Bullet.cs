@@ -15,6 +15,7 @@ public class Skill_Bullet : MonoBehaviour
     public Transform bullet;
     public Transform hitEffect;
     public float targetSize, bulletSpeed = 1f;
+    public float speed = 1f;
 
     public delegate void BulletDelegate(Skill_Bullet bullet);
     public BulletDelegate bulletDelegate;
@@ -68,17 +69,18 @@ public class Skill_Bullet : MonoBehaviour
     {
         hitEffect.gameObject.SetActive(false);
         bullet.gameObject.SetActive(true);
+        float normalize = 0f;
         Vector3 targetPosition = default;
-
         bool fire = true;
         while (fire == true)
         {
-            targetPosition = new Vector3(_target.position.x, bullet.transform.position.y, _target.position.z);
+            normalize += Time.deltaTime * 0.3f;
+            targetPosition = new Vector3(_target.position.x, transform.position.y, _target.position.z);
+            bullet.transform.position = Vector3.MoveTowards(bullet.transform.position, targetPosition, Time.deltaTime * speed);// 발사
             if ((targetPosition - bullet.transform.position).magnitude < targetSize)
             {
                 fire = false;
             }
-            bullet.transform.position = Vector3.Lerp(bullet.transform.position, _target.position, Time.deltaTime * bulletSpeed);// 발사
             yield return null;
         }
         hitEffect.gameObject.SetActive(true);

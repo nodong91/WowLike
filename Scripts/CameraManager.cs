@@ -57,7 +57,7 @@ public class CameraManager : MonoBehaviour
         {
             SplineCurvature = 0.5f,
             Top = new Cinemachine3OrbitRig.Orbit { Height = 7, Radius = 2 },
-            Center = new Cinemachine3OrbitRig.Orbit { Height = 4f, Radius = 4 },
+            Center = new Cinemachine3OrbitRig.Orbit { Height = 4f, Radius = 3 },
             Bottom = new Cinemachine3OrbitRig.Orbit { Height = 1f, Radius = 2.5f }
         };
         orbitalFollow.Orbits = newSetting;

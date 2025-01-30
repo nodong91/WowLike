@@ -5383,8 +5383,8 @@
     "m_ObjectId": "0ca15132dc0340ffb0874d13e780fd9e",
     "m_Title": "RimLight",
     "m_Position": {
-        "x": -3362.0,
-        "y": -721.0
+        "x": -3361.99951171875,
+        "y": -720.9999389648438
     }
 }
 
@@ -8197,7 +8197,7 @@
     "m_ObjectId": "2f3b6af12be74cfea77a3ae0d4d018cb",
     "m_Title": "Baked GI and Ambient contribution",
     "m_Position": {
-        "x": -1968.0,
+        "x": -1967.999755859375,
         "y": 40.0
     }
 }
@@ -8605,8 +8605,8 @@
     "m_ObjectId": "3476e3b40a3241d8a8d2819340e8e8cb",
     "m_Title": "Shadow SmoothStep",
     "m_Position": {
-        "x": -2615.0,
-        "y": 27.0
+        "x": -2614.999755859375,
+        "y": 26.999996185302736
     }
 }
 
@@ -20177,8 +20177,8 @@
     "m_ObjectId": "b23c0235de294946b5b40ca3cee414ac",
     "m_Title": "Shadow",
     "m_Position": {
-        "x": -4088.0,
-        "y": -571.0
+        "x": -4087.99951171875,
+        "y": -570.9998779296875
     }
 }
 
@@ -23070,7 +23070,7 @@
         "m_Position": {
             "serializedVersion": "2",
             "x": -4062.99951171875,
-            "y": -470.9999694824219,
+            "y": -471.99993896484377,
             "width": 103.0,
             "height": 34.0
         }

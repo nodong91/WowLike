@@ -3920,11 +3920,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6893b8ffea3df83489265c5d1c8f03f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletType: 2
+  bulletType: 1
   bullet: {fileID: 1656944086}
   hitEffect: {fileID: 1212600600}
   targetSize: 2
   bulletSpeed: 1
+  speed: 5
 --- !u!4 &1829705724
 Transform:
   m_ObjectHideFlags: 0
