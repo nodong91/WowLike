@@ -113,6 +113,9 @@
         },
         {
             "m_Id": "acf7c1765fb7447591e2dbcac0df9f00"
+        },
+        {
+            "m_Id": "f6f1274a84c34819802e5b3735681dc8"
         }
     ],
     "m_Keywords": [
@@ -786,6 +789,9 @@
         },
         {
             "m_Id": "99b2226ed19f4ab9ac62888c7513009b"
+        },
+        {
+            "m_Id": "8702fa82076c46fd8d27ddc88bd782b2"
         }
     ],
     "m_GroupDatas": [
@@ -2253,6 +2259,20 @@
                     "m_Id": "fd38d6fa829a4f76acad2a0c4970d8c8"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "8702fa82076c46fd8d27ddc88bd782b2"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "04cf5e05b2214c7ba86caa100b52d5d8"
+                },
+                "m_SlotId": 2009103928
             }
         },
         {
@@ -4348,6 +4368,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "02abed1ba3e247ef9f941a7e22ad6daf",
+    "m_Id": 0,
+    "m_DisplayName": "AddFaceAngle",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Texture2DInputMaterialSlot",
     "m_ObjectId": "02e80ca6a3174e26b453300c5e8e5185",
     "m_Id": 1,
@@ -4492,6 +4527,9 @@
             "m_Id": "1b799f35b0414f728d7cc7b256600697"
         },
         {
+            "m_Id": "1f7359e05bb1447d8b176dfd3ffbc05c"
+        },
+        {
             "m_Id": "46c6fb7310ac41d697e949c2f51a1a0d"
         },
         {
@@ -4521,7 +4559,9 @@
         "5d0bc6ba-4e05-47fa-997a-40a77a2152aa",
         "7da42c41-7dd0-4d0d-92a9-85fd6e8033ec",
         "5e3129bf-7cde-4432-a95b-31d83f3e1fc8",
-        "c52f64ad-dacf-4357-8f2a-9d6f9b0b7b1a"
+        "c52f64ad-dacf-4357-8f2a-9d6f9b0b7b1a",
+        "0c3310a8-8fed-4f84-ad5e-aceb4833a502",
+        "3baf6a1d-7344-48d9-8ffc-2edaee9b98de"
     ],
     "m_PropertyIds": [
         1037381882,
@@ -4531,7 +4571,9 @@
         400806748,
         555710573,
         170733815,
-        -207708298
+        -207708298,
+        -1430326624,
+        2009103928
     ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []
@@ -5383,7 +5425,7 @@
     "m_ObjectId": "0ca15132dc0340ffb0874d13e780fd9e",
     "m_Title": "RimLight",
     "m_Position": {
-        "x": -3361.99951171875,
+        "x": -3361.999755859375,
         "y": -720.9999389648438
     }
 }
@@ -7154,6 +7196,21 @@
 {
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "1f7359e05bb1447d8b176dfd3ffbc05c",
+    "m_Id": 2009103928,
+    "m_DisplayName": "AddFaceAngle",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_AddFaceAngle",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "200266555dbf48858dbaa39b7edc1d95",
     "m_Id": 4,
     "m_DisplayName": "Smooth Delta",
@@ -7187,7 +7244,7 @@
     "m_ObjectId": "217c8e192fcb4744864519504095334b",
     "m_Title": "Damage",
     "m_Position": {
-        "x": -1268.0,
+        "x": -1267.9998779296875,
         "y": -74.0
     }
 }
@@ -7437,7 +7494,7 @@
     "m_Title": "ShadowColor",
     "m_Position": {
         "x": -3289.0,
-        "y": 704.0
+        "y": 703.9999389648438
     }
 }
 
@@ -8197,8 +8254,8 @@
     "m_ObjectId": "2f3b6af12be74cfea77a3ae0d4d018cb",
     "m_Title": "Baked GI and Ambient contribution",
     "m_Position": {
-        "x": -1967.999755859375,
-        "y": 40.0
+        "x": -1967.9998779296875,
+        "y": 40.00000762939453
     }
 }
 
@@ -8605,8 +8662,8 @@
     "m_ObjectId": "3476e3b40a3241d8a8d2819340e8e8cb",
     "m_Title": "Shadow SmoothStep",
     "m_Position": {
-        "x": -2614.999755859375,
-        "y": 26.999996185302736
+        "x": -2615.0,
+        "y": 27.00000762939453
     }
 }
 
@@ -8850,7 +8907,7 @@
     "m_ObjectId": "38b49573eb9b4b1892df6ebaf55a1a65",
     "m_Title": "Outline Mask",
     "m_Position": {
-        "x": -1456.0,
+        "x": -1455.9998779296875,
         "y": 891.0
     }
 }
@@ -8926,7 +8983,7 @@
     "m_Title": "MatCap2",
     "m_Position": {
         "x": -2532.0,
-        "y": 1926.0
+        "y": 1925.999755859375
     }
 }
 
@@ -9069,7 +9126,7 @@
     "m_Title": "Burn",
     "m_Position": {
         "x": -3884.0,
-        "y": 2636.0
+        "y": 2635.999755859375
     }
 }
 
@@ -9277,8 +9334,8 @@
     "m_ObjectId": "3f635f21661647f0a79a7e1ba68eaf26",
     "m_Title": "Occlusion Mask",
     "m_Position": {
-        "x": -2863.0,
-        "y": 301.0
+        "x": -2862.999755859375,
+        "y": 300.9999694824219
     }
 }
 
@@ -9498,6 +9555,12 @@
     "m_ChildObjectList": [
         {
             "m_Id": "848ca65834b34db4bdde3dee4c8883d3"
+        },
+        {
+            "m_Id": "2fd1a158392e4dd593b77bd9346ffcc0"
+        },
+        {
+            "m_Id": "f6f1274a84c34819802e5b3735681dc8"
         }
     ]
 }
@@ -9509,7 +9572,7 @@
     "m_Title": "Additional Lights",
     "m_Position": {
         "x": -3998.0,
-        "y": 3110.0
+        "y": 3109.99951171875
     }
 }
 
@@ -14018,7 +14081,7 @@
     "m_ObjectId": "6ea546007d3b4e688621fd7230bd7ae5",
     "m_Title": "Fresnel Portal",
     "m_Position": {
-        "x": -2255.0,
+        "x": -2254.999755859375,
         "y": 2242.0
     }
 }
@@ -15571,7 +15634,7 @@
     "m_ObjectId": "80d96100b22d4080a100efca49c564c6",
     "m_Title": "Specular",
     "m_Position": {
-        "x": -3459.0,
+        "x": -3458.999755859375,
         "y": -1613.0
     }
 }
@@ -16312,6 +16375,42 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "8702fa82076c46fd8d27ddc88bd782b2",
+    "m_Group": {
+        "m_Id": "b23c0235de294946b5b40ca3cee414ac"
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -4111.0,
+            "y": -421.0000305175781,
+            "width": 151.0,
+            "height": 33.999969482421878
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "02abed1ba3e247ef9f941a7e22ad6daf"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "f6f1274a84c34819802e5b3735681dc8"
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.SamplerStateMaterialSlot",
     "m_ObjectId": "8743b880100c4f71a283bef046dd664c",
     "m_Id": 3,
@@ -16758,7 +16857,7 @@
     "m_Title": "Texture",
     "m_Position": {
         "x": -2500.0,
-        "y": 704.0
+        "y": 703.9999389648438
     }
 }
 
@@ -19125,7 +19224,7 @@
     "m_ObjectId": "a91319db7f5e4a0cb9b5cfd2e53f7b22",
     "m_Title": "Emission",
     "m_Position": {
-        "x": -1171.0,
+        "x": -1170.9998779296875,
         "y": 358.0
     }
 }
@@ -19256,8 +19355,8 @@
     "m_ObjectId": "aa1c80bd942949c58cacfb83f6eb0047",
     "m_Title": "MatCap",
     "m_Position": {
-        "x": -2812.0,
-        "y": 1166.0
+        "x": -2811.999755859375,
+        "y": 1166.0001220703125
     }
 }
 
@@ -19306,9 +19405,6 @@
     "m_ObjectId": "aa978275b23b4d87bdd6f1221fee4f56",
     "m_Name": "Main",
     "m_ChildObjectList": [
-        {
-            "m_Id": "2fd1a158392e4dd593b77bd9346ffcc0"
-        },
         {
             "m_Id": "4e52c9c53a244873827ed5a45058efb8"
         },
@@ -19755,8 +19851,8 @@
     "m_ObjectId": "ae16703d4f9c4c268a60a559e607e631",
     "m_Title": "MatCap",
     "m_Position": {
-        "x": -3749.0,
-        "y": 1394.0
+        "x": -3748.999755859375,
+        "y": 1393.9998779296875
     }
 }
 
@@ -20177,8 +20273,8 @@
     "m_ObjectId": "b23c0235de294946b5b40ca3cee414ac",
     "m_Title": "Shadow",
     "m_Position": {
-        "x": -4087.99951171875,
-        "y": -570.9998779296875
+        "x": -4136.0,
+        "y": -571.0000610351563
     }
 }
 
@@ -24453,8 +24549,8 @@
     "m_ObjectId": "db84ff02e229446498201a452162c7f7",
     "m_Title": "Line Portal",
     "m_Position": {
-        "x": -1576.0,
-        "y": 2893.0
+        "x": -1575.9998779296875,
+        "y": 2892.999755859375
     }
 }
 
@@ -25971,7 +26067,7 @@
     "m_ObjectId": "ea362cf21e424384a0294eaaa60640b0",
     "m_Title": "MatCap",
     "m_Position": {
-        "x": -2814.0,
+        "x": -2813.999755859375,
         "y": 1539.0
     }
 }
@@ -27392,6 +27488,34 @@
     "m_PreviewMode": 0,
     "m_CustomColors": {
         "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "f6f1274a84c34819802e5b3735681dc8",
+    "m_Guid": {
+        "m_GuidSerialized": "0c5e287b-c104-440d-9c7a-c583d01f85dc"
+    },
+    "m_Name": "AddFaceAngle",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "AddFaceAngle",
+    "m_DefaultReferenceName": "_AddFaceAngle",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
     }
 }
 

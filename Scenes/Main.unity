@@ -1091,13 +1091,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 1.933, z: 0}
+  m_LocalRotation: {x: -0.391049, y: -0.34367502, z: 0.16025746, w: -0.8386213}
+  m_LocalPosition: {x: 0, y: 1.933, z: 4.78}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 49.999, y: -2475.432, z: 0}
 --- !u!114 &410087042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3044,80 +3044,10 @@ MonoBehaviour:
   ResourceFolders:
   - {fileID: 102900000, guid: 2263c0d7ba2b7b04494d6c3efd65953a, type: 3}
   - {fileID: 102900000, guid: 152d01fbae87437498a2147174831cc6, type: 3}
-  CSV_Data:
-  - {fileID: 4900000, guid: 71bdaee5370dcdd4c8b3297416a3ccb1, type: 3}
+  - {fileID: 102900000, guid: 52b5e2752f8399046832c84cf5dade8f, type: 3}
+  CSVFolders: []
   translation: 2
-  dialog:
-  - ID: 50010
-    color: 
-    size: 0
-    bold: 0
-    textStyle: 0
-    speed: 0
-    KR: "\uB808\uC774\uB4DC"
-    EN: Raid
-    JP: "\u30EC\u30A4\u30C9"
-    CN: "\u7A81\u88AD\u884C\u52A8"
-  - ID: 50011
-    color: 00FF20
-    size: 25
-    bold: 1
-    textStyle: 1
-    speed: 0.5
-    KR: "\uC13C\uD130"
-    EN: Center
-    JP: "\u30BB\u30F3\u30BF\u30FC"
-    CN: "\u4E2D\u5FC3"
-  - ID: 50012
-    color: FF0000
-    size: 25
-    bold: 0
-    textStyle: 6
-    speed: 0
-    KR: "\uC721\uC131"
-    EN: Nurture
-    JP: "\u80B2\u6210"
-    CN: "\u80B2\u6210"
-  - ID: 11
-    color: 0000FF
-    size: 0
-    bold: 0
-    textStyle: 0
-    speed: 0
-    KR: "{50010} {50011}\uC774 {50012}"
-    EN: '{50010} {50011}is {50012}'
-    JP: "{50010} {50011}\u304C {50012}"
-    CN: "{50010} {50011}\u4E4B {50012}"
-  - ID: 0
-    color: 
-    size: 0
-    bold: 0
-    textStyle: 3
-    speed: 0
-    KR: 
-    EN: 
-    JP: 
-    CN: 
-  - ID: 1
-    color: 
-    size: 0
-    bold: 0
-    textStyle: 4
-    speed: 0
-    KR: 
-    EN: 
-    JP: 
-    CN: 
-  - ID: 2
-    color: 
-    size: 0
-    bold: 0
-    textStyle: 6
-    speed: 0
-    KR: 
-    EN: 
-    JP: 
-    CN: 
+  dialog: []
 --- !u!4 &1122030693
 Transform:
   m_ObjectHideFlags: 0

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Splines;
+using static Data_Manager;
 
 public class Data_Parse : MonoBehaviour
 {
-    public List<AudioClip> audioClip = new List<AudioClip>();
 
 #if UNITY_EDITOR
     [Header(" [ EDITOR ] ")]
@@ -13,19 +12,25 @@ public class Data_Parse : MonoBehaviour
 
     [Header(" [ CSV ] ")]
     /* 구글 스플레트 시트에서 "파일 - 다운로드 - 쉼표로 구분된 값" 으로 저장*/
-    public TextAsset[] CSV_Data;
+    [SerializeField] List<TextAsset> CSV_Data = new List<TextAsset>();
+    public List<TextAsset> GetCSV_Data { get { return CSV_Data; } }
+    public List<DialogInfoamtion> dialog = new List<DialogInfoamtion>();
+    public List<AudioClip> audioClip = new List<AudioClip>();
 
     public virtual void DataSetting()
     {
+        //prop = new List<GameObject>();
+        //sprite = new List<Sprite>();
+        audioClip.Clear();
+        //defaultItem = new List<Data_ItemSet>();
+        CSV_Data.Clear();
+        dialog.Clear();
+
         if (ResourceFolders.Count == 0)
         {
             Debug.LogError("DataFolders 폴더 필요");
             return;
         }
-        //prop = new List<GameObject>();
-        //sprite = new List<Sprite>();
-        audioClip = new List<AudioClip>();
-        //defaultItem = new List<Data_ItemSet>();
 
         string[] paths = new string[ResourceFolders.Count];
         for (int i = 0; i < ResourceFolders.Count; i++)
@@ -39,8 +44,8 @@ public class Data_Parse : MonoBehaviour
         for (int i = 0; i < assets.Length; i++)
         {
             var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(GameObject));
-            GameObject propData = data as GameObject;
-            //prop.Add(propData);
+            GameObject addData = data as GameObject;
+            //prop.Add(addData);
             EditorUtility.SetDirty(data);
         }
 
@@ -49,8 +54,8 @@ public class Data_Parse : MonoBehaviour
         for (int i = 0; i < assets.Length; i++)
         {
             var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(Sprite));
-            Sprite iconSpriteData = data as Sprite;
-            //sprite.Add(iconSpriteData);
+            Sprite addData = data as Sprite;
+            //sprite.Add(addData);
             EditorUtility.SetDirty(data);
         }
 
@@ -58,8 +63,8 @@ public class Data_Parse : MonoBehaviour
         for (int i = 0; i < assets.Length; i++)
         {
             var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(AudioClip));
-            AudioClip audioClipData = data as AudioClip;
-            audioClip.Add(audioClipData);
+            AudioClip addData = data as AudioClip;
+            audioClip.Add(addData);
             EditorUtility.SetDirty(data);
         }
 
@@ -71,7 +76,41 @@ public class Data_Parse : MonoBehaviour
             //defaultItem.Add(temp);
             //EditorUtility.SetDirty(data);
         }
+
+        assets = AssetDatabase.FindAssets("t: TextAsset", paths);// CSV
+        for (int i = 0; i < assets.Length; i++)
+        {
+            var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(TextAsset));
+            TextAsset addData = data as TextAsset;
+            CSV_Data.Add(addData);
+            EditorUtility.SetDirty(data);
+        }
     }
+
+    //void SetCSVData()
+    //{
+    //    if (CSVFolders.Count == 0)
+    //    {
+    //        Debug.LogError("CSVFolders 폴더 필요");
+    //        return;
+    //    }
+
+    //    string[] paths = new string[CSVFolders.Count];
+    //    for (int i = 0; i < CSVFolders.Count; i++)
+    //    {
+    //        paths[i] = AssetDatabase.GetAssetPath(CSVFolders[i]);
+    //        Debug.LogWarning("File paths : " + paths[i]);
+    //    }
+
+    //    string[] assets = AssetDatabase.FindAssets("t: TextAsset", paths);// CSV
+    //    for (int i = 0; i < assets.Length; i++)
+    //    {
+    //        var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(TextAsset));
+    //        TextAsset addData = data as TextAsset;
+    //        CSV_Data.Add(addData);
+    //        EditorUtility.SetDirty(data);
+    //    }
+    //}
 
     //==================================================================================
     // Parse

@@ -405,6 +405,7 @@ Material:
     - Vector1_3: 0
     - Vector1_33e6c7c6eed84512822471e65837d802: 0.07
     - Vector1_4: 0
+    - _AddFaceAngle: 0
     - _AdditionalLightCelShadeMidPoint: 0
     - _AdditionalLightCelShadeMidPointForFaceArea: 0
     - _AdditionalLightCelShadeSoftness: 0.05
@@ -719,6 +720,7 @@ Material:
     - _FaceMaskMapRemapEnd: 1
     - _FaceMaskMapRemapMinMaxSlider: 1
     - _FaceMaskMapRemapStart: 0
+    - _FaceShadow: 1
     - _FaceShadowBrightness: 1
     - _FaceShadowGradientIntensity: 1
     - _FaceShadowGradientMapFaceMidPoint: 0.5

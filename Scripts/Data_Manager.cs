@@ -38,13 +38,12 @@ public class Data_Manager : Data_Parse
     public override void DataSetting()
     {
         base.DataSetting();
-        TextAsset[] csv_data = CSV_Data;
-        for (int i = 0; i < csv_data.Length; i++)
+        for (int i = 0; i < GetCSV_Data.Count; i++)
         {
-            string csv_Type = csv_data[i].name;
+            string csv_Type = GetCSV_Data[i].name;
             if (csv_Type.Contains("Dialog"))
             {
-                SetDialogData(csv_data[i]);
+                SetDialogData(GetCSV_Data[i]);
             }
             //else if (csv_Type.Contains("Translation"))
             //{
@@ -166,7 +165,6 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
-    public List<DialogInfoamtion> dialog;
     //[System.Serializable]
     //public class DialogTranslation
     //{
