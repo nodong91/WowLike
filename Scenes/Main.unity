@@ -2946,6 +2946,82 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e84d39e89725e1459ecced29def874a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ResourceFolders:
+  - {fileID: 102900000, guid: 549a166cc9502264d96a8bd4d1d19bf3, type: 3}
+  CSV_Data:
+  - {fileID: 4900000, guid: 71bdaee5370dcdd4c8b3297416a3ccb1, type: 3}
+  - {fileID: 4900000, guid: 69e55b57e21c9a849acc2637b32a5084, type: 3}
+  dialog:
+  - ID: 50010
+    color: 
+    size: 0
+    bold: 0
+    textStyle: 0
+    speed: 0
+    KR: "\uB808\uC774\uB4DC"
+    EN: Raid
+    JP: "\u30EC\u30A4\u30C9"
+    CN: "\u7A81\u88AD\u884C\u52A8"
+  - ID: 50011
+    color: 00FF20
+    size: 25
+    bold: 1
+    textStyle: 1
+    speed: 0.5
+    KR: "\uC13C\uD130"
+    EN: Center
+    JP: "\u30BB\u30F3\u30BF\u30FC"
+    CN: "\u4E2D\u5FC3"
+  - ID: 50012
+    color: FF0000
+    size: 25
+    bold: 0
+    textStyle: 6
+    speed: 0
+    KR: "\uC721\uC131"
+    EN: Nurture
+    JP: "\u80B2\u6210"
+    CN: "\u80B2\u6210"
+  - ID: 11
+    color: 0000FF
+    size: 0
+    bold: 0
+    textStyle: 1
+    speed: 0
+    KR: "{50010} {50011}\uC774 {50012}"
+    EN: '{50010} {50011}is {50012}'
+    JP: "{50010} {50011}\u304C {50012}"
+    CN: "{50010} {50011}\u4E4B {50012}"
+  - ID: 0
+    color: 
+    size: 0
+    bold: 0
+    textStyle: 3
+    speed: 0
+    KR: 
+    EN: 
+    JP: 
+    CN: 
+  - ID: 1
+    color: 
+    size: 0
+    bold: 0
+    textStyle: 4
+    speed: 0
+    KR: 
+    EN: 
+    JP: 
+    CN: 
+  - ID: 2
+    color: 
+    size: 0
+    bold: 0
+    textStyle: 6
+    speed: 0
+    KR: 
+    EN: 
+    JP: 
+    CN: 
   audioClip:
   - {fileID: 8300000, guid: 69e7803638fe0d94fa852ab29e34d928, type: 3}
   - {fileID: 8300000, guid: 0331cf0fe8bc5d549aa70827dcf1a063, type: 3}
@@ -3041,13 +3117,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2a34928133520df4c842f35a37ea6910, type: 3}
   - {fileID: 8300000, guid: d825a82911adfff4f99baa3fd5c99441, type: 3}
   - {fileID: 8300000, guid: d6bcd35210be60342a034ae90cb05a91, type: 3}
-  ResourceFolders:
-  - {fileID: 102900000, guid: 2263c0d7ba2b7b04494d6c3efd65953a, type: 3}
-  - {fileID: 102900000, guid: 152d01fbae87437498a2147174831cc6, type: 3}
-  - {fileID: 102900000, guid: 52b5e2752f8399046832c84cf5dade8f, type: 3}
-  CSVFolders: []
   translation: 2
-  dialog: []
 --- !u!4 &1122030693
 Transform:
   m_ObjectHideFlags: 0
