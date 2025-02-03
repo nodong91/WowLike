@@ -3038,7 +3038,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "36d911bbf963417ab70bf6112cd7d272",
     "m_Id": 0,
-    "m_DisplayName": "Speed",
+    "m_DisplayName": "CircleSpeed",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",

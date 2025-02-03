@@ -66,27 +66,34 @@ Material:
     m_Floats:
     - _Boolean: 0
     - _CircleAmount: 5
+    - _CircleShapen: 0.2
+    - _CircleSpeed: 1
     - _ENUM: 0
-    - _Float: 3
+    - _Float: 0.764
     - _Float_1: 0.2
     - _Float_2: 0.423
     - _Float_3: 0
+    - _InCircle: 0.515
     - _MaskPreview: 0
-    - _MaskSize: 0.5
+    - _MaskSize: 0.082
     - _Mask_1: 0
-    - _NoiseAmount: 1
-    - _NoiseSize: 10
-    - _NoiseSpeed: 0.1
-    - _Power: 0.221
+    - _NoiseAmount: 0.107
+    - _NoiseShapen: 0.515
+    - _NoiseSize: 20
+    - _NoiseSpeed: 1
+    - _OutCircle: 1
+    - _Power: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Shapen: 1
+    - _Shapen: 0.164
     - _Size: 0.637
-    - _Speed: 0.5
+    - _Speed: 1
     - _Step: 0.829
     - _VoronoiSize: 30
     m_Colors:
     - _Circle_Center: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _Color: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 0}
+    - _ShadowColor: {r: 0.25471696, g: 0.25471696, b: 0.25471696, a: 0.16470589}
     - _Vector2: {r: 0.48, g: 0.52, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
