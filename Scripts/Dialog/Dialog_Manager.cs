@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Security.Cryptography;
 
 public class Dialog_Manager : MonoBehaviour
 {
@@ -110,7 +111,6 @@ public class Dialog_Manager : MonoBehaviour
                 ids.Add(result);
             }
         }
-        // 줄넘김 잘 안된다!!!!!
         actionList.Clear();
         speedList.Clear();
         string setIndex = mainString;// 글자 개수 뽑을 때 사용
@@ -222,7 +222,7 @@ public class Dialog_Manager : MonoBehaviour
                         //Color32[] vertexColors = component.textInfo.meshInfo[materialIndex].colors32;
                         Data_DialogType.ActionType type = dialogType.actionType[_actionText[i].z];
                         //SetActionType(type, vertexIndex, sourceVertices, destinationVertices, c);
-                        TryAnimationCurve(type, vertexIndex, sourceVertices, destinationVertices, c);
+                        TryAimationWave(type, vertexIndex, sourceVertices, destinationVertices, c);
                     }
                 }
             }
@@ -242,6 +242,25 @@ public class Dialog_Manager : MonoBehaviour
             float x = curveValue * type.angle.x;
             float y = curveValue * type.angle.y;
             destinationVertices[index] = sourceVertices[index] + new Vector3(x, y, 0f);
+        }
+    }
+
+    void TryAimationWave(Data_DialogType.ActionType type, int vertexIndex, Vector3[] sourceVertices, Vector3[] destinationVertices, int _index)
+    {
+        AnimationCurve curve = type.curve;
+        for (int v = 0; v < 4; v++)
+        {
+            int index = vertexIndex + v;
+            float curveTime = (Time.time * type.speed) + (type.interval *_index);
+            float curveValue = curve.Evaluate(curveTime);
+
+            float x = curveValue * type.angle.x;
+            float y = curveValue * type.angle.y;
+            //float animTime = Time.time * type.speed;
+            //float actionRange = 5f * 0.01f;
+            //float x = Mathf.Sin(curveTime + sourceVertices[index].x * actionRange) * type.angle.x;
+            //float y = Mathf.Cos(curveTime + sourceVertices[index].y * actionRange) * type.angle.y;
+            destinationVertices[index] = sourceVertices[index] + new Vector3(y, x, 0f);
         }
     }
 
@@ -323,26 +342,26 @@ public class Dialog_Manager : MonoBehaviour
         typing = _typing;
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
-        typingCoroutine = StartCoroutine(Typing());
+        typingCoroutine = StartCoroutine(Typing(actionList));
     }
 
-    IEnumerator Typing()
+    IEnumerator Typing(List<Vector3Int> _actionText)
     {
         int subIndex = 0;
         TMP_TextInfo textInfo = dialogText.textInfo;
         for (int i = 0; i < textInfo.characterCount; i++)
         {
-            if (actionList.Count > 0)
+            if (_actionText.Count > 0)
             {
                 float speed = speedList[subIndex];
-                if (i == actionList[subIndex].x)
+                if (i == _actionText[subIndex].x)
                 {
                     if (speed > 0)// 타이핑 스피드가 0 이상이라면..
                         typingSpeed = speed;
                 }
-                else if (i == actionList[subIndex].y)
+                else if (i == _actionText[subIndex].y)
                 {
-                    if (subIndex + 1 < actionList.Count)
+                    if (subIndex + 1 < _actionText.Count)
                         subIndex++;
                     typingSpeed = defaultTypingSpeed;// 기본 속도
                 }

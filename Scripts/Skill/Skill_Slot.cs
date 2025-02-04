@@ -9,13 +9,17 @@ public class Skill_Slot : MonoBehaviour
     public Dele_SlotAction dele_SlotAction;
     public Button button;
 
-    void Start()
-    {
-        //button.onClick.AddListener(ActionButton);
-    }
+    public bool isActive;
+    public GameObject activeImage;
 
     public void ActionButton()
     {
         dele_Action(true);
+    }
+
+    public void IsActive(bool _isActive)
+    {
+        isActive=_isActive;
+        activeImage.SetActive(_isActive);
     }
 }

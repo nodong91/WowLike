@@ -14,7 +14,7 @@ public class Game_Manager : MonoBehaviour
     public float rotateSpeed = 10f;
     Coroutine inputDirection;
     Coroutine mouseRight;
-
+    [System.Flags]
     public enum InputDir
     {
         Up = 1 << 0,
@@ -22,7 +22,6 @@ public class Game_Manager : MonoBehaviour
         Down = 1 << 2,
         Right = 1 << 3
     }
-    [EnumFlags]
     public InputDir inputDir;
     public enum RotateType
     {
@@ -53,10 +52,10 @@ public class Game_Manager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_MouseRight = InputMouseRight;
         Singleton_Controller.INSTANCE.key_MouseWheel = InputMouseWheel;
     }
-
+    public int currentIndex;
     void SetSkillSlot()
     {
-        slotArray = new Skill_Slot[4];
+        slotArray = new Skill_Slot[skillStructs.Length];
         for (int i = 0; i < slotArray.Length; i++)
         {
             int index = i;
@@ -82,48 +81,38 @@ public class Game_Manager : MonoBehaviour
 
     void InputSlot(int _index)
     {
-        switch (_index)
+        currentIndex = _index;
+        if (slotArray[currentIndex].isActive == true)
         {
-            case 0:
-                InputKey01(false);
-                break;
-
-            case 1:
-                InputKey02(false);
-                break;
-
-            case 2:
-                InputKey03(false);
-                break;
-
-            case 3:
-                InputKey04(false);
-                break;
+            Fire();
         }
     }
 
     void InputKey01(bool _input)
     {
         if (_input == false)
-            Fire();
+            InputSlot(0);
         Debug.LogWarning("InputKey01");
     }
 
     void InputKey02(bool _input)
     {
-
+        if (_input == false)
+            InputSlot(1);
         Debug.LogWarning("InputKey02");
     }
 
     void InputKey03(bool _input)
     {
-
+        if (_input == false)
+            InputSlot(2);
         Debug.LogWarning("InputKey03");
     }
 
     void InputKey04(bool _input)
     {
-
+        if (_input == false)
+            InputSlot(3);
         Debug.LogWarning("InputKey04");
     }
 
@@ -149,10 +138,14 @@ public class Game_Manager : MonoBehaviour
         }
         clickLefting = StartCoroutine(MouseLeftDrag(_input));
     }
+
     public bool clickLeft, isLeftDrag, inputMouseRight;
     public float clickTime;
     public Vector2 clickPosition;
     public Coroutine clickLefting;
+
+    public LayerMask layerMask;
+
     IEnumerator MouseLeftDrag(bool _input)
     {
         rotateType = RotateType.Normal;
@@ -172,8 +165,7 @@ public class Game_Manager : MonoBehaviour
             }
         }
     }
-    public Transform jjjeffie;
-    public LayerMask layerMask;
+
     void LeftRayCasting()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -185,6 +177,7 @@ public class Game_Manager : MonoBehaviour
 
             target = hit.transform;
             targetGuide.transform.position = target.position;
+            CheckDistance();
         }
     }
 
@@ -212,14 +205,17 @@ public class Game_Manager : MonoBehaviour
     {
         InputDirection(_input, InputDir.Up);
     }
+
     void InputLeft(bool _input)
     {
         InputDirection(_input, InputDir.Left);
     }
+
     void InputDown(bool _input)
     {
         InputDirection(_input, InputDir.Down);
     }
+
     void InputRight(bool _input)
     {
         InputDirection(_input, InputDir.Right);
@@ -291,6 +287,7 @@ public class Game_Manager : MonoBehaviour
     {
         Vector3 movePoint = Vector3.Lerp(player.transform.position, direction, Time.deltaTime * moveSpeed);
         player.transform.position = movePoint;
+        CheckDistance();
     }
 
     void Rotate()
@@ -369,6 +366,7 @@ public class Game_Manager : MonoBehaviour
                 targetIndex = 0;
             target = visibleTargets[targetIndex].transform;
             targetGuide.transform.position = target.position;
+            CheckDistance();
         }
     }
 
@@ -382,21 +380,6 @@ public class Game_Manager : MonoBehaviour
             _angleInDegrees += player.transform.eulerAngles.y;
         }
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (player != null)
-        {
-            Handles.color = Color.red;
-            Handles.DrawWireArc(player.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
-
-            Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
-            Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
-
-            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleA * viewRadius);
-            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
-        }
     }
 
     //public Transform ijijfeiifej, damageEffect;
@@ -421,6 +404,7 @@ public class Game_Manager : MonoBehaviour
     //        ijijfeiifej.position = targetPosition - offset * unitSize;
     //    }
     //}
+
     public Skill_Bullet bullet;
     public float unitSize = 1f;
     private void Fire()
@@ -430,5 +414,58 @@ public class Game_Manager : MonoBehaviour
         Skill_Bullet instBullet = Instantiate(bullet);
         instBullet.transform.position = player.position;
         instBullet.SetTarget(target, unitSize);
+    }
+
+    float targetDistance;
+    //float skillDistance = 5f;
+    [System.Serializable]
+    public struct SkillStruct
+    {
+        public string skillName;
+        public float skillDistance;
+    }
+    public SkillStruct[] skillStructs;
+    void CheckDistance()
+    {
+        if (target != null)
+        {
+            targetDistance = Vector3.Distance(target.position, player.transform.position);
+            for (int i = 0; i < skillStructs.Length; i++)
+            {
+                slotArray[i].IsActive(skillStructs[i].skillDistance > targetDistance);
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (player != null)
+        {
+            Handles.color = Color.red;
+            Handles.DrawWireArc(player.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
+
+            Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
+            Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
+
+            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleA * viewRadius);
+            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
+
+            if (target != null)
+            {
+                Color color = Color.green;
+                GUIStyle fontStyle = new()
+                {
+                    fontSize = 50,
+                    normal = { textColor = color },
+                    alignment = TextAnchor.MiddleCenter,
+                    fontStyle = FontStyle.Bold,
+                };
+
+                Handles.color = Gizmos.color = color;
+                Handles.DrawLine(player.transform.position, target.transform.position);
+                Handles.Label(target.transform.position, targetDistance.ToString("N2"), fontStyle);
+                Gizmos.DrawSphere(target.transform.position, 0.3f);
+            }
+        }
     }
 }
