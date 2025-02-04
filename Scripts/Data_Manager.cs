@@ -29,7 +29,6 @@ public class DataManager_Editor : Editor
 public class Data_Manager : Data_Parse
 {
 #if UNITY_EDITOR
-    public Singleton_Data.Translation translation;
     public void UpdateData()
     {
         DataSetting();
@@ -165,6 +164,7 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
+    public Singleton_Data.Translation translation;
     //[System.Serializable]
     //public class DialogTranslation
     //{
