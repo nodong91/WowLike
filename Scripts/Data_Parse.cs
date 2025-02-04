@@ -1,21 +1,14 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using static Data_Manager;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class Data_Parse : MonoBehaviour
 {
-
 #if UNITY_EDITOR
     [Header(" [ EDITOR ] ")]
     public List<Object> ResourceFolders = new List<Object>();
-
-    [Header(" [ CSV ] ")]
-    /* 구글 스플레트 시트에서 "파일 - 다운로드 - 쉼표로 구분된 값" 으로 저장*/
-    [SerializeField] List<TextAsset> CSV_Data = new List<TextAsset>();
-    public List<TextAsset> GetCSV_Data { get { return CSV_Data; } }
-    public List<DialogInfoamtion> dialog = new List<DialogInfoamtion>();
-    public List<AudioClip> audioClip = new List<AudioClip>();
 
     public virtual void DataSetting()
     {
@@ -166,4 +159,11 @@ public class Data_Parse : MonoBehaviour
     //    return null;
     //}
 #endif
+
+    [Header(" [ CSV ] ")]
+    /* 구글 스플레트 시트에서 "파일 - 다운로드 - 쉼표로 구분된 값" 으로 저장*/
+    [SerializeField] List<TextAsset> CSV_Data = new List<TextAsset>();
+    public List<TextAsset> GetCSV_Data { get { return CSV_Data; } }
+    public List<Data_Manager.DialogInfoamtion> dialog = new List<Data_Manager.DialogInfoamtion>();
+    public List<AudioClip> audioClip = new List<AudioClip>();
 }

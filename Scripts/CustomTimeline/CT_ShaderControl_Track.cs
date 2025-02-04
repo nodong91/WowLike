@@ -2,13 +2,16 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-[TrackBindingType(typeof(CT_ShaderControl))]
-[TrackClipType(typeof(CT_ShaderControl_Clip))]
-public class CT_ShaderControl_Track : TrackAsset // 트랙 만들기
+namespace P01.Editor
 {
-    public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
+    [TrackBindingType(typeof(CT_ShaderControl))]
+    [TrackClipType(typeof(CT_ShaderControl_Clip))]
+    public class CT_ShaderControl_Track : TrackAsset // 트랙 만들기
     {
-        var mixer = ScriptPlayable<CT_ShaderControl_Mixer>.Create(graph, inputCount);
-        return mixer;
+        public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
+        {
+            var mixer = ScriptPlayable<CT_ShaderControl_Mixer>.Create(graph, inputCount);
+            return mixer;
+        }
     }
 }

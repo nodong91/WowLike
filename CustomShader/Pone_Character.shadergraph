@@ -1362,7 +1362,7 @@
                 "m_Node": {
                     "m_Id": "db3ccf5f53b2469fafd9bf92aaa564b2"
                 },
-                "m_SlotId": 0
+                "m_SlotId": 1
             }
         },
         {
@@ -1402,7 +1402,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "640833f74c6e411b8b441d55b25ef8e0"
+                    "m_Id": "db3ccf5f53b2469fafd9bf92aaa564b2"
                 },
                 "m_SlotId": 0
             }
@@ -1878,9 +1878,9 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "db3ccf5f53b2469fafd9bf92aaa564b2"
+                    "m_Id": "491b7e932089414ba50860f452147ca6"
                 },
-                "m_SlotId": 1
+                "m_SlotId": 0
             }
         },
         {
@@ -3432,7 +3432,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "491b7e932089414ba50860f452147ca6"
+                    "m_Id": "640833f74c6e411b8b441d55b25ef8e0"
                 },
                 "m_SlotId": 0
             }
@@ -5425,8 +5425,8 @@
     "m_ObjectId": "0ca15132dc0340ffb0874d13e780fd9e",
     "m_Title": "RimLight",
     "m_Position": {
-        "x": -1664.000244140625,
-        "y": -589.0000610351563
+        "x": -3363.0,
+        "y": -705.0
     }
 }
 
@@ -5539,7 +5539,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Vector1_0dedfdaa4635448eb0bafbb3a87892ab",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_Rimlight_Stranth",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -5651,8 +5651,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1638.9998779296875,
-            "y": -504.0,
+            "x": -3338.0,
+            "y": -619.9999389648438,
             "width": 161.0,
             "height": 34.0
         }
@@ -5779,7 +5779,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Vector1_1071188b9b934b89b52b5508caafe7a5",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_MatCap_Value",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -7244,8 +7244,8 @@
     "m_ObjectId": "217c8e192fcb4744864519504095334b",
     "m_Title": "Damage",
     "m_Position": {
-        "x": -406.0001220703125,
-        "y": -403.00006103515627
+        "x": -406.0,
+        "y": -403.0
     }
 }
 
@@ -7493,8 +7493,8 @@
     "m_ObjectId": "2306ca2d79f54224a4a9656ac1c7acbc",
     "m_Title": "ShadowColor",
     "m_Position": {
-        "x": -3289.000244140625,
-        "y": 704.0000610351563
+        "x": -3289.0,
+        "y": 704.0
     }
 }
 
@@ -7510,9 +7510,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1138.9998779296875,
-            "y": -525.9999389648438,
-            "width": 151.9998779296875,
+            "x": -2838.0,
+            "y": -641.9998779296875,
+            "width": 152.0,
             "height": 141.99996948242188
         }
     },
@@ -8254,8 +8254,8 @@
     "m_ObjectId": "2f3b6af12be74cfea77a3ae0d4d018cb",
     "m_Title": "Baked GI and Ambient contribution",
     "m_Position": {
-        "x": -1968.000244140625,
-        "y": 40.0000114440918
+        "x": -1968.0,
+        "y": 40.0
     }
 }
 
@@ -8662,8 +8662,8 @@
     "m_ObjectId": "3476e3b40a3241d8a8d2819340e8e8cb",
     "m_Title": "Shadow SmoothStep",
     "m_Position": {
-        "x": -2615.000244140625,
-        "y": 26.99999237060547
+        "x": -2615.0,
+        "y": 27.0
     }
 }
 
@@ -8896,8 +8896,8 @@
     "m_ObjectId": "384f5d1d96f94dc3a5e338f64fed5f34",
     "m_Title": "Specular",
     "m_Position": {
-        "x": -4102.00048828125,
-        "y": -1262.000244140625
+        "x": -4102.0,
+        "y": -1262.0
     }
 }
 
@@ -8907,8 +8907,8 @@
     "m_ObjectId": "38b49573eb9b4b1892df6ebaf55a1a65",
     "m_Title": "Outline Mask",
     "m_Position": {
-        "x": -1569.0001220703125,
-        "y": 879.0000610351563
+        "x": -1569.0,
+        "y": 879.0
     }
 }
 
@@ -8982,8 +8982,8 @@
     "m_ObjectId": "39e77a2a00134951a3d84abc885dc301",
     "m_Title": "MatCap2",
     "m_Position": {
-        "x": -2532.000244140625,
-        "y": 1926.000244140625
+        "x": -2532.0,
+        "y": 1926.0
     }
 }
 
@@ -9125,7 +9125,7 @@
     "m_ObjectId": "3cfec547edda4526afc51393de81a1f8",
     "m_Title": "Burn",
     "m_Position": {
-        "x": -3884.000244140625,
+        "x": -3884.0,
         "y": 2636.0
     }
 }
@@ -9334,8 +9334,8 @@
     "m_ObjectId": "3f635f21661647f0a79a7e1ba68eaf26",
     "m_Title": "Occlusion Mask",
     "m_Position": {
-        "x": -2863.000244140625,
-        "y": 301.0000305175781
+        "x": -2863.0,
+        "y": 301.0
     }
 }
 
@@ -9571,7 +9571,7 @@
     "m_ObjectId": "4176b84bb3084426812c05dfa136ffd8",
     "m_Title": "Additional Lights",
     "m_Position": {
-        "x": -3998.000244140625,
+        "x": -3998.0,
         "y": 3110.0
     }
 }
@@ -11326,10 +11326,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1442.0,
-            "y": -364.9999694824219,
+            "x": -3141.0,
+            "y": -480.9999084472656,
             "width": 130.0,
-            "height": 117.99995422363281
+            "height": 117.99996948242188
         }
     },
     "m_Slots": [
@@ -13084,10 +13084,10 @@
         "m_Expanded": false,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1581.9998779296875,
-            "y": -340.0,
+            "x": -3281.0,
+            "y": -455.9999694824219,
             "width": 125.0,
-            "height": 92.99998474121094
+            "height": 94.00006103515625
         }
     },
     "m_Slots": [
@@ -13718,7 +13718,7 @@
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "● MatCap Channel",
     "m_DefaultReferenceName": "_MatCap_Channel",
-    "m_OverrideReferenceName": "Vector1_1",
+    "m_OverrideReferenceName": "_MatCap_Channel",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -14081,7 +14081,7 @@
     "m_ObjectId": "6ea546007d3b4e688621fd7230bd7ae5",
     "m_Title": "Fresnel Portal",
     "m_Position": {
-        "x": -2255.000244140625,
+        "x": -2255.0,
         "y": 2242.0
     }
 }
@@ -14274,8 +14274,8 @@
     "m_ObjectId": "704f342ddfc74e3c9998aa44c1fb3a52",
     "m_Title": "Realtime shadows on Baked geometry",
     "m_Position": {
-        "x": -2513.000244140625,
-        "y": -473.00006103515627
+        "x": -2513.0,
+        "y": -473.0
     }
 }
 
@@ -15634,8 +15634,8 @@
     "m_ObjectId": "80d96100b22d4080a100efca49c564c6",
     "m_Title": "Specular",
     "m_Position": {
-        "x": -3459.000244140625,
-        "y": -1613.0001220703125
+        "x": -3459.0,
+        "y": -1613.0
     }
 }
 
@@ -16134,7 +16134,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Color_848ca65834b34db4bdde3dee4c8883d3",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_ShadowColor",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -16856,8 +16856,8 @@
     "m_ObjectId": "8d760856a95f44a7a852d8cb9cbbc489",
     "m_Title": "Texture",
     "m_Position": {
-        "x": -2500.000244140625,
-        "y": 704.0000610351563
+        "x": -2500.0,
+        "y": 704.0
     }
 }
 
@@ -17417,7 +17417,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Texture2D_95d61c5498a844db9381fa1d60718dc0",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_MainTexture",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -17716,7 +17716,7 @@
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "● MatCap2 Channel",
     "m_DefaultReferenceName": "_MatCap2_Channel",
-    "m_OverrideReferenceName": "Vector1_3",
+    "m_OverrideReferenceName": "_MatCap2_Channel",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -19224,8 +19224,8 @@
     "m_ObjectId": "a91319db7f5e4a0cb9b5cfd2e53f7b22",
     "m_Title": "Emission",
     "m_Position": {
-        "x": -1513.000244140625,
-        "y": -214.00003051757813
+        "x": -1513.0,
+        "y": -214.0
     }
 }
 
@@ -19355,7 +19355,7 @@
     "m_ObjectId": "aa1c80bd942949c58cacfb83f6eb0047",
     "m_Title": "MatCap",
     "m_Position": {
-        "x": -2812.000244140625,
+        "x": -2812.0,
         "y": 1166.0
     }
 }
@@ -19442,9 +19442,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1291.0,
-            "y": -501.0,
-            "width": 126.0001220703125,
+            "x": -2990.0,
+            "y": -616.9999389648438,
+            "width": 126.0,
             "height": 118.0
         }
     },
@@ -19851,7 +19851,7 @@
     "m_ObjectId": "ae16703d4f9c4c268a60a559e607e631",
     "m_Title": "MatCap",
     "m_Position": {
-        "x": -3749.000244140625,
+        "x": -3749.0,
         "y": 1394.0
     }
 }
@@ -20273,8 +20273,8 @@
     "m_ObjectId": "b23c0235de294946b5b40ca3cee414ac",
     "m_Title": "Shadow",
     "m_Position": {
-        "x": -4136.00048828125,
-        "y": -571.0000610351563
+        "x": -4136.0,
+        "y": -571.0
     }
 }
 
@@ -21300,10 +21300,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1478.9998779296875,
-            "y": -431.9999694824219,
-            "width": 161.9998779296875,
-            "height": 33.999969482421878
+            "x": -3178.0,
+            "y": -547.9999389648438,
+            "width": 162.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
@@ -21550,7 +21550,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Texture2D_c2a40dc56b3a45da85e781a3382f8161",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_Splat_Main",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -22000,7 +22000,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Texture2D_c55c60fad6a14c61975c2bb1e20422bd",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_SubTexture",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -22404,7 +22404,7 @@
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "● OcclusionChannel",
     "m_DefaultReferenceName": "_OcclusionChannel",
-    "m_OverrideReferenceName": "Vector1_2",
+    "m_OverrideReferenceName": "_OcclusionChannel",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -22663,10 +22663,10 @@
         "m_Expanded": false,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1442.9998779296875,
-            "y": -530.0,
-            "width": 127.9998779296875,
-            "height": 93.0
+            "x": -3142.0,
+            "y": -645.9999389648438,
+            "width": 128.0,
+            "height": 94.00006103515625
         }
     },
     "m_Slots": [
@@ -22704,7 +22704,7 @@
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "● Splat_Sub",
     "m_DefaultReferenceName": "_Splat_Sub",
-    "m_OverrideReferenceName": "Texture2D_c2a40dc56b3a45da85e781a3382f8161_1",
+    "m_OverrideReferenceName": "_Splat_Sub",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -23496,7 +23496,7 @@
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "MatCap2 Value",
     "m_DefaultReferenceName": "_MatCap2_Value",
-    "m_OverrideReferenceName": "Vector1_4",
+    "m_OverrideReferenceName": "_MatCap2_Value",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -24464,10 +24464,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -958.9999389648438,
-            "y": -310.9999694824219,
-            "width": 130.0,
-            "height": 118.00001525878906
+            "x": -2664.000244140625,
+            "y": -824.0,
+            "width": 126.0,
+            "height": 118.0
         }
     },
     "m_Slots": [
@@ -24549,8 +24549,8 @@
     "m_ObjectId": "db84ff02e229446498201a452162c7f7",
     "m_Title": "Line Portal",
     "m_Position": {
-        "x": -1576.000244140625,
-        "y": 2893.000244140625
+        "x": -1576.0,
+        "y": 2893.0
     }
 }
 
@@ -24793,10 +24793,10 @@
         "m_Expanded": false,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1283.9998779296875,
-            "y": -364.0,
+            "x": -2983.0,
+            "y": -479.99993896484377,
             "width": 119.0,
-            "height": 76.00003051757813
+            "height": 77.0
         }
     },
     "m_Slots": [
@@ -26067,8 +26067,8 @@
     "m_ObjectId": "ea362cf21e424384a0294eaaa60640b0",
     "m_Title": "MatCap",
     "m_Position": {
-        "x": -2814.000244140625,
-        "y": 1539.0001220703125
+        "x": -2814.0,
+        "y": 1539.0
     }
 }
 

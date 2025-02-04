@@ -384,6 +384,7 @@ public class Game_Manager : MonoBehaviour
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (player != null)
@@ -398,6 +399,7 @@ public class Game_Manager : MonoBehaviour
             Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
         }
     }
+#endif
 
     //public Transform ijijfeiifej, damageEffect;
     //public float unitSize;
