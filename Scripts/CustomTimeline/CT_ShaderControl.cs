@@ -4,7 +4,7 @@ using System;
 
 #if UNITY_EDITOR
 using UnityEditor;
-[CustomEditor(typeof(ShaderTest))]
+[CustomEditor(typeof(CT_ShaderControl))]
 public class ShaderTestEditor : Editor
 {
     public override void OnInspectorGUI()
@@ -13,7 +13,7 @@ public class ShaderTestEditor : Editor
         fontStyle.fontSize = 15;
         fontStyle.normal.textColor = Color.yellow;
 
-        ShaderTest Inspector = target as ShaderTest;
+        CT_ShaderControl Inspector = target as CT_ShaderControl;
         if (GUILayout.Button("SetRenderer", fontStyle, GUILayout.Height(30f)))
         {
             Inspector.SetData();
@@ -26,7 +26,7 @@ public class ShaderTestEditor : Editor
 }
 #endif
 [RequireComponent(typeof(PlayableDirector))]
-public class ShaderTest : MonoBehaviour
+public class CT_ShaderControl : MonoBehaviour
 {
     public void SetData()
     {
