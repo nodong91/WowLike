@@ -2251,13 +2251,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 910744934}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdecdcc1d9b437d4f9fb4dcf68389ca1, type: 3}
+  m_Script: {fileID: 11500000, guid: eed8ac03409cf1e4d808472ccb6938d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 296430390}
   guide: {fileID: 1807361540}
   direction: {x: 0, y: 0, z: 0}
-  moveSpeed: 3
+  moveSpeed: 1
   rotateSpeed: 10
   inputDir: 0
   rotateType: 0
@@ -2272,32 +2272,30 @@ MonoBehaviour:
   clickPosition: {x: 0, y: 0}
   layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   target: {fileID: 0}
   targetGuide: {fileID: 42474246}
   targetIndex: 0
   targetMask:
     serializedVersion: 2
-    m_Bits: 16
+    m_Bits: 0
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
   visibleTargets: []
-  viewRadius: 6
-  viewAngle: 100
+  viewRadius: 5
+  viewAngle: 120
   bullet: {fileID: 1829705723}
   unitSize: 1
   skillStructs:
-  - skillName: FireBall
-    skillDistance: 1
-  - skillName: FireBall
-    skillDistance: 2
-  - skillName: FireBall
+  - skillName: sdfd
     skillDistance: 3
-  - skillName: FireBall
+  - skillName: sdfd
     skillDistance: 4
-  - skillName: FireBall
+  - skillName: sdfd
     skillDistance: 5
+  - skillName: sdfd
+    skillDistance: 6
 --- !u!4 &910744936
 Transform:
   m_ObjectHideFlags: 0

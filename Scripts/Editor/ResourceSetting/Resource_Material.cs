@@ -1,10 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering;
-using static P01.Resource_Material;
-
-
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -23,13 +18,14 @@ namespace P01
             Background
         }
         public SetShader setShader;
+        Shader aaaa;
 
         public void DisplayMaterial()
         {
             if (materials?.Count <= 0)
                 return;
 
-            float setWidth = SetButtonWidth(3f);
+            float setWidth = SetButtonWidth(4f);
             float setHight = 35;
 
             GUIStyle buttonText = new(GUI.skin.button)
@@ -70,11 +66,12 @@ namespace P01
                     materials[i] = EditorGUILayout.ObjectField("", materials[i], typeof(Material), true, GUILayout.Width(setWidth), GUILayout.Height(setHight)) as Material;
 
                     string shaderName = materials[i].shader.name;
-                    centerText.normal.textColor = shaderName.Contains("Hidden") ? Color.red : Color.white;
+                    //centerText.normal.textColor = shaderName.Contains("Hidden") ? Color.red : Color.white;// 히든이면 빨간색으로
 
-                    GUILayout.Label(shaderName, centerText, GUILayout.Width(setWidth));
+                    //GUILayout.Label(shaderName, centerText, GUILayout.Width(setWidth));
+                    EditorGUILayout.ObjectField("", materials[i].shader, typeof(Shader), true, GUILayout.Width(setWidth), GUILayout.Height(setHight));
                     //setShader = (SetShader)EditorGUILayout.EnumPopup("", setShader, centerText, GUILayout.Width(setWidth), GUILayout.Height(setHight));
-
+                    aaaa = EditorGUILayout.ObjectField("", aaaa, typeof(Shader), true, GUILayout.Width(setWidth), GUILayout.Height(setHight))as Shader;
                     //GUILayout.Label(matName, centerText, GUILayout.Width(setWidth));
                     buttonText.normal.textColor = materials[i].enableInstancing ? Color.green : Color.red;
                     if (GUILayout.Button(materials[i].enableInstancing.ToString(), buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
