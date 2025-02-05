@@ -8,13 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Mat_Amber_Face_01
-  m_Shader: {fileID: -6465566751694194690, guid: 7ffd77e36c20cad4e9c1542c5b98e89d, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 5479c1b47e5944343937705b3ba44f3b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _POTALTYPE_FRESNEL_NORMAL
-  m_InvalidKeywords:
-  - _POTALTYPE_FRESNEL
+  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -246,6 +245,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: 78480d2a8d9f42d4094341daf75f5d8b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MatCap2_Texture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -371,6 +374,18 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecularMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat_Main:
+        m_Texture: {fileID: 2800000, guid: f3f0e5730e1c0fa4580ae1b8e3dbb699, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat_Sub:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -767,6 +782,8 @@ Material:
     - _METALNESS: 0
     - _MainLightIgnoreCelShade: 0
     - _MainLightIgnoreCelShadeForFaceArea: 0
+    - _MatCap2_Channel: 0
+    - _MatCap2_Value: 0
     - _MatCapAdditiveApplytoFaces: 0
     - _MatCapAdditiveExtractBrightArea: 0
     - _MatCapAdditiveIntensity: 1
@@ -797,6 +814,8 @@ Material:
     - _MatCapOcclusionMaskMapRemapStart: 0
     - _MatCapOcclusionPreset: 0
     - _MatCapOcclusionUvScale: 1
+    - _MatCap_Channel: 1
+    - _MatCap_Value: 0
     - _Metallic: 0
     - _Mode: 0
     - _MultiplyBRPColor: 0
@@ -813,6 +832,7 @@ Material:
     - _NoiseDistortion: 10
     - _NoiseSpeed: 0
     - _NormalsSensitivity: 0
+    - _OcclusionChannel: 2
     - _OcclusionMapApplytoFaces: 0
     - _OcclusionMapInvertColor: 0
     - _OcclusionMapStylePreset: 0
@@ -910,6 +930,7 @@ Material:
     - _RenderScreenSpaceOutlineV2: 0
     - _Rimlight_Shapeness: 0
     - _Rimlight_Smooth: 0
+    - _Rimlight_Strangth: 0.37
     - _Rimlight_Stranth: 0
     - _ScreenSpaceOutlineDepthSensitivity: 1
     - _ScreenSpaceOutlineDepthSensitivityIfFace: 1
@@ -1102,7 +1123,7 @@ Material:
     - _CharacterAreaColorFillTextureUVTilingOffset: {r: 1, g: 1, b: 0, a: 0}
     - _CharacterBoundCenterPosWS: {r: 0, g: 0, b: 0, a: 1}
     - _Color: {r: 0.8867924, g: 0.8867924, b: 0.8867924, a: 1}
-    - _DamageColor: {r: 9.849155, g: 9.849155, b: 9.849155, a: 2}
+    - _DamageColor: {r: 3.1829493, g: 11.269851, b: 12.268822, a: 2}
     - _DepthTexRimLightAndShadowWidthMultiplierFromVertexColorChannelMask: {r: 0, g: 1, b: 0, a: 0}
     - _DepthTexRimLightAndShadowWidthTexChannelMask: {r: 0, g: 1, b: 0, a: 0}
     - _DepthTexRimLightMaskTexChannelMask: {r: 0, g: 1, b: 0, a: 0}
@@ -1116,7 +1137,7 @@ Material:
     - _DynamicEyePupilColor: {r: 1, g: 1, b: 1, a: 1}
     - _DynamicEyePupilMaskTexChannelMask: {r: 0, g: 0, b: 0, a: 1}
     - _EMISSION_COLOR: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissionColor: {r: 56.631523, g: 56.631523, b: 56.631523, a: 2}
+    - _EmissionColor: {r: 0.7490197, g: 0.7490197, b: 0.7490197, a: 2}
     - _EmissionMapSingleChannelMask: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionMapTilingXyOffsetZw: {r: 1, g: 1, b: 0, a: 0}
     - _EmissionMapUVScrollSpeed: {r: 0, g: 0, b: 0, a: 0}
@@ -1194,6 +1215,7 @@ Material:
     - _ScreenSpaceOutlineTintColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
     - _SelfShadowTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadingGradeMapChannelMask: {r: 0, g: 1, b: 0, a: 0}
+    - _ShadowColor: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 0.101960786}
     - _SkinMaskMapChannelMask: {r: 0, g: 1, b: 0, a: 0}
     - _SkinShadowTintColor: {r: 1, g: 0.9019608, b: 0.9019608, a: 1}
     - _SkinShadowTintColor2: {r: 1, g: 1, b: 1, a: 1}

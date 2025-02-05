@@ -80,7 +80,7 @@ namespace P01.Editor
                     }
                 }
             }
-            Debug.LogWarning(_controlClass.SetName);
+            Debug.Log("³ð¤·¤¡"+_controlClass.SetName);
         }
     }
 }

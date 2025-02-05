@@ -42,7 +42,7 @@ public class CT_ShaderControl_ClipEditor : Editor
             case CT_ShaderControl.ShaderControlType.SetFloat:
                 SetButton("_Damage", Inspector);
                 SetButton("_Specular_Strength", Inspector);
-                SetButton("_Rimlight_Stranth", Inspector); 
+                SetButton("_Rimlight_Strangth", Inspector); 
                 SetButton("_PortalAmount", Inspector);
                 break;
 
