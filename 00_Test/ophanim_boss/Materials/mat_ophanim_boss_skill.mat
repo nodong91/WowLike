@@ -118,7 +118,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _Float: 1
+    - _Float: 0
     - _Float_1: 0.246
     - _Float_2: 0.253
     - _Float_3: -46.27
