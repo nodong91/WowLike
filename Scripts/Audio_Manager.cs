@@ -8,11 +8,6 @@ public class Audio_Manager : MonoBehaviour
 
     public Button button;
 
-    void Start()
-    {
-        button.onClick.AddListener(CloseWindow);
-        SetAudioManager();
-    }
 
     void CloseWindow()
     {
@@ -21,6 +16,8 @@ public class Audio_Manager : MonoBehaviour
 
     public void SetAudioManager()
     {
+        button.onClick.AddListener(CloseWindow);
+
         Singleton_Audio.INSTANCE.SetAudio();
 
         bgmSlider.onValueChanged.AddListener(BGMValue);

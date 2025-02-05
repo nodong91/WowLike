@@ -53,6 +53,7 @@ public class Skill_Bullet : MonoBehaviour
 
         hitEffect.gameObject.SetActive(true);
         bullet.gameObject.SetActive(false);
+        CameraManager.current.InputShake();
 
         Vector3 targetPosition = new Vector3(_target.position.x, bullet.transform.position.y, _target.position.z);
         Vector3 offset = (targetPosition - bullet.transform.position).normalized;
@@ -85,6 +86,7 @@ public class Skill_Bullet : MonoBehaviour
         }
         hitEffect.gameObject.SetActive(true);
         bullet.gameObject.SetActive(false);
+        CameraManager.current.InputShake();
 
         Vector3 offset = (targetPosition - bullet.transform.position).normalized;
         hitEffect.rotation = Quaternion.LookRotation(offset);

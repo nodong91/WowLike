@@ -5,9 +5,9 @@ public class Singleton_Audio : MonoSingleton<Singleton_Audio>
 {
     public void Call()
     {
-        Debug.Log("SoundManager Call()");
+        Debug.LogWarning("SoundManager Call()");
     }
-
+    [SerializeField]
     private AudioSource bgmSource, fxSource;
 
     public bool BGMMute;

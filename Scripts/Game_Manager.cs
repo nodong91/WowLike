@@ -5,6 +5,8 @@ using UnityEditor;
 
 public class Game_Manager : MonoBehaviour
 {
+    public string BGMSound;
+
     private Camera mainCamera;
     public Transform player;
     public Transform guide;
@@ -32,18 +34,29 @@ public class Game_Manager : MonoBehaviour
     public Skill_Slot slot;
     public Transform slotParent;
     public Skill_Slot[] slotArray;
+    public int currentIndex;
+    [Header("Instance")]
+    public Audio_Manager audioManager;
+
+    public static Game_Manager instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {
         mainCamera = Camera.main;
-
+        CameraManager.current.rotateDelegate = Rotate;
         Singleton_Controller.INSTANCE.SetController();
 
         SetMouse();
         SetSkillSlot();
         SetETC();
 
-        CameraManager.current.rotateDelegate = Rotate;
+        audioManager.SetAudioManager();
+        Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);
     }
 
     void SetMouse()
@@ -52,7 +65,7 @@ public class Game_Manager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_MouseRight = InputMouseRight;
         Singleton_Controller.INSTANCE.key_MouseWheel = InputMouseWheel;
     }
-    public int currentIndex;
+    
     void SetSkillSlot()
     {
         slotArray = new Skill_Slot[skillStructs.Length];
@@ -81,6 +94,7 @@ public class Game_Manager : MonoBehaviour
 
     void InputSlot(int _index)
     {
+        Debug.LogWarning("InputKey" + _index.ToString("N2"));
         currentIndex = _index;
         if (slotArray[currentIndex].isActive == true)
         {
@@ -92,28 +106,24 @@ public class Game_Manager : MonoBehaviour
     {
         if (_input == false)
             InputSlot(0);
-        Debug.LogWarning("InputKey01");
     }
 
     void InputKey02(bool _input)
     {
         if (_input == false)
             InputSlot(1);
-        Debug.LogWarning("InputKey02");
     }
 
     void InputKey03(bool _input)
     {
         if (_input == false)
             InputSlot(2);
-        Debug.LogWarning("InputKey03");
     }
 
     void InputKey04(bool _input)
     {
         if (_input == false)
             InputSlot(3);
-        Debug.LogWarning("InputKey04");
     }
 
     void InputMouseLeft(bool _input)
@@ -341,8 +351,6 @@ public class Game_Manager : MonoBehaviour
     {
         if (_input == false)
         {
-            CameraManager.current.InputShake();
-
             visibleTargets.Clear();
             Collider[] targetsInViewRadius = Physics.OverlapSphere(player.transform.position, viewRadius, targetMask);
             for (int i = 0; i < targetsInViewRadius.Length; i++)
@@ -452,17 +460,7 @@ public class Game_Manager : MonoBehaviour
 
     public Skill_Bullet bullet;
     public float unitSize = 1f;
-    private void Fire()
-    {
-        if (target == null)
-            return;
-        Skill_Bullet instBullet = Instantiate(bullet);
-        instBullet.transform.position = player.position;
-        instBullet.SetTarget(target, unitSize);
-    }
-
     float targetDistance;
-    //float skillDistance = 5f;
     [System.Serializable]
     public struct SkillStruct
     {
@@ -470,6 +468,16 @@ public class Game_Manager : MonoBehaviour
         public float skillDistance;
     }
     public SkillStruct[] skillStructs;
+
+    private void Fire()
+    {
+        if (target == null)
+            return;
+        Skill_Bullet instBullet = Instantiate(bullet, this.transform);
+        instBullet.transform.position = player.position;
+        instBullet.SetTarget(target, unitSize);
+    }
+
     void CheckDistance()
     {
         if (target != null)

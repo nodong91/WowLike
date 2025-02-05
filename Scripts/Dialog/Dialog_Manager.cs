@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Security.Cryptography;
 
 public class Dialog_Manager : MonoBehaviour
 {
@@ -23,19 +22,21 @@ public class Dialog_Manager : MonoBehaviour
     public float interval;
     public Transform target;
     public Vector3 offset;
+    public string FXSound;
 
     public Image nextMark;
     public Button button;
 
     void Start()
     {
-        //Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);
         typingSpeed = defaultTypingSpeed;
         button.onClick.AddListener(SetTest);
     }
 
     void SetTest()
     {
+        AddFollow();
+
         if (typing == true)
         {
             StartTyping(false);
@@ -47,15 +48,20 @@ public class Dialog_Manager : MonoBehaviour
         }
     }
 
-    private void Update()
+    void AddFollow()
     {
-        FollowUI();
+        target = Game_Manager.instance.target;// юс╫ц е╦╟ы
+        UI_Manager.FollowStruct followStruct = new UI_Manager.FollowStruct
+        {
+            followTarget = target,
+            followOoffset = offset,
+        };
+        UI_Manager.instance.AddFollowUI(transform, followStruct);
     }
 
-    void FollowUI()
+    void RemoveFollow()
     {
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(target.position + offset);
-        transform.position = screenPosition;
+        UI_Manager.instance.RemoveFollowUI(transform);
     }
 
 
@@ -251,7 +257,7 @@ public class Dialog_Manager : MonoBehaviour
         for (int v = 0; v < 4; v++)
         {
             int index = vertexIndex + v;
-            float curveTime = (Time.time * type.speed) + (type.interval *_index);
+            float curveTime = (Time.time * type.speed) + (type.interval * _index);
             float curveValue = curve.Evaluate(curveTime);
 
             float x = curveValue * type.angle.x;
@@ -406,6 +412,6 @@ public class Dialog_Manager : MonoBehaviour
             nextMark.fillAmount = normalize;
             yield return null;
         }
+        RemoveFollow();
     }
-    public string BGMSound, FXSound;
 }
