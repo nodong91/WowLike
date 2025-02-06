@@ -58,6 +58,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ArrayTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BASE_COLOR_MAP:
         m_Texture: {fileID: 2800000, guid: cd7fdb52fce1a444aba744edb119337d, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -358,6 +362,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DArray_4928423cd8644d7ab0f04b63e2a5d85c_TextureArray_1_Texture2DArray:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ScreenSpaceOutlineDepthSensitivityTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -403,6 +411,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TRANSPARENCY_MAP:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2D_Array:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -460,6 +472,7 @@ Material:
     - _AlphaToMask: 0
     - _ApplyAlphaOverrideOnlyWhenFaceForwardIsPointingToCamera: 0
     - _ApplyDepthTexRimLightFixDottedLineArtifacts: 1
+    - _ArrayIndex: 0
     - _AsUnlit: 0
     - _AverageShadowMapRTSampleIndex: -1
     - _BASE_COLOR_WEIGHT: 1
@@ -619,6 +632,7 @@ Material:
     - _BaseMapUVIndex: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _Boolean: 0
     - _BumpMapApplytoFaces: 0
     - _BumpMapUVIndex: 0
     - _BumpScale: 1
@@ -782,6 +796,7 @@ Material:
     - _HairStrandSpecularTintMapUsage: 1
     - _IgnoreDefaultMainLightFaceShadow: 1
     - _IndirectLightFlatten: 1
+    - _IsArray: 0
     - _IsFace: 0
     - _IsSkin: 1
     - _LightingStyleDirectionalLightRenderFacePreset: 0
@@ -794,6 +809,9 @@ Material:
     - _METALNESS: 0
     - _MainLightIgnoreCelShade: 0
     - _MainLightIgnoreCelShadeForFaceArea: 0
+    - _MatCap2Blend: 0
+    - _MatCap2Blend_CH: 0
+    - _MatCap2Blend_MSO: 0
     - _MatCap2_Channel: 0
     - _MatCap2_Value: 0
     - _MatCapAdditiveApplytoFaces: 0
@@ -815,6 +833,9 @@ Material:
     - _MatCapAlphaBlendPreset: 0
     - _MatCapAlphaBlendUsage: 1
     - _MatCapAlphaBlendUvScale: 1
+    - _MatCapBlend: 0
+    - _MatCapBlend_CH: 0
+    - _MatCapBlend_MSO: 0
     - _MatCapOcclusionIntensity: 0.24
     - _MatCapOcclusionMapAlphaAsMask: 0
     - _MatCapOcclusionMapRemapEnd: 1
@@ -1175,6 +1196,7 @@ Material:
     - _FaceShadowTintColor: {r: 1, g: 0.9019608, b: 0.9019608, a: 1}
     - _FaceShadowTintColor2: {r: 1, g: 1, b: 1, a: 1}
     - _FaceUpDirection: {r: 0, g: 1, b: 0, a: 1}
+    - _FlipBookSize: {r: 0, g: 0, b: 0, a: 0}
     - _HairStrandSpecularMainColor: {r: 1, g: 1, b: 1, a: 1}
     - _HairStrandSpecularSecondColor: {r: 1, g: 1, b: 1, a: 1}
     - _HairStrandSpecularTintMapTilingXyOffsetZw: {r: 1, g: 1, b: 0, a: 0}
@@ -1182,6 +1204,7 @@ Material:
     - _LitToShadowTransitionAreaTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _LowSaturationFallbackColor: {r: 0.3764706, g: 0.4141177, b: 0.5019608, a: 0}
     - _MainColor: {r: 1, g: 1, b: 1, a: 2}
+    - _MatCap2_Color: {r: 0, g: 0, b: 0, a: 0}
     - _MatCapAdditiveColor: {r: 1, g: 1, b: 1, a: 1}
     - _MatCapAdditiveMaskMapChannelMask: {r: 0, g: 1, b: 0, a: 0}
     - _MatCapAlphaBlendMaskMapChannelMask: {r: 1, g: 0, b: 0, a: 0}
@@ -1189,6 +1212,7 @@ Material:
     - _MatCapOcclusionMapChannelMask: {r: 0, g: 1, b: 0, a: 0}
     - _MatCapOcclusionMaskMapChannelMask: {r: 0, g: 1, b: 0, a: 0}
     - _MatCapUVTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _MatCap_Color: {r: 0, g: 0, b: 0, a: 0}
     - _NiloToonSelfShadowMappingTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _OcclusionMapChannelMask: {r: 0, g: 0, b: 0, a: 1}
     - _Occlusion_Color: {r: 0, g: 0, b: 0, a: 0.5254902}

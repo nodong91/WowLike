@@ -21,7 +21,7 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: 
+  m_LockedProperties: _MatCap2_Channel
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -66,11 +66,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap2_Texture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 5bf462e76994fd6489dd64e70f6d7cfd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap_Texture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: cd959cf22edc9a248969740d72fafd42, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -94,11 +94,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Splat_Main:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Splat_Sub:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SubTexture:
@@ -127,7 +127,7 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _ArrayIndex: 0
+    - _ArrayIndex: 1
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _Boolean: 1
@@ -153,12 +153,18 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _InCircle: 0.5
-    - _IsArray: 1
+    - _IsArray: 0
     - _MaskPreview: 0
+    - _MatCap2Blend: 0
+    - _MatCap2Blend_CH: 0
+    - _MatCap2Blend_MSO: 2
     - _MatCap2_Channel: 0
     - _MatCap2_Value: 0
+    - _MatCapBlend: 0
+    - _MatCapBlend_CH: 2
+    - _MatCapBlend_MSO: 0
     - _MatCap_Channel: 0
-    - _MatCap_Value: 0
+    - _MatCap_Value: 0.636
     - _Metallic: 0
     - _NoiseAmount: 1
     - _NoiseDistortion: 10
@@ -167,7 +173,7 @@ Material:
     - _NoiseStrength: 0
     - _NormalsSensitivity: 0
     - _OcclusionChannel: 0
-    - _OcclusionStrength: 1
+    - _OcclusionStrength: 0
     - _OutCircle: 1
     - _OutlineThickness: 1
     - _Outline_Mask_Channel: 0
@@ -198,13 +204,15 @@ Material:
     - _DamageColor: {r: 9.560206, g: 2.215383, b: 0.3156674, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MatCap2_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _MatCap_Color: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _PortalColor: {r: 0, g: 0, b: 0, a: 0}
     - _PortalMinMax: {r: 0, g: 1, b: 0, a: 0}
-    - _ShadowColor: {r: 0, g: 0, b: 0, a: 0}
+    - _ShadowColor: {r: 0, g: 0, b: 0, a: 0.101960786}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Sub_ShadowColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Sub_ShadowColor: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &8602693372055197847
