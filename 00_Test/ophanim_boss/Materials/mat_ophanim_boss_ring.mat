@@ -21,13 +21,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_ophanim_boss_ring
-  m_Shader: {fileID: -6465566751694194690, guid: 7ffd77e36c20cad4e9c1542c5b98e89d, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 5479c1b47e5944343937705b3ba44f3b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _POTALTYPE_FRESNEL_NORMAL
-  m_InvalidKeywords:
-  - _POTALTYPE_FRESNEL
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -87,12 +86,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: eabba30ed8c56e54cb9d84badb209a47, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MatCap2_Texture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap_Texture:
-        m_Texture: {fileID: 2800000, guid: a92c6a9380a51c843b70ec15df9d831e, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -108,6 +111,18 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat_Main:
+        m_Texture: {fileID: 2800000, guid: f6556f78ba5271e4286fc6738a9735e1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Splat_Sub:
+        m_Texture: {fileID: 2800000, guid: f11c636f5fb37e8449752cb0252592f9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -132,6 +147,7 @@ Material:
     - Vector1_3: 0
     - Vector1_33e6c7c6eed84512822471e65837d802: 0.4
     - Vector1_4: 0
+    - _AddFaceAngle: 0
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
@@ -153,12 +169,17 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.14142135
     - _GlossyReflections: 1
+    - _MatCap2_Channel: 0
+    - _MatCap2_Value: 0
+    - _MatCap_Channel: 1
+    - _MatCap_Value: 0
     - _Metallic: 0
     - _Mode: 0
     - _NoiseAmount: 1
     - _NoiseDistortion: 10
     - _NoiseSpeed: 0
     - _NormalsSensitivity: 0
+    - _OcclusionChannel: 2
     - _OcclusionStrength: 1
     - _OutlineThickness: 2
     - _Outline_Mask_Channel: 0
@@ -169,11 +190,13 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Rimlight_Smooth: 0.1
+    - _Rimlight_Strangth: 0.2
     - _Smoothness: 0.14142135
     - _SmoothnessTextureChannel: 0
     - _SpecularChannel: 2
     - _SpecularHighlights: 1
     - _Specular_Smooth: 0.1
+    - _Specular_Strength: 0.4
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _SubShadowChannel: 0
@@ -187,12 +210,13 @@ Material:
     - _BaseColor: {r: 0.79058963, g: 0.79058963, b: 0.79058963, a: 1}
     - _Color: {r: 0.79058963, g: 0.79058963, b: 0.79058963, a: 1}
     - _DamageColor: {r: 9.560206, g: 2.215383, b: 0.3156674, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0.3584906, g: 0.05918476, b: 0.05918476, a: 1}
     - _PortalColor: {r: 0, g: 0, b: 0, a: 0}
     - _PortalMinMax: {r: 0, g: 1, b: 0, a: 0}
     - _RimlightColor: {r: 1, g: 0, b: 0, a: 1}
+    - _ShadowColor: {r: 0.7264151, g: 0.6130409, b: 0.53110534, a: 0.19215687}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColor: {r: 0.6886792, g: 0.620461, b: 0.620461, a: 1}
     - _Sub_ShadowColor: {r: 0.7877358, g: 0.83317256, b: 1, a: 0}

@@ -64,6 +64,8 @@ public class UI_Manager : MonoBehaviour
     }
     public Dictionary<Transform, FollowStruct> dictFollow = new Dictionary<Transform, FollowStruct>();
     Coroutine followUI;
+    public GameObject hpUI;
+    public Transform instanceParent;
     public void AddFollowUI(Transform _addFollow, FollowStruct _addStruct)
     {
         if (dictFollow.ContainsKey(_addFollow) == false)
@@ -76,6 +78,18 @@ public class UI_Manager : MonoBehaviour
     public void RemoveFollowUI(Transform _addFollow)
     {
         dictFollow.Remove(_addFollow);
+    }
+
+    public void AddHP()
+    {
+        Transform target = Game_Manager.instance.target;
+        FollowStruct followStruct = new FollowStruct
+        {
+            followTarget = target,
+            followOoffset = Vector3.up,
+        };
+        GameObject inst = Instantiate(hpUI, instanceParent);
+        AddFollowUI(inst.transform, followStruct);
     }
 
     void StartFollowing()

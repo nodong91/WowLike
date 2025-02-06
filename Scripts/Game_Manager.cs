@@ -104,6 +104,7 @@ public class Game_Manager : MonoBehaviour
 
     void InputKey01(bool _input)
     {
+        FollowTest();
         if (_input == false)
             InputSlot(0);
     }
@@ -521,4 +522,9 @@ public class Game_Manager : MonoBehaviour
     //        }
     //    }
     //}
+
+    void FollowTest()
+    {
+        UI_Manager.instance.AddHP();
+    }
 }

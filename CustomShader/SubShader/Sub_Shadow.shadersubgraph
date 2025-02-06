@@ -2329,7 +2329,7 @@
     ],
     "synonyms": [],
     "m_Precision": 0,
-    "m_PreviewExpanded": false,
+    "m_PreviewExpanded": true,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 2,
     "m_CustomColors": {
@@ -7551,7 +7551,7 @@
     "m_ObjectId": "e31be8f483b347e9866dea550d79e4a5",
     "m_Title": "Shadow",
     "m_Position": {
-        "x": -1034.0001220703125,
+        "x": -1033.9998779296875,
         "y": -145.00001525878907
     }
 }

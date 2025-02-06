@@ -6,6 +6,7 @@ using TMPro;
 
 public class Dialog_Manager : MonoBehaviour
 {
+    public string FXSound;
     const float defaultTypingSpeed = 0.1f;
     const int defaultSize = 15;
     const string defaultColor = "000000";
@@ -22,7 +23,6 @@ public class Dialog_Manager : MonoBehaviour
     public float interval;
     public Transform target;
     public Vector3 offset;
-    public string FXSound;
 
     public Image nextMark;
     public Button button;
