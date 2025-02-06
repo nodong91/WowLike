@@ -47,6 +47,8 @@ public class Game_Manager : MonoBehaviour
 
     void Start()
     {
+        TestSkillSetting();
+
         mainCamera = Camera.main;
         CameraManager.current.rotateDelegate = Rotate;
         Singleton_Controller.INSTANCE.SetController();
@@ -65,7 +67,7 @@ public class Game_Manager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_MouseRight = InputMouseRight;
         Singleton_Controller.INSTANCE.key_MouseWheel = InputMouseWheel;
     }
-    
+
     void SetSkillSlot()
     {
         slotArray = new Skill_Slot[skillStructs.Length];
@@ -394,17 +396,6 @@ public class Game_Manager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        //if (player != null)
-        //{
-        //    Handles.color = Color.red;
-        //    Handles.DrawWireArc(player.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
-
-        //    Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
-        //    Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
-
-        //    Handles.DrawLine(player.transform.position, player.transform.position + viewAngleA * viewRadius);
-        //    Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
-        //}
         if (player != null)
         {
             Handles.color = Color.red;
@@ -436,39 +427,62 @@ public class Game_Manager : MonoBehaviour
     }
 #endif
 
-    //public Transform ijijfeiifej, damageEffect;
-    //public float unitSize;
-    //private void Update()
-    //{
-    //    if (target != null)
-    //    {
-    //        Vector3 targetPosition = new Vector3(target.position.x, damageEffect.transform.position.y, target.position.z);
-    //        if ((targetPosition - damageEffect.transform.position).magnitude < unitSize)
-    //        {
-    //            damageEffect.gameObject.SetActive(false);
-    //            ijijfeiifej.gameObject.SetActive(true);
-    //        }
-    //        else
-    //        {
-    //            damageEffect.gameObject.SetActive(true);
-    //            ijijfeiifej.gameObject.SetActive(false);
-    //        }
-    //        Vector3 offset = (targetPosition - damageEffect.transform.position).normalized;
-    //        ijijfeiifej.rotation = Quaternion.LookRotation(offset);
-    //        ijijfeiifej.position = targetPosition - offset * unitSize;
-    //    }
-    //}
-
     public Skill_Bullet bullet;
     public float unitSize = 1f;
     float targetDistance;
-    [System.Serializable]
-    public struct SkillStruct
+    public Data_Manager.SkillStruct[] skillStructs;
+
+    void TestSkillSetting()
     {
-        public string skillName;
-        public float skillDistance;
+        skillStructs = new Data_Manager.SkillStruct[4];
+        skillStructs[0] = Singleton_Data.INSTANCE.Dict_Skill["10001"];
+        skillStructs[1] = Singleton_Data.INSTANCE.Dict_Skill["10002"];
+        skillStructs[2] = Singleton_Data.INSTANCE.Dict_Skill["10003"];
+        skillStructs[3] = Singleton_Data.INSTANCE.Dict_Skill["10004"];
+        TestSkillName();
     }
-    public SkillStruct[] skillStructs;
+
+    void TestSkillName()
+    {
+        for (int i = 0; i < skillStructs.Length; i++)
+        {
+            skillStructs[i].skillName = SkillName(skillStructs[i].skillName);
+            skillStructs[i].skillExplanation = SkillName(skillStructs[i].skillExplanation);
+            skillStructs[i].skillExplanation.Replace("{T}", skillStructs[i].energyAmount.ToString());// 색변경되게 리치코드 추가
+        }
+    }
+
+    string SkillName(string _id)
+    {
+        Singleton_Data.Translation translation = Singleton_Data.INSTANCE.translation;
+        Data_Manager.SkillTranslation skill = Singleton_Data.INSTANCE.Dict_SkillTranslation[_id];
+        string temp = string.Empty;
+        switch (translation)
+        {
+            case Singleton_Data.Translation.Korean:
+                temp = skill.KR;
+                break;
+
+            case Singleton_Data.Translation.English:
+                temp = skill.EN;
+                break;
+
+            case Singleton_Data.Translation.Japanese:
+                temp = skill.JP;
+                break;
+
+            case Singleton_Data.Translation.Chinese:
+                temp = skill.CN;
+                break;
+        }
+        return temp;
+    }
+
+    string SetExplanationValue()
+    {
+        string temp = string.Empty;
+        return temp;
+    }
 
     private void Fire()
     {
@@ -486,42 +500,10 @@ public class Game_Manager : MonoBehaviour
             targetDistance = Vector3.Distance(target.position, player.transform.position);
             for (int i = 0; i < skillStructs.Length; i++)
             {
-                slotArray[i].IsActive(skillStructs[i].skillDistance > targetDistance);
+                slotArray[i].IsActive(skillStructs[i].distance > targetDistance);
             }
         }
     }
-
-    //private void OnDrawGizmos()
-    //{
-    //    if (player != null)
-    //    {
-    //        Handles.color = Color.red;
-    //        Handles.DrawWireArc(player.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
-
-    //        Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
-    //        Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
-
-    //        Handles.DrawLine(player.transform.position, player.transform.position + viewAngleA * viewRadius);
-    //        Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
-
-    //        if (target != null)
-    //        {
-    //            Color color = Color.green;
-    //            GUIStyle fontStyle = new()
-    //            {
-    //                fontSize = 50,
-    //                normal = { textColor = color },
-    //                alignment = TextAnchor.MiddleCenter,
-    //                fontStyle = FontStyle.Bold,
-    //            };
-
-    //            Handles.color = Gizmos.color = color;
-    //            Handles.DrawLine(player.transform.position, target.transform.position);
-    //            Handles.Label(target.transform.position, targetDistance.ToString("N2"), fontStyle);
-    //            Gizmos.DrawSphere(target.transform.position, 0.3f);
-    //        }
-    //    }
-    //}
 
     void FollowTest()
     {

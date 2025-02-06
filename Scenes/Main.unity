@@ -918,15 +918,7 @@ MonoBehaviour:
   viewAngle: 120
   bullet: {fileID: 1829705723}
   unitSize: 1
-  skillStructs:
-  - skillName: sdfd
-    skillDistance: 3
-  - skillName: sdfd
-    skillDistance: 4
-  - skillName: sdfd
-    skillDistance: 5
-  - skillName: sdfd
-    skillDistance: 6
+  skillStructs: []
 --- !u!4 &910744936
 Transform:
   m_ObjectHideFlags: 0
@@ -1736,6 +1728,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 968665283428246880, guid: 853ec07f9dc87154cb4a9c3bca003e93, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968665283428246880, guid: 853ec07f9dc87154cb4a9c3bca003e93, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 968665283428246880, guid: 853ec07f9dc87154cb4a9c3bca003e93, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1865,6 +1865,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8905086779643753562, guid: 853ec07f9dc87154cb4a9c3bca003e93, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8905086779643753562, guid: 853ec07f9dc87154cb4a9c3bca003e93, type: 3}
+      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8905086779643753562, guid: 853ec07f9dc87154cb4a9c3bca003e93, type: 3}
@@ -2400,6 +2404,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 159983409}
     m_Modifications:
+    - target: {fileID: 1566714374419618949, guid: b0c26c967bd475241bc1300e3935b692, type: 3}
+      propertyPath: translation
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3451600474304760600, guid: b0c26c967bd475241bc1300e3935b692, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

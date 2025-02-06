@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static Singleton_Data;
 
 public class Singleton_Data : MonoSingleton<Singleton_Data>
 {
     public Dictionary<string, Data_Manager.DialogInfoamtion> Dict_Dialog = new Dictionary<string, Data_Manager.DialogInfoamtion>();
-    //public Dictionary<string, Data_Manager.DialogTranslation> Dict_DialogTranslation = new Dictionary<string, Data_Manager.DialogTranslation>();
+    public Dictionary<string, Data_Manager.SkillTranslation> Dict_SkillTranslation = new Dictionary<string, Data_Manager.SkillTranslation>();
+    public Dictionary<string, Data_Manager.SkillStruct> Dict_Skill = new Dictionary<string, Data_Manager.SkillStruct>();
     public Dictionary<string, AudioClip> Dict_Audio = new Dictionary<string, AudioClip>();
     public Translation translation;
 
@@ -26,22 +26,40 @@ public class Singleton_Data : MonoSingleton<Singleton_Data>
         }
     }
 
-    //public void SetDictionary_DialogTranslation(List<Data_Manager.DialogTranslation> _data)
-    //{
-    //    Dict_DialogTranslation = new Dictionary<string, Data_Manager.DialogTranslation>();
-    //    for (int i = 0; i < _data.Count; i++)
-    //    {
-    //        string id = _data[i].ID;
-    //        if (Dict_DialogTranslation.ContainsKey(id) == true)
-    //        {
-    //            Debug.LogError($"{id}와 같은 이름이 존재 합니다.");
-    //        }
-    //        else
-    //        {
-    //            Dict_DialogTranslation[id] = _data[i];
-    //        }
-    //    }
-    //}
+    public void SetDictionary_SkillTranslation(List<Data_Manager.SkillTranslation> _data)
+    {
+        Dict_SkillTranslation = new Dictionary<string, Data_Manager.SkillTranslation>();
+        for (int i = 0; i < _data.Count; i++)
+        {
+            string id = _data[i].ID;
+            if (Dict_SkillTranslation.ContainsKey(id) == true)
+            {
+                Debug.LogError($"{id}와 같은 이름이 존재 합니다.");
+            }
+            else
+            {
+                Dict_SkillTranslation[id] = _data[i];
+            }
+        }
+    }
+
+    public void SetDictionary_Skill(List<Data_Manager.SkillStruct> _data)
+    {
+        Dict_Skill = new Dictionary<string, Data_Manager.SkillStruct>();
+        for (int i = 0; i < _data.Count; i++)
+        {
+            string id = _data[i].ID;
+            if (Dict_Skill.ContainsKey(id) == true)
+            {
+                Debug.LogError($"{id}와 같은 이름이 존재 합니다.");
+            }
+            else
+            {
+                Dict_Skill[id] = _data[i];
+            }
+        }
+    }
+
     public enum Translation
     {
         Korean,

@@ -48,6 +48,8 @@ MonoBehaviour:
   - {fileID: 102900000, guid: 549a166cc9502264d96a8bd4d1d19bf3, type: 3}
   CSV_Data:
   - {fileID: 4900000, guid: 71bdaee5370dcdd4c8b3297416a3ccb1, type: 3}
+  - {fileID: 4900000, guid: 628e171176303a44abb14ed274ea1d38, type: 3}
+  - {fileID: 4900000, guid: 008e1147e8ccd8746b2c5986f59da859, type: 3}
   - {fileID: 4900000, guid: 69e55b57e21c9a849acc2637b32a5084, type: 3}
   dialog:
   - ID: 50010
@@ -215,4 +217,62 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3fe793b8732cab045aa4daf6c573122d, type: 3}
   - {fileID: 8300000, guid: 12285ac72cf02dd4da7f2562ff5254af, type: 3}
   - {fileID: 8300000, guid: 34b07e3fd4cb93f438415c2241a54e4c, type: 3}
+  skillTranslation:
+  - ID: 10010
+    KR: "\uB808\uC774\uB4DC"
+    EN: Raid
+    JP: "\u30EC\u30A4\u30C9"
+    CN: "\u7A81\u88AD\u884C\u52A8"
+  - ID: 10011
+    KR: "\uC13C\uD130"
+    EN: Center
+    JP: "\u30BB\u30F3\u30BF\u30FC"
+    CN: "\u4E2D\u5FC3"
+  - ID: 10012
+    KR: "\uC721\uC131"
+    EN: Nurture
+    JP: "\u80B2\u6210"
+    CN: "\u80B2\u6210"
+  - ID: 10013
+    KR: "{T} {50011}\uC774 {50012}"
+    EN: '{50010} {50011}is {50012}'
+    JP: "{50010} {50011}\u304C {50012}"
+    CN: "{50010} {50011}\u4E4B {50012}"
+  skills:
+  - ID: 10001
+    skillName: 10010
+    skillExplanation: 10013
+    level: 1
+    energyType: 0
+    energyAmount: 1
+    castingTime: 0
+    coolingTime: 1
+    distance: 1
+  - ID: 10002
+    skillName: 10010
+    skillExplanation: 10013
+    level: 1
+    energyType: 1
+    energyAmount: 1
+    castingTime: 0
+    coolingTime: 1
+    distance: 1
+  - ID: 10003
+    skillName: 10010
+    skillExplanation: 10013
+    level: 1
+    energyType: 2
+    energyAmount: 1
+    castingTime: 0
+    coolingTime: 1
+    distance: 1
+  - ID: 10004
+    skillName: 10010
+    skillExplanation: 10013
+    level: 1
+    energyType: 0
+    energyAmount: 1
+    castingTime: 0
+    coolingTime: 1
+    distance: 1
   translation: 2

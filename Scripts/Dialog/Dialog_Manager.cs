@@ -51,6 +51,9 @@ public class Dialog_Manager : MonoBehaviour
     void AddFollow()
     {
         target = Game_Manager.instance.target;// юс╫ц е╦╟ы
+        if (target == null)
+            return;
+
         UI_Manager.FollowStruct followStruct = new UI_Manager.FollowStruct
         {
             followTarget = target,

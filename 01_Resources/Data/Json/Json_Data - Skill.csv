@@ -1,0 +1,5 @@
+ID,Name,Explanation,Level,EnergyType,EnergyAmount,CastingTime,CoolingTime,Distance
+10001,10010,10013,1,Mana,1,0,1,1
+10002,10010,10013,1,Rage,1,0,1,1
+10003,10010,10013,1,Stamina,1,0,1,1
+10004,10010,10013,1,Mana,1,0,1,1

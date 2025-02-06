@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
+
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -44,10 +45,17 @@ public class Data_Manager : Data_Parse
             {
                 SetDialogData(GetCSV_Data[i]);
             }
-            //else if (csv_Type.Contains("Translation"))
-            //{
-            //    SetDialogTranslation(csv_data[i]);
-            //}
+            else if (csv_Type.Contains("Skill"))
+            {
+                if (csv_Type.Contains("Translation"))
+                {
+                    SetSkillTranslation(GetCSV_Data[i]);
+                }
+                else
+                {
+                    SetSkill(GetCSV_Data[i]);
+                }
+            }
         }
     }
 
@@ -80,27 +88,53 @@ public class Data_Manager : Data_Parse
         }
     }
 
-    //void SetDialogTranslation(TextAsset _textAsset)
-    //{
-    //    dialogTranslation.Clear();
-    //    string[] data = _textAsset.text.Split(new char[] { '\n' });
-    //    for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
-    //    {
-    //        string[] elements = data[i].Split(new char[] { ',' });
-    //        if (elements[0].Trim().Length == 0)// 아이디 표기가 없으면 제외
-    //            continue;
+    void SetSkillTranslation(TextAsset _textAsset)
+    {
+        skillTranslation.Clear();
+        string[] data = _textAsset.text.Split(new char[] { '\n' });
+        for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
+        {
+            string[] elements = data[i].Split(new char[] { ',' });
+            if (elements[0].Trim().Length == 0)// 아이디 표기가 없으면 제외
+                continue;
 
-    //        DialogTranslation tempData = new DialogTranslation
-    //        {
-    //            ID = elements[0].Trim(),
-    //            KR = elements[1],
-    //            EN = elements[2],
-    //            JP = elements[3],
-    //            CN = elements[4],
-    //        };
-    //        dialogTranslation.Add(tempData);
-    //    }
-    //}
+            SkillTranslation tempData = new SkillTranslation
+            {
+                ID = elements[0].Trim(),
+                KR = elements[1],
+                EN = elements[2],
+                JP = elements[3],
+                CN = elements[4],
+            };
+            skillTranslation.Add(tempData);
+        }
+    }
+
+    void SetSkill(TextAsset _textAsset)
+    {
+        skills.Clear();
+        string[] data = _textAsset.text.Split(new char[] { '\n' });
+        for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
+        {
+            string[] elements = data[i].Split(new char[] { ',' });
+            if (elements[0].Trim().Length == 0)// 아이디 표기가 없으면 제외
+                continue;
+
+            SkillStruct tempData = new SkillStruct
+            {
+                ID = elements[0].Trim(),
+                skillName = elements[1],
+                skillExplanation = elements[2],
+                level = IntTryParse(elements[3]),
+                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[4]),// 기본 에너지의 몇%
+                energyAmount = FloatTryParse(elements[5]),
+                castingTime = FloatTryParse(elements[6]),// 0일 경우 즉시시전
+                coolingTime = FloatTryParse(elements[7]),
+                distance = FloatTryParse(elements[8]),
+            };
+            skills.Add(tempData);
+        }
+    }
 
     //void SetUnitData(TextAsset _textAsset)
     //{
@@ -145,17 +179,6 @@ public class Data_Manager : Data_Parse
         public string color;
         public int size;
         public bool bold;
-
-        //public enum TextType
-        //{
-        //    None,
-        //    Move,
-        //    MoveAll,
-        //    Wave,
-        //    Squash,
-        //    Jitter,
-        //    Test
-        //}
         public Data_DialogType.TextStyle textStyle;
         public float speed;
 
@@ -164,24 +187,48 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
-    public Singleton_Data.Translation translation;
-    //[System.Serializable]
-    //public class DialogTranslation
-    //{
-    //    public string ID;
-    //    public string KR;
-    //    public string EN;
-    //    public string JP;
-    //    public string CN;
-    //}
-    //public List<DialogTranslation> dialogTranslation;
+    [System.Serializable]
+    public class SkillTranslation
+    {
+        public string ID;
+        public string KR;
+        public string EN;
+        public string JP;
+        public string CN;
+    }
+    public List<SkillTranslation> skillTranslation;
+
+    [System.Serializable]
+    public struct SkillStruct
+    {
+        public string ID;
+        public string skillName;
+        [TextArea]
+        public string skillExplanation;
+        public int level;
+        public enum EnergyType
+        {
+            Mana,
+            Rage,
+            Stamina
+        }
+        public EnergyType energyType;// 기본 에너지의 몇%
+        public float energyAmount;
+        public float castingTime;// 0일 경우 즉시시전
+        public float coolingTime;
+        public float distance;
+    }
+    public List<SkillStruct> skills;
+
+    public Singleton_Data.Translation translation;// 번역 타입
 
     private void Awake()
     {
         Singleton_Data.INSTANCE.translation = translation;
 
-        Singleton_Data.INSTANCE.SetDictionary_Dialog(dialog);
-        //Singleton_Data.INSTANCE.SetDictionary_DialogTranslation(dialogTranslation);
+        Singleton_Data.INSTANCE.SetDictionary_Dialog(dialog); 
+        Singleton_Data.INSTANCE.SetDictionary_SkillTranslation(skillTranslation);
+        Singleton_Data.INSTANCE.SetDictionary_Skill(skills);
         Singleton_Data.INSTANCE.SetDictionary_Audio(audioClip);
     }
 }
