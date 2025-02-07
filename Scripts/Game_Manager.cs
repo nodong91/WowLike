@@ -447,9 +447,34 @@ public class Game_Manager : MonoBehaviour
         for (int i = 0; i < skillStructs.Length; i++)
         {
             skillStructs[i].skillName = SkillName(skillStructs[i].skillName);
-            skillStructs[i].skillExplanation = SkillName(skillStructs[i].skillExplanation);
-            skillStructs[i].skillExplanation.Replace("{T}", skillStructs[i].energyAmount.ToString());// 색변경되게 리치코드 추가
+            string explanation = SkillName(skillStructs[i].skillExplanation);
+            string color = "FF0000";// 에너지
+            string e = $"<color=#{color}>에너지 : {skillStructs[i].energyType.ToString()} {skillStructs[i].energyAmount.ToString()}</color>";
+            explanation = explanation.Replace("{e}", e);
+
+            color = "00FF00";// 레벨
+            string l = $"<color=#{color}>레벨 : {skillStructs[i].level.ToString()}</color>";
+            explanation = explanation.Replace("{l}", l);
+
+            color = "0000FF";// 캐스팅 타임
+            string a = $"<color=#{color}>캐스팅 : {skillStructs[i].castingTime.ToString()}</color>";
+            explanation = explanation.Replace("{a}", a);
+
+            color = "000000";// 쿨타임
+            string o = $"<color=#{color}>쿨타임 : {skillStructs[i].coolingTime.ToString()}</color>";
+            explanation = explanation.Replace("{o}", o);
+
+            color = "FFFF00";// 효과 거리
+            string d = $"<color=#{color}>효과 거리 : {skillStructs[i].distance.ToString()}</color>";
+            explanation = explanation.Replace("{d}", d);
+
+            color = "FF00FF";// 효과 정도 (데미지 같은...)
+            string v = $"<color=#{color}>효과 정도 : {skillStructs[i].energyAmount.ToString()}</color>";
+            explanation = explanation.Replace("{v}", v);
+
+            skillStructs[i].skillExplanation = explanation;
         }
+        UI_Manager.instance.testText.text = skillStructs[0].skillExplanation;
     }
 
     string SkillName(string _id)

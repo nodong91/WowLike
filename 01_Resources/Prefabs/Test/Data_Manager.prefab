@@ -45,12 +45,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ResourceFolders:
-  - {fileID: 102900000, guid: 549a166cc9502264d96a8bd4d1d19bf3, type: 3}
+  - {fileID: 102900000, guid: 2263c0d7ba2b7b04494d6c3efd65953a, type: 3}
+  - {fileID: 102900000, guid: 2cd6015e889d0f6429429fbb35d5e507, type: 3}
   CSV_Data:
   - {fileID: 4900000, guid: 71bdaee5370dcdd4c8b3297416a3ccb1, type: 3}
   - {fileID: 4900000, guid: 628e171176303a44abb14ed274ea1d38, type: 3}
   - {fileID: 4900000, guid: 008e1147e8ccd8746b2c5986f59da859, type: 3}
-  - {fileID: 4900000, guid: 69e55b57e21c9a849acc2637b32a5084, type: 3}
   dialog:
   - ID: 50010
     color: 
@@ -234,15 +234,17 @@ MonoBehaviour:
     JP: "\u80B2\u6210"
     CN: "\u80B2\u6210"
   - ID: 10013
-    KR: "{T} {50011}\uC774 {50012}"
-    EN: '{50010} {50011}is {50012}'
-    JP: "{50010} {50011}\u304C {50012}"
-    CN: "{50010} {50011}\u4E4B {50012}"
+    KR: "{e} {l}\uC774 {a} {o} {d}"
+    EN: '{e} {l}is {a} {o} {d}'
+    JP: "{e} {l}\u304C {a} {o} {d}"
+    CN: "{e} {l}\u4E4B {a} {o} {d}"
   skills:
   - ID: 10001
     skillName: 10010
     skillExplanation: 10013
     level: 1
+    skillType: 0
+    value: 2
     energyType: 0
     energyAmount: 1
     castingTime: 0
@@ -252,6 +254,8 @@ MonoBehaviour:
     skillName: 10010
     skillExplanation: 10013
     level: 1
+    skillType: 0
+    value: 2
     energyType: 1
     energyAmount: 1
     castingTime: 0
@@ -261,6 +265,8 @@ MonoBehaviour:
     skillName: 10010
     skillExplanation: 10013
     level: 1
+    skillType: 1
+    value: 2
     energyType: 2
     energyAmount: 1
     castingTime: 0
@@ -270,9 +276,11 @@ MonoBehaviour:
     skillName: 10010
     skillExplanation: 10013
     level: 1
+    skillType: 0
+    value: 2
     energyType: 0
     energyAmount: 1
     castingTime: 0
     coolingTime: 1
     distance: 1
-  translation: 2
+  translation: 0

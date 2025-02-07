@@ -427,6 +427,7 @@ MonoBehaviour:
   exitButton: {fileID: 3330576950066459097}
   canvas: {fileID: 3094612463743659972}
   dialog: {fileID: 8207738682614622772}
+  testText: {fileID: 0}
   hpUI: {fileID: 0}
   instanceParent: {fileID: 8585609702635264319}
 --- !u!1 &8155949750663051823

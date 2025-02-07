@@ -6,26 +6,6 @@ using System.IO;
 
 #if UNITY_EDITOR
 using UnityEditor;
-//[CustomEditor(typeof(Editor_MeshCombine))]
-//public class MeshCombine_Editor : Editor
-//{
-//    public override void OnInspectorGUI()
-//    {
-//        GUIStyle fontStyle = new GUIStyle(GUI.skin.button);
-//        fontStyle.fontSize = 15;
-//        fontStyle.normal.textColor = Color.yellow;
-
-//        Editor_MeshCombine Inspector = target as Editor_MeshCombine;
-//        if (GUILayout.Button("Combine", fontStyle, GUILayout.Height(30f)))
-//        {
-//            Inspector.SetMeshCombine();
-//            EditorUtility.SetDirty(Inspector);
-//        }
-//        GUILayout.Space(10f);
-
-//        base.OnInspectorGUI();
-//    }
-//}
 #endif
 namespace P01.Editor
 {

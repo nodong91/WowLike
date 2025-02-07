@@ -9,8 +9,10 @@ public class UI_Manager : MonoBehaviour
     public Button openButton, exitButton;
     public CanvasGroup canvas;
     bool open;
-    [Header("Instance")]
+    [Header("[ Instance ]")]
     public Dialog_Manager dialog;
+    public TMPro.TMP_Text testText;
+
     public static UI_Manager instance;
 
     private void Awake()

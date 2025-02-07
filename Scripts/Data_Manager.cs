@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -126,11 +125,13 @@ public class Data_Manager : Data_Parse
                 skillName = elements[1],
                 skillExplanation = elements[2],
                 level = IntTryParse(elements[3]),
-                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[4]),// 기본 에너지의 몇%
-                energyAmount = FloatTryParse(elements[5]),
-                castingTime = FloatTryParse(elements[6]),// 0일 경우 즉시시전
-                coolingTime = FloatTryParse(elements[7]),
-                distance = FloatTryParse(elements[8]),
+                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[4]),// 기본 데미지의 몇%
+                value = FloatTryParse(elements[5]),
+                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[6]),// 기본 에너지의 몇%
+                energyAmount = FloatTryParse(elements[7]),
+                castingTime = FloatTryParse(elements[8]),// 0일 경우 즉시시전
+                coolingTime = FloatTryParse(elements[9]),
+                distance = FloatTryParse(elements[10]),
             };
             skills.Add(tempData);
         }
@@ -206,6 +207,14 @@ public class Data_Manager : Data_Parse
         [TextArea]
         public string skillExplanation;
         public int level;
+        public enum SkillType
+        {
+            Damage,
+            Heal,
+
+        }
+        public SkillType skillType;
+        public float value;
         public enum EnergyType
         {
             Mana,

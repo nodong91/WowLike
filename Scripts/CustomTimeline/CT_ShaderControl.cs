@@ -41,8 +41,9 @@ namespace P01.Editor
             SetFloat,
             SetVector,
             SetColor,
+            SetHDRColor
         }
-        //[System.Serializable]
+
         public class ControlClass
         {
             public ShaderControlType controlType;
@@ -50,6 +51,8 @@ namespace P01.Editor
             public float SetFloat;
             public Vector4 SetVector;
             public Color SetColor;
+            [ColorUsage(true, true)]
+            public Color SetHDRColor;
         }
         public Renderer[] renderers;
 
@@ -77,10 +80,14 @@ namespace P01.Editor
                         case ShaderControlType.SetColor:
                             materials[j].SetColor(_controlClass.SetName, _controlClass.SetColor);
                             break;
+
+                        case ShaderControlType.SetHDRColor:
+                            materials[j].SetColor(_controlClass.SetName, _controlClass.SetHDRColor);
+                            break;
                     }
                 }
             }
-            Debug.Log("³ð¤·¤¡"+_controlClass.SetName);
+            Debug.Log(_controlClass.controlType.ToString() + " : " + _controlClass.SetName);
         }
     }
 }
