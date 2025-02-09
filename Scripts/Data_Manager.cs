@@ -46,9 +46,9 @@ public class Data_Manager : Data_Parse
             }
             else if (csv_Type.Contains("Skill"))
             {
-                if (csv_Type.Contains("Translation"))
+                if (csv_Type.Contains("String"))
                 {
-                    SetSkillTranslation(GetCSV_Data[i]);
+                    SetSkillString(GetCSV_Data[i]);
                 }
                 else
                 {
@@ -87,28 +87,6 @@ public class Data_Manager : Data_Parse
         }
     }
 
-    void SetSkillTranslation(TextAsset _textAsset)
-    {
-        skillTranslation.Clear();
-        string[] data = _textAsset.text.Split(new char[] { '\n' });
-        for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
-        {
-            string[] elements = data[i].Split(new char[] { ',' });
-            if (elements[0].Trim().Length == 0)// 아이디 표기가 없으면 제외
-                continue;
-
-            SkillTranslation tempData = new SkillTranslation
-            {
-                ID = elements[0].Trim(),
-                KR = elements[1],
-                EN = elements[2],
-                JP = elements[3],
-                CN = elements[4],
-            };
-            skillTranslation.Add(tempData);
-        }
-    }
-
     void SetSkill(TextAsset _textAsset)
     {
         skills.Clear();
@@ -123,17 +101,40 @@ public class Data_Manager : Data_Parse
             {
                 ID = elements[0].Trim(),
                 skillName = elements[1],
-                skillExplanation = elements[2],
-                level = IntTryParse(elements[3]),
-                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[4]),// 기본 데미지의 몇%
-                value = FloatTryParse(elements[5]),
-                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[6]),// 기본 에너지의 몇%
-                energyAmount = FloatTryParse(elements[7]),
-                castingTime = FloatTryParse(elements[8]),// 0일 경우 즉시시전
-                coolingTime = FloatTryParse(elements[9]),
-                distance = FloatTryParse(elements[10]),
+                skillDescription = elements[2],
+                icon = FindSprite(elements[3]),
+                level = IntTryParse(elements[4]),
+                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[5]),// 기본 데미지의 몇%
+                value = FloatTryParse(elements[6]),
+                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[7]),// 기본 에너지의 몇%
+                energyAmount = FloatTryParse(elements[8]),
+                castingTime = FloatTryParse(elements[9]),// 0일 경우 즉시시전
+                coolingTime = FloatTryParse(elements[10]),
+                distance = FloatTryParse(elements[11]),
             };
             skills.Add(tempData);
+        }
+    }
+
+    void SetSkillString(TextAsset _textAsset)
+    {
+        skillString.Clear();
+        string[] data = _textAsset.text.Split(new char[] { '\n' });
+        for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
+        {
+            string[] elements = data[i].Split(new char[] { ',' });
+            if (elements[0].Trim().Length == 0)// 아이디 표기가 없으면 제외
+                continue;
+
+            SkillString tempData = new SkillString
+            {
+                ID = elements[0].Trim(),
+                KR = elements[1],
+                EN = elements[2],
+                JP = elements[3],
+                CN = elements[4],
+            };
+            skillString.Add(tempData);
         }
     }
 
@@ -188,8 +189,9 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
+
     [System.Serializable]
-    public class SkillTranslation
+    public class SkillString
     {
         public string ID;
         public string KR;
@@ -197,7 +199,7 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
-    public List<SkillTranslation> skillTranslation;
+    public List<SkillString> skillString;
 
     [System.Serializable]
     public struct SkillStruct
@@ -205,7 +207,8 @@ public class Data_Manager : Data_Parse
         public string ID;
         public string skillName;
         [TextArea]
-        public string skillExplanation;
+        public string skillDescription;
+        public Sprite icon;
         public int level;
         public enum SkillType
         {
@@ -229,6 +232,39 @@ public class Data_Manager : Data_Parse
     }
     public List<SkillStruct> skills;
 
+    [System.Serializable]
+    public struct UnitInfomation
+    {
+        public string ID;
+        public string Name;
+        public string Description;// 설명
+        //General
+        public int Strength;
+        public int Agility;
+        public int Constitution;
+        public int Intelligence;
+        public int Wisdom;
+
+        public struct UnitAttributes
+        {
+            public float Health;// 체력
+            public float Mana;// 마나
+            public float Defense;// 방어
+            public float AttackPower;// 힘 공격력
+            public float SpellPower;// 지능 공격력
+            public float RangePower;// 원거리 공격력
+            public float MoveSpeed;
+        }
+        public UnitAttributes attributes;
+
+        public void SetUnitAttributes()
+        {
+            attributes.Health = Constitution;
+            attributes.Mana = Wisdom;
+        }
+    }
+    public List <UnitInfomation> unitInfomations;
+
     public Singleton_Data.Translation translation;// 번역 타입
 
     private void Awake()
@@ -236,7 +272,7 @@ public class Data_Manager : Data_Parse
         Singleton_Data.INSTANCE.translation = translation;
 
         Singleton_Data.INSTANCE.SetDictionary_Dialog(dialog); 
-        Singleton_Data.INSTANCE.SetDictionary_SkillTranslation(skillTranslation);
+        Singleton_Data.INSTANCE.SetDictionary_SkillTranslation(skillString);
         Singleton_Data.INSTANCE.SetDictionary_Skill(skills);
         Singleton_Data.INSTANCE.SetDictionary_Audio(audioClip);
     }

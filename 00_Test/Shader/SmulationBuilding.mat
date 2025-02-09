@@ -55,7 +55,7 @@ Material:
     - _Radius: 1
     - _TEXTURETYPE: 0
     m_Colors:
-    - Color_848ca65834b34db4bdde3dee4c8883d3: {r: 0.6431373, g: 0.6431373, b: 0.6431373, a: 0.1490196}
+    - Color_848ca65834b34db4bdde3dee4c8883d3: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
     - _CellScale: {r: 10, g: 10, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _MainColor: {r: 1, g: 0, b: 0, a: 0}

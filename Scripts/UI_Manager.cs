@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,8 +9,12 @@ public class UI_Manager : MonoBehaviour
     public CanvasGroup canvas;
     bool open;
     [Header("[ Instance ]")]
+    public Transform instanceParent;
     public Dialog_Manager dialog;
     public TMPro.TMP_Text testText;
+    public Dictionary<Transform, FollowStruct> dictFollow = new Dictionary<Transform, FollowStruct>();
+    Coroutine followUI;
+    public UI_HP uiHP;
 
     public static UI_Manager instance;
 
@@ -53,6 +56,28 @@ public class UI_Manager : MonoBehaviour
 
 
 
+
+
+
+
+    public void SkillText(string _text)
+    {
+        testText.text = _text;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public struct FollowStruct
     {
         public Transform followTarget;
@@ -64,10 +89,7 @@ public class UI_Manager : MonoBehaviour
             followOoffset = _offset;
         }
     }
-    public Dictionary<Transform, FollowStruct> dictFollow = new Dictionary<Transform, FollowStruct>();
-    Coroutine followUI;
-    public GameObject hpUI;
-    public Transform instanceParent;
+
     public void AddFollowUI(Transform _addFollow, FollowStruct _addStruct)
     {
         if (dictFollow.ContainsKey(_addFollow) == false)
@@ -82,15 +104,16 @@ public class UI_Manager : MonoBehaviour
         dictFollow.Remove(_addFollow);
     }
 
-    public void AddHP()
+    public void AddHP(Transform _target)
     {
-        Transform target = Game_Manager.instance.target;
+        if (_target == null)
+            return;
         FollowStruct followStruct = new FollowStruct
         {
-            followTarget = target,
+            followTarget = _target,
             followOoffset = Vector3.up,
         };
-        GameObject inst = Instantiate(hpUI, instanceParent);
+        UI_HP inst = Instantiate(uiHP, instanceParent);
         AddFollowUI(inst.transform, followStruct);
     }
 

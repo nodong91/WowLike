@@ -31,10 +31,6 @@ public class Game_Manager : MonoBehaviour
         Focus
     }
     public RotateType rotateType;
-    public Skill_Slot slot;
-    public Transform slotParent;
-    public Skill_Slot[] slotArray;
-    public int currentIndex;
     [Header("Instance")]
     public Audio_Manager audioManager;
 
@@ -48,6 +44,7 @@ public class Game_Manager : MonoBehaviour
     void Start()
     {
         TestSkillSetting();
+        FollowTest();
 
         mainCamera = Camera.main;
         CameraManager.current.rotateDelegate = Rotate;
@@ -70,13 +67,6 @@ public class Game_Manager : MonoBehaviour
 
     void SetSkillSlot()
     {
-        slotArray = new Skill_Slot[skillStructs.Length];
-        for (int i = 0; i < slotArray.Length; i++)
-        {
-            int index = i;
-            slotArray[index] = Instantiate(slot, slotParent);
-            slotArray[index].button.onClick.AddListener(delegate { InputSlot(index); });
-        }
         Singleton_Controller.INSTANCE.key_1 = InputKey01;
         Singleton_Controller.INSTANCE.key_2 = InputKey02;
         Singleton_Controller.INSTANCE.key_3 = InputKey03;
@@ -96,17 +86,18 @@ public class Game_Manager : MonoBehaviour
 
     void InputSlot(int _index)
     {
-        Debug.LogWarning("InputKey" + _index.ToString("N2"));
+        Debug.LogWarning("슬롯 : " + _index.ToString());
         currentIndex = _index;
-        if (slotArray[currentIndex].isActive == true)
+        SetSkillText(currentIndex);
+        if (slotArray[currentIndex].GetIsActive == true)
         {
+            slotArray[currentIndex].ActionButton();
             Fire();
         }
     }
 
     void InputKey01(bool _input)
     {
-        FollowTest();
         if (_input == false)
             InputSlot(0);
     }
@@ -289,9 +280,10 @@ public class Game_Manager : MonoBehaviour
 
     void SetDirection(Vector3 _direction)
     {
-        Vector3 temp = mainCamera.transform.TransformDirection(_direction);
-        direction = player.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
-        guide.transform.position = direction;
+        Vector3 dir = new Vector3(_direction.x, 0, _direction.y);
+        Vector3 temp = mainCamera.transform.TransformDirection(dir).normalized;
+        direction = player.transform.position + new Vector3(temp.x, 0f, temp.z);
+        guide.transform.position = dir;
         Moving();
         Rotate();
     }
@@ -430,6 +422,10 @@ public class Game_Manager : MonoBehaviour
     public Skill_Bullet bullet;
     public float unitSize = 1f;
     float targetDistance;
+    public int currentIndex;
+    public Skill_Slot slot;
+    public Transform slotParent;
+    public Skill_Slot[] slotArray;
     public Data_Manager.SkillStruct[] skillStructs;
 
     void TestSkillSetting()
@@ -440,6 +436,16 @@ public class Game_Manager : MonoBehaviour
         skillStructs[2] = Singleton_Data.INSTANCE.Dict_Skill["10003"];
         skillStructs[3] = Singleton_Data.INSTANCE.Dict_Skill["10004"];
         TestSkillName();
+
+        slotArray = new Skill_Slot[skillStructs.Length];
+        for (int i = 0; i < slotArray.Length; i++)
+        {
+            int index = i;
+            slotArray[index] = Instantiate(slot, slotParent);
+            slotArray[index].button.onClick.AddListener(delegate { InputSlot(index); });
+            string quickIndex = (index + 1).ToString();// 단축키
+            slotArray[index].SetSlot(quickIndex, skillStructs[index]);
+        }
     }
 
     void TestSkillName()
@@ -447,7 +453,7 @@ public class Game_Manager : MonoBehaviour
         for (int i = 0; i < skillStructs.Length; i++)
         {
             skillStructs[i].skillName = SkillName(skillStructs[i].skillName);
-            string explanation = SkillName(skillStructs[i].skillExplanation);
+            string explanation = SkillName(skillStructs[i].skillDescription);
             string color = "FF0000";// 에너지
             string e = $"<color=#{color}>에너지 : {skillStructs[i].energyType.ToString()} {skillStructs[i].energyAmount.ToString()}</color>";
             explanation = explanation.Replace("{e}", e);
@@ -472,15 +478,19 @@ public class Game_Manager : MonoBehaviour
             string v = $"<color=#{color}>효과 정도 : {skillStructs[i].energyAmount.ToString()}</color>";
             explanation = explanation.Replace("{v}", v);
 
-            skillStructs[i].skillExplanation = explanation;
+            skillStructs[i].skillDescription = explanation;
         }
-        UI_Manager.instance.testText.text = skillStructs[0].skillExplanation;
+    }
+
+    void SetSkillText(int _index)
+    {
+        UI_Manager.instance.SkillText(skillStructs[_index].skillDescription);
     }
 
     string SkillName(string _id)
     {
         Singleton_Data.Translation translation = Singleton_Data.INSTANCE.translation;
-        Data_Manager.SkillTranslation skill = Singleton_Data.INSTANCE.Dict_SkillTranslation[_id];
+        Data_Manager.SkillString skill = Singleton_Data.INSTANCE.Dict_SkillString[_id];
         string temp = string.Empty;
         switch (translation)
         {
@@ -513,6 +523,7 @@ public class Game_Manager : MonoBehaviour
     {
         if (target == null)
             return;
+
         Skill_Bullet instBullet = Instantiate(bullet, this.transform);
         instBullet.transform.position = player.position;
         instBullet.SetTarget(target, unitSize);
@@ -525,13 +536,17 @@ public class Game_Manager : MonoBehaviour
             targetDistance = Vector3.Distance(target.position, player.transform.position);
             for (int i = 0; i < skillStructs.Length; i++)
             {
-                slotArray[i].IsActive(skillStructs[i].distance > targetDistance);
+                slotArray[i].InDistance(skillStructs[i].distance > targetDistance);
             }
         }
     }
 
+    public Transform[] testTarget;
     void FollowTest()
     {
-        UI_Manager.instance.AddHP();
+        for (int i = 0; i < testTarget.Length; i++)
+        {
+            UI_Manager.instance.AddHP(testTarget[i]);
+        }
     }
 }

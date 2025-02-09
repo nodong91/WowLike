@@ -13,9 +13,8 @@ public class Data_Parse : MonoBehaviour
     public virtual void DataSetting()
     {
         //prop = new List<GameObject>();
-        //sprite = new List<Sprite>();
+        sprites = new List<Sprite>();
         audioClip.Clear();
-        //defaultItem = new List<Data_ItemSet>();
         CSV_Data.Clear();
         dialog.Clear();
 
@@ -48,7 +47,7 @@ public class Data_Parse : MonoBehaviour
         {
             var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(Sprite));
             Sprite addData = data as Sprite;
-            //sprite.Add(addData);
+            sprites.Add(addData);
             EditorUtility.SetDirty(data);
         }
 
@@ -139,15 +138,15 @@ public class Data_Parse : MonoBehaviour
     //    return null;
     //}
 
-    //public Sprite FindSprite(string _str)
-    //{
-    //    for (int i = 0; i < sprite.Count; i++)
-    //    {
-    //        if (_str.Equals(sprite[i].name))
-    //            return sprite[i];
-    //    }
-    //    return null;
-    //}
+    public Sprite FindSprite(string _str)
+    {
+        for (int i = 0; i < sprites.Count; i++)
+        {
+            if (_str.Equals(sprites[i].name))
+                return sprites[i];
+        }
+        return null;
+    }
 
     //public Data_ItemSet FindDefaultItem(string _str)
     //{
@@ -166,4 +165,5 @@ public class Data_Parse : MonoBehaviour
     public List<TextAsset> GetCSV_Data { get { return CSV_Data; } }
     public List<Data_Manager.DialogInfoamtion> dialog = new List<Data_Manager.DialogInfoamtion>();
     public List<AudioClip> audioClip = new List<AudioClip>();
+    public List<Sprite> sprites = new List<Sprite>();
 }

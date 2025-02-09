@@ -1,5 +1,5 @@
-ID,Name,Explanation,Level,SkillType,Value,EnergyType,EnergyAmount,CastingTime,CoolingTime,Distance
-10001,10010,10013,1,Damage,2,Mana,1,0,1,1
-10002,10010,10013,1,Damage,2,Rage,1,0,1,1
-10003,10010,10013,1,Heal,2,Stamina,1,0,1,1
-10004,10010,10013,1,Damage,2,Mana,1,0,1,1
+ID,Name,Explanation,Icon,Level,SkillType,Value,EnergyType,EnergyAmount,CastingTime,CoolingTime,Distance
+10001,10010,10013,store_icon03,1,Damage,2,Mana,1,0,1,1
+10002,10010,10013,store_icon04,1,Damage,2,Rage,1,1,2,2
+10003,10010,10013,store_icon05,1,Heal,2,Stamina,1,2,3,3
+10004,10010,10013,store_icon06,1,Damage,2,Mana,1,3,4,4

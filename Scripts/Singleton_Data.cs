@@ -4,7 +4,7 @@ using UnityEngine;
 public class Singleton_Data : MonoSingleton<Singleton_Data>
 {
     public Dictionary<string, Data_Manager.DialogInfoamtion> Dict_Dialog = new Dictionary<string, Data_Manager.DialogInfoamtion>();
-    public Dictionary<string, Data_Manager.SkillTranslation> Dict_SkillTranslation = new Dictionary<string, Data_Manager.SkillTranslation>();
+    public Dictionary<string, Data_Manager.SkillString> Dict_SkillString= new Dictionary<string, Data_Manager.SkillString>();
     public Dictionary<string, Data_Manager.SkillStruct> Dict_Skill = new Dictionary<string, Data_Manager.SkillStruct>();
     public Dictionary<string, AudioClip> Dict_Audio = new Dictionary<string, AudioClip>();
     public Translation translation;
@@ -26,19 +26,19 @@ public class Singleton_Data : MonoSingleton<Singleton_Data>
         }
     }
 
-    public void SetDictionary_SkillTranslation(List<Data_Manager.SkillTranslation> _data)
+    public void SetDictionary_SkillTranslation(List<Data_Manager.SkillString> _data)
     {
-        Dict_SkillTranslation = new Dictionary<string, Data_Manager.SkillTranslation>();
+        Dict_SkillString = new Dictionary<string, Data_Manager.SkillString>();
         for (int i = 0; i < _data.Count; i++)
         {
             string id = _data[i].ID;
-            if (Dict_SkillTranslation.ContainsKey(id) == true)
+            if (Dict_SkillString.ContainsKey(id) == true)
             {
                 Debug.LogError($"{id}와 같은 이름이 존재 합니다.");
             }
             else
             {
-                Dict_SkillTranslation[id] = _data[i];
+                Dict_SkillString[id] = _data[i];
             }
         }
     }
