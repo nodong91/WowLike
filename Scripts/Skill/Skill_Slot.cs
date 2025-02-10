@@ -32,7 +32,7 @@ public class Skill_Slot : MonoBehaviour
         SetCooling(1f);
     }
 
-    public void ActionButton()
+    public void CoolingSlot()
     {
         //dele_Action(true);
         StartCoroutine(CoolingSkill());

@@ -5,7 +5,6 @@ using System.Collections;
 public class CameraManager : MonoBehaviour
 {
     public CinemachineCamera cinemachineCamera;
-    public Transform target;
     public Vector3 offset;
     CinemachineRotationComposer rotationComposer;
     CinemachineOrbitalFollow orbitalFollow;
@@ -43,7 +42,7 @@ public class CameraManager : MonoBehaviour
         cinemachineBasicMultiChannelPerlin = cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
         rotationComposer = cinemachineCamera.GetComponent<CinemachineRotationComposer>();
         SetDefault();
-        GetTarget(target);
+        //GetTarget(target);
     }
 
     void SetDefault()
@@ -62,9 +61,9 @@ public class CameraManager : MonoBehaviour
         orbitalFollow.Orbits = newSetting;
     }
 
-    public void GetTarget(Transform _trans)
+    public void SetTarget(Transform _target)
     {
-        cinemachineCamera.Target.TrackingTarget = _trans;
+        cinemachineCamera.Target.TrackingTarget = _target;
         rotationComposer.TargetOffset = offset;
     }
 

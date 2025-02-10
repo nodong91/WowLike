@@ -91,9 +91,35 @@ public class Game_Manager : MonoBehaviour
         Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
         if (slotArray[currentIndex].GetIsActive == true)
         {
-            slotArray[currentIndex].ActionButton();
+            Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);// »ßÁö¿¥Å×½ºÆ®
+            if (skillStructs[currentIndex].castingTime > 0)
+            {
+                StartCoroutine(Casting(slotArray[currentIndex]));
+            }
+            else
+            {
+                Fire();
+                slotArray[currentIndex].CoolingSlot();
+            }
+        }
+    }
+
+    IEnumerator Casting(Skill_Slot _slotArray)
+    {
+        float castingTime = 1f / skillStructs[currentIndex].castingTime;
+        float normalize = 0f;
+        while (normalize < 1f && inputDir == 0)
+        {
+            normalize += Time.deltaTime * castingTime;
+            UI_Manager.instance.SkillCasting(normalize);
+            yield return null;
+        }
+        UI_Manager.instance.SkillCasting(0f);
+
+        if (inputDir == 0)
+        {
             Fire();
-            Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);
+            _slotArray.CoolingSlot();
         }
     }
 
@@ -538,7 +564,7 @@ public class Game_Manager : MonoBehaviour
     public Transform[] testTarget;
     void FollowTest()
     {
-        CameraManager.instance.target = player;
+        CameraManager.instance.SetTarget(player);
         for (int i = 0; i < testTarget.Length; i++)
         {
             UI_Manager.instance.AddHPUI(testTarget[i]);

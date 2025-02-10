@@ -163,7 +163,15 @@ public class UI_Manager : MonoBehaviour
             slotArray[index].button.onClick.AddListener(delegate { _action(index); });
             string quickIndex = (index + 1).ToString();// ´ÜÃàÅ°
             slotArray[index].SetSlot(quickIndex, _skillStruct[index]);
-            //UI_Manager.instance.SetSkillSlot(SetSkillSlot);
         }
+        SkillCasting(0f);
+    }
+    public CanvasGroup castingCanvas;
+    public Image castingBar;
+    public void SkillCasting(float _value)
+    {
+        castingBar.fillAmount = _value;
+        float alpha = _value > 0? 1f: 0f;
+        castingCanvas.alpha = alpha;
     }
 }
