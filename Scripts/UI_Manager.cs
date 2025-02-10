@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class UI_Manager : MonoBehaviour
 {
+    public Option_Manager optionManager;
+
     public Button openButton, exitButton;
     public CanvasGroup canvas;
     bool open;
@@ -23,11 +25,12 @@ public class UI_Manager : MonoBehaviour
         instance = this;
     }
 
-    void Start()
+    public void SetUIManager()
     {
         canvas.gameObject.SetActive(open);
         openButton.onClick.AddListener(OpenCanvas);
         exitButton.onClick.AddListener(QuitGame);
+        optionManager.SetAudioManager();
     }
 
     void OpenCanvas()
@@ -104,7 +107,7 @@ public class UI_Manager : MonoBehaviour
         dictFollow.Remove(_addFollow);
     }
 
-    public void AddHP(Transform _target)
+    public void AddHPUI(Transform _target)
     {
         if (_target == null)
             return;
@@ -134,6 +137,33 @@ public class UI_Manager : MonoBehaviour
                 child.Key.position = screenPosition;
             }
             yield return null;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public Skill_Slot slot;
+    public Transform slotParent;
+    public Skill_Slot[] slotArray;
+    public delegate void Test(int index);
+    public void SetSkillSlot(Test _action, Data_Manager.SkillStruct[] _skillStruct)
+    {
+        slotArray = new Skill_Slot[_skillStruct.Length];
+        for (int i = 0; i < slotArray.Length; i++)
+        {
+            int index = i;
+            slotArray[index] = Instantiate(slot, slotParent);
+            slotArray[index].button.onClick.AddListener(delegate { _action(index); });
+            string quickIndex = (index + 1).ToString();// ´ÜÃàÅ°
+            slotArray[index].SetSlot(quickIndex, _skillStruct[index]);
+            //UI_Manager.instance.SetSkillSlot(SetSkillSlot);
         }
     }
 }

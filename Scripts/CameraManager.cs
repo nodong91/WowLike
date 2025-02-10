@@ -8,7 +8,6 @@ public class CameraManager : MonoBehaviour
     public Transform target;
     public Vector3 offset;
     CinemachineRotationComposer rotationComposer;
-    //CinemachineFollow cinemachineFollow;
     CinemachineOrbitalFollow orbitalFollow;
     CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin;
 
@@ -30,11 +29,11 @@ public class CameraManager : MonoBehaviour
     public delegate void DelegateInputScroll(float _input);
     public DelegateInputScroll delegateInputScroll;
 
-    public static CameraManager current;
+    public static CameraManager instance;
 
     private void Awake()
     {
-        current = this;
+        instance = this;
         delegateInputScroll = InputScroll;
     }
 
