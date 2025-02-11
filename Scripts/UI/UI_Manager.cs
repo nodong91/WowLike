@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class UI_Manager : MonoBehaviour
 {
-    public Option_Manager optionManager;
+    public UI_Option uiOption;
 
     public Button openButton, exitButton;
     public CanvasGroup canvas;
@@ -31,7 +31,7 @@ public class UI_Manager : MonoBehaviour
         canvas.gameObject.SetActive(open);
         openButton.onClick.AddListener(OpenCanvas);
         exitButton.onClick.AddListener(QuitGame);
-        optionManager.SetAudioManager();
+        uiOption.SetAudioManager();
     }
 
     void OpenCanvas()

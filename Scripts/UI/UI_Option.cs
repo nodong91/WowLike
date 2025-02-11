@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Option_Manager : MonoBehaviour
+public class UI_Option : MonoBehaviour
 {
     [Header("[ Sound ]")]
     public Slider bgmSlider;
