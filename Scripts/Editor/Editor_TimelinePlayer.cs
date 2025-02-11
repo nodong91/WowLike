@@ -1,7 +1,8 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
-
+using Unity.Cinemachine;
+using System.Collections.Generic;
 
 
 #if UNITY_EDITOR
@@ -20,7 +21,17 @@ namespace P01.Editor
         }
 
         PlayableDirector[] playableDirectors;
+        Dictionary<GameObject, CinemachineCamera> cinemachineCameras = new Dictionary<GameObject, CinemachineCamera>();
         bool tutorialToggle;
+
+        public class ObjectStruct
+        {
+            public bool structEnabled;
+            public GameObject structObject;
+        }
+        public List<ObjectStruct> objectStruct = new List<ObjectStruct>();
+        public bool toggleObject;
+        public Vector2 scrollPos;
         private void OnGUI()
         {
             SetTutorial();
@@ -43,17 +54,11 @@ namespace P01.Editor
 
             if (Application.isPlaying == true)
             {
-                Camera main = Camera.main;
-                if (main != null)
+                Camera mainCamera = Camera.main;
+                if (mainCamera != null)
                 {
-                    main.enabled = true;
-                    main.gameObject.SetActive(true);
-                }
-
-                playableDirectors = Object.FindObjectsByType<PlayableDirector>(FindObjectsSortMode.InstanceID);
-                for (int i = 0; i < playableDirectors.Length; i++)
-                {
-                    EditorGUILayout.ObjectField(playableDirectors[i].gameObject, typeof(GameObject), true);
+                    mainCamera.enabled = true;
+                    mainCamera.gameObject.SetActive(true);
                 }
 
                 if (GUILayout.Button("연출 시작", buttonText, GUILayout.Height(30f)))
@@ -63,6 +68,67 @@ namespace P01.Editor
             }
             else
             {
+                if (GUILayout.Button("미리 세팅", buttonText, GUILayout.Height(30f)))
+                {
+                    // 타임라인 세팅
+                    playableDirectors = Object.FindObjectsByType<PlayableDirector>(FindObjectsSortMode.None);
+                    objectStruct = new List<ObjectStruct>();
+                    Data_Manager[] enabledObject = Object.FindObjectsByType<Data_Manager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+                    for (int i = 0; i < enabledObject.Length; i++)
+                    {
+                        ObjectStruct newStruct = new ObjectStruct
+                        {
+                            structEnabled = enabledObject[i].gameObject.activeSelf,
+                            structObject = enabledObject[i].gameObject
+                        };
+                        objectStruct.Add(newStruct);
+                    }
+
+                    CinemachineCamera[] child = Object.FindObjectsByType<CinemachineCamera>
+                        (FindObjectsInactive.Include, FindObjectsSortMode.None);
+                    for (int c = 0; c < child.Length; c++)
+                    {
+                        cinemachineCameras[child[c].gameObject] = child[c];
+                        ObjectStruct newStruct = new ObjectStruct
+                        {
+                            structEnabled = child[c].gameObject.activeSelf,
+                            structObject = child[c].gameObject
+                        };
+                        objectStruct.Add(newStruct);
+                    }
+                }
+                if (cinemachineCameras.Count > 0)
+                {
+                    GUILayout.Space(10);
+                    for (int i = 0; i < playableDirectors.Length; i++)
+                    {
+                        GUILayout.BeginHorizontal();
+                        EditorGUILayout.ObjectField(playableDirectors[i].gameObject, typeof(GameObject), true);
+                        GUILayout.EndHorizontal();
+                    }
+                    GUILayout.Space(10);
+
+                    if (GUILayout.Button("Enabled List", buttonText, GUILayout.Height(30f)))
+                    {
+                        toggleObject = !toggleObject;
+                    }
+
+                    if (toggleObject)
+                    {
+                        scrollPos = GUILayout.BeginScrollView(scrollPos);
+                        for (int i = 0; i < objectStruct.Count; i++)
+                        {
+                            GUILayout.BeginHorizontal("box");
+                            objectStruct[i].structEnabled = EditorGUILayout.Toggle(objectStruct[i].structEnabled);
+                            objectStruct[i].structObject = EditorGUILayout.ObjectField(objectStruct[i].structObject, typeof(GameObject), true) as GameObject;
+                            objectStruct[i].structObject.SetActive(objectStruct[i].structEnabled);
+                            GUILayout.EndHorizontal();
+                        }
+                        GUILayout.EndScrollView();
+                    }
+                    GUILayout.Space(10);
+                }
+
                 GUILayout.Label("플레이 버튼 눌러 주세요~~", fontText);
             }
         }

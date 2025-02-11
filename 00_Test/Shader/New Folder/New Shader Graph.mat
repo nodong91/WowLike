@@ -53,7 +53,7 @@ Material:
     m_Floats:
     - _Float: 4.88
     - _Float_1: 1.28
-    - _Float_2: 0.55
+    - _Float_2: 0.18
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors: []

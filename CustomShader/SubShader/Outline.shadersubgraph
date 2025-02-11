@@ -619,7 +619,7 @@
     },
     "m_SourceType": 0,
     "m_FunctionName": "OutlineObject",
-    "m_FunctionSource": "e2348fcc861891a4caf041c04bd12368",
+    "m_FunctionSource": "83ba2aeca7759e84a9a36524ed44fdac",
     "m_FunctionBody": "Enter function body here..."
 }
 
@@ -1430,8 +1430,8 @@
     "m_ObjectId": "64b8ade23cb7410c9cbfedc26450010a",
     "m_Title": "Anti-Aliasing",
     "m_Position": {
-        "x": -841.9999389648438,
-        "y": 45.00002670288086
+        "x": -842.0,
+        "y": 45.0
     }
 }
 
@@ -1582,8 +1582,8 @@
     "m_ObjectId": "711c48c30d074a7394aa22beed93e2fb",
     "m_Title": "Screen Resolution Adjustment",
     "m_Position": {
-        "x": -1853.9998779296875,
-        "y": 241.9999542236328
+        "x": -1854.0,
+        "y": 242.0
     }
 }
 
@@ -2372,7 +2372,7 @@
     },
     "m_SourceType": 0,
     "m_FunctionName": "OutlineObject",
-    "m_FunctionSource": "e2348fcc861891a4caf041c04bd12368",
+    "m_FunctionSource": "83ba2aeca7759e84a9a36524ed44fdac",
     "m_FunctionBody": "Enter function body here..."
 }
 
@@ -2844,7 +2844,7 @@
     "m_ObjectId": "ef0b3d468f464859981715fec563da03",
     "m_Title": "Distance Fading",
     "m_Position": {
-        "x": -2034.9998779296875,
+        "x": -2035.0,
         "y": 542.0
     }
 }

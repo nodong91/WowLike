@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements.Experimental;
 
 public class Game_Manager : MonoBehaviour
 {
@@ -82,7 +83,7 @@ public class Game_Manager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_Tab = NextTarget;
         //Singleton_Controller.INSTANCE.key_SpaceBar = Fire;
     }
-
+    Coroutine casting;
     void InputSlot(int _index)
     {
         Debug.LogWarning("½½·Ô : " + _index.ToString());
@@ -94,13 +95,19 @@ public class Game_Manager : MonoBehaviour
             Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);// »ßÁö¿¥Å×½ºÆ®
             if (skillStructs[currentIndex].castingTime > 0)
             {
-                StartCoroutine(Casting(slotArray[currentIndex]));
+                if (casting != null)
+                    StopCoroutine(casting);
+                casting = StartCoroutine(Casting(slotArray[currentIndex]));
             }
             else
             {
                 Fire();
                 slotArray[currentIndex].CoolingSlot();
             }
+        }
+        else
+        {
+            UI_Manager.instance.SetWarning(0, "ÄðÅ¸ÀÓ Áß");
         }
     }
 

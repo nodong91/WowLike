@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -152,8 +153,14 @@ public class UI_Manager : MonoBehaviour
     public Skill_Slot slot;
     public Transform slotParent;
     public Skill_Slot[] slotArray;
-    public delegate void Test(int index);
-    public void SetSkillSlot(Test _action, Data_Manager.SkillStruct[] _skillStruct)
+    public delegate void DelegateAction(int index);
+
+    public CanvasGroup castingCanvas;
+    public Image castingBar;
+    public TMPro.TMP_Text warningText;
+    Coroutine warningCoroutine;
+
+    public void SetSkillSlot(DelegateAction _action, Data_Manager.SkillStruct[] _skillStruct)
     {
         slotArray = new Skill_Slot[_skillStruct.Length];
         for (int i = 0; i < slotArray.Length; i++)
@@ -166,12 +173,56 @@ public class UI_Manager : MonoBehaviour
         }
         SkillCasting(0f);
     }
-    public CanvasGroup castingCanvas;
-    public Image castingBar;
+
     public void SkillCasting(float _value)
     {
         castingBar.fillAmount = _value;
-        float alpha = _value > 0? 1f: 0f;
+        float alpha = _value > 0 ? 1f : 0f;
         castingCanvas.alpha = alpha;
+    }
+
+    public void SetWarning(int _type, string _text)
+    {
+        _text = SetText(_type, _text);
+
+        if (warningCoroutine != null)
+            StopCoroutine(warningCoroutine);
+        warningCoroutine = StartCoroutine(WarningText(_text));
+    }
+
+    string SetText(int _type, string _text, string _color = "FFFFFF")
+    {
+        switch (_type)
+        {
+            case 0:
+                return $"<b><color=#FF0000>{_text}</color></b>";
+
+            case 1:
+                return $"<b><color=#00FF00>{_text}</color></b>";
+
+            case 2:
+                return $"<b><color=#0000FF>{_text}</color></b>";
+
+            case 3:
+                return $"<b><color=#FFFF00>{_text}</color></b>";
+        }
+        return _text;
+    }
+
+
+    IEnumerator WarningText(string _text)
+    {
+        warningText.text = _text;
+        warningText.alpha = 1f;
+        yield return new WaitForSeconds(1f);
+
+        float normalize = 0f;
+        while (normalize < 1f)
+        {
+            normalize += Time.deltaTime * 3f;
+            warningText.alpha = 1f - normalize;
+            yield return null;
+        }
+        warningText.alpha = 0f;
     }
 }

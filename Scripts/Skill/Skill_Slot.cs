@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Skill_Slot : MonoBehaviour
 {
+    [SerializeField]
     private bool inDist, cooling, isActive;
     public bool GetIsActive { get { return isActive; } }
     public delegate void Dele_Action(bool _action);
