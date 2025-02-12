@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -160,6 +161,9 @@ public class UI_Manager : MonoBehaviour
     public TMPro.TMP_Text warningText;
     Coroutine warningCoroutine;
 
+
+
+
     public void SetSkillSlot(DelegateAction _action, Data_Manager.SkillStruct[] _skillStruct)
     {
         slotArray = new Skill_Slot[_skillStruct.Length];
@@ -172,6 +176,9 @@ public class UI_Manager : MonoBehaviour
             slotArray[index].SetSlot(quickIndex, _skillStruct[index]);
         }
         SkillCasting(0f);
+
+        inventory.SetInventory();
+        inventory.SetQuickSlot(_action);
     }
 
     public void SkillCasting(float _value)
@@ -225,4 +232,5 @@ public class UI_Manager : MonoBehaviour
         }
         warningText.alpha = 0f;
     }
+    public UI_Inventory inventory;
 }

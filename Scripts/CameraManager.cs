@@ -36,7 +36,7 @@ public class CameraManager : MonoBehaviour
         delegateInputScroll = InputScroll;
     }
 
-    void Start()
+    public void SetCameraManager()
     {
         orbitalFollow = cinemachineCamera.GetComponent<CinemachineOrbitalFollow>();
         cinemachineBasicMultiChannelPerlin = cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();

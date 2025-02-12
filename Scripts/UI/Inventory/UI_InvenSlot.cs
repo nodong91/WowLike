@@ -1,15 +1,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static Data_Manager;
 
-public class UI_InvenSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public enum SlotType
     {
         Empty,
         Item,
-        Skill,
+        Skill
     }
     public SlotType slotType;
 
@@ -20,6 +19,24 @@ public class UI_InvenSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     public OnSlotHandler onBeginDrag;
     public OnSlotHandler onEndDrag;
     public OnSlotHandler onPointerEnter;
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        switch (eventData.button)
+        {
+            case PointerEventData.InputButton.Left:
+                ClickLeft();
+                break;
+
+            case PointerEventData.InputButton.Right:
+                ClickRight();
+                break;
+
+            case PointerEventData.InputButton.Middle:
+                ClickMiddle();
+                break;
+        }
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -45,36 +62,86 @@ public class UI_InvenSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnPointerExit(PointerEventData eventData)
     {
-
+        onPointerEnter?.Invoke(null);
     }
 
 
 
 
-
-
+    public UI_InvenSlot slotClone;
+    public Data_Manager.ItemStruct itemStruct;
     public Data_Manager.SkillStruct skillStruct;
+    public bool quick;
 
-    public void ChangeSlot(UI_InvenSlot _slot)
+    public delegate void DeleGateAction();
+    public DeleGateAction deleGateAction;
+
+    void ClickLeft()
+    {
+        deleGateAction();
+    }
+
+    void ClickRight()
+    {
+
+    }
+
+    void ClickMiddle()
+    {
+
+    }
+   
+    public void ChangeSlot(UI_InvenSlot _enterSlot)
+    {
+        if (_enterSlot == null)
+        {
+            TakeSlot(this);// ¿ø·¡ ÀÚ¸®·Î µ¹¸²
+            return;
+        }
+
+        //_slot ¹Ù²Ü ½½·Ô
+        switch (_enterSlot.slotType)
+        {
+            case SlotType.Empty:
+                _enterSlot.TakeSlot(this);
+                SetEmptySlot();
+                break;
+
+            case SlotType.Item:
+                Data_Manager.ItemStruct itemSkill = _enterSlot.itemStruct;// ¹Ì¸® ÀúÀå
+                _enterSlot.TakeSlot(this);
+                SetItemSlot(itemSkill);
+                break;
+
+            case SlotType.Skill:
+                Data_Manager.SkillStruct slotSkill = _enterSlot.skillStruct;// ¹Ì¸® ÀúÀå
+                _enterSlot.TakeSlot(this);// °¡Á®¿Â ½½·Ô ¹Ù²Þ
+                SetSkillSlot(slotSkill);// ³» ½½·Ô ¹Ù²Þ
+                break;
+        }
+    }
+
+    void TakeSlot(UI_InvenSlot _slot)
     {
         switch (_slot.slotType)
         {
             case SlotType.Empty:
-
                 break;
 
             case SlotType.Item:
-                _slot.SetItemSlot(this);
+                SetItemSlot(_slot.itemStruct);
                 break;
 
             case SlotType.Skill:
-                Data_Manager.SkillStruct slotSkill = _slot.skillStruct;
-                _slot.SetSkillSlot(skillStruct);
-                SetSkillSlot(slotSkill);
+                SetSkillSlot(_slot.skillStruct);
                 break;
-
-
         }
+    }
+
+    public void SetEmptySlot()
+    {
+        slotType = SlotType.Empty;
+        icon.sprite = null;
     }
 
     public void SetSkillSlot(Data_Manager.SkillStruct _skillStruct)
@@ -84,9 +151,10 @@ public class UI_InvenSlot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         icon.sprite = _skillStruct.icon;
     }
 
-    public void SetItemSlot(UI_InvenSlot _slot)
+    public void SetItemSlot(Data_Manager.ItemStruct _itemStruct)
     {
         slotType = SlotType.Item;
-        icon.sprite = _slot.icon.sprite;
+        itemStruct = _itemStruct;
+        icon.sprite = _itemStruct.icon;
     }
 }

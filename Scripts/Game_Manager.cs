@@ -44,10 +44,11 @@ public class Game_Manager : MonoBehaviour
     void Start()
     {
         TestSkillSetting();
-        FollowTest();
 
         mainCamera = Camera.main;
+        CameraManager.instance.SetCameraManager();
         CameraManager.instance.rotateDelegate = Rotate;
+        FollowTest();
         Singleton_Controller.INSTANCE.SetController();
 
         SetMouse();

@@ -232,6 +232,18 @@ public class Data_Manager : Data_Parse
     }
     public List<SkillStruct> skills;
 
+
+    [System.Serializable]
+    public struct ItemStruct
+    {
+        public string ID;
+        public string itemName;
+        [TextArea]
+        public string itemDescription;
+        public Sprite icon;
+    }
+    public List<ItemStruct> itemStruct;
+
     [System.Serializable]
     public struct UnitInfomation
     {
@@ -241,9 +253,8 @@ public class Data_Manager : Data_Parse
         //General
         public int Strength;
         public int Agility;
-        public int Constitution;
         public int Intelligence;
-        public int Wisdom;
+        public int Constitution;
 
         public struct UnitAttributes
         {
@@ -260,7 +271,7 @@ public class Data_Manager : Data_Parse
         public void SetUnitAttributes()
         {
             attributes.Health = Constitution;
-            attributes.Mana = Wisdom;
+            attributes.Mana = Intelligence;
         }
     }
     public List <UnitInfomation> unitInfomations;
