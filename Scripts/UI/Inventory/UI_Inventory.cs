@@ -44,9 +44,8 @@ public class UI_Inventory : MonoBehaviour
     public UI_InvenSlot dragSlot, enterSlot;
     public void OnBeginDrag(UI_InvenSlot _slot)
     {
-        dragSlot = _slot;
-
-        if (_slot.slotType != UI_InvenSlot.SlotType.Empty)
+        dragSlot = _slot.slotType == UI_InvenSlot.SlotType.Empty ? null : _slot;
+        if (dragSlot != null)
         {
             dragIcon.sprite = _slot.icon.sprite;
             dragIcon.gameObject.SetActive(true);
@@ -55,7 +54,7 @@ public class UI_Inventory : MonoBehaviour
 
     private void OnDrag(Vector3 _position)
     {
-        if (dragSlot.slotType == UI_InvenSlot.SlotType.Empty)
+        if (dragSlot == null)
             return;
 
         dragIcon.transform.position = _position;
@@ -63,10 +62,21 @@ public class UI_Inventory : MonoBehaviour
 
     public void OnEndDrag(UI_InvenSlot _slot)
     {
-        if (dragSlot.slotType != UI_InvenSlot.SlotType.Empty)
+        if (dragSlot == null)
         {
-            dragSlot.ChangeSlot(enterSlot);
+            return;
         }
+        dragSlot.ChangeSlot(enterSlot);
+        dragIcon.gameObject.SetActive(false);
+    }
+
+    public void OnEndDrag_Quick(UI_InvenSlot _slot)
+    {
+        if (dragSlot == null)
+        {
+            return;
+        }
+        dragSlot.ChangeSlot(enterSlot);
         dragIcon.gameObject.SetActive(false);
     }
 
@@ -80,20 +90,25 @@ public class UI_Inventory : MonoBehaviour
 
 
     public Transform quickParent;
+    UI_InvenSlot[] quickSlots;
+    public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
+
     public void SetQuickSlot(UI_Manager.DelegateAction _action)
     {
-        for (int i = 0; i < 4; i++)
+        int quickAmount = 4;
+        quickSlots = new UI_InvenSlot[quickAmount];
+        for (int i = 0; i < quickAmount; i++)
         {
             UI_InvenSlot inst = Instantiate(invenSlot, quickParent);
 
             inst.onBeginDrag += OnBeginDrag;
             inst.onDrag += OnDrag;
-            inst.onEndDrag += OnEndDrag;
+            inst.onEndDrag += OnEndDrag_Quick;
             inst.onPointerEnter += OnPointerEnter;
 
             int index = i;
             inst.deleGateAction = delegate { _action(index); };
-            //inst.SetQuickSlot(null);
+            quickSlots[index] = inst;
         }
     }
 }

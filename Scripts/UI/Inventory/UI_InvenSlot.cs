@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections;
+using TMPro;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -76,9 +78,14 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public delegate void DeleGateAction();
     public DeleGateAction deleGateAction;
 
+    void Start()
+    {
+        icon.material = Instantiate(icon.material);
+    }
+
     void ClickLeft()
     {
-        deleGateAction();
+        deleGateAction?.Invoke();
     }
 
     void ClickRight()
@@ -90,7 +97,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     {
 
     }
-   
+
     public void ChangeSlot(UI_InvenSlot _enterSlot)
     {
         if (_enterSlot == null)
@@ -121,21 +128,22 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         }
     }
 
-    void TakeSlot(UI_InvenSlot _slot)
+    void TakeSlot(UI_InvenSlot _dragSlot)
     {
-        switch (_slot.slotType)
+        switch (_dragSlot.slotType)
         {
             case SlotType.Empty:
                 break;
 
             case SlotType.Item:
-                SetItemSlot(_slot.itemStruct);
+                SetItemSlot(_dragSlot.itemStruct);
                 break;
 
             case SlotType.Skill:
-                SetSkillSlot(_slot.skillStruct);
+                SetSkillSlot(_dragSlot.skillStruct);
                 break;
         }
+        Game_Manager.instance.CheckDistance();
     }
 
     public void SetEmptySlot()
@@ -156,5 +164,55 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         slotType = SlotType.Item;
         itemStruct = _itemStruct;
         icon.sprite = _itemStruct.icon;
+    }
+
+
+
+
+
+
+    bool inDist, cooling, isActive;
+    public bool GetIsActive { get { return isActive; } }
+
+    public void InDistance(bool _inDist)
+    {
+        inDist = _inDist;
+        CheckActive();
+    }
+
+    public void CoolingSlot()
+    {
+        StartCoroutine(CoolingSkill());
+    }
+
+    IEnumerator CoolingSkill()
+    {
+        cooling = true;
+        CheckActive();
+        float coolingTime = 1f / skillStruct.coolingTime;
+        float normalize = 0f;
+        while (normalize < 1f)
+        {
+            normalize += Time.deltaTime * coolingTime;
+            SetCooling(normalize);
+            yield return null;
+        }
+        cooling = false;
+        CheckActive();
+    }
+
+    public void SetCooling(float _value)
+    {
+        icon.material.SetFloat("_FillAmount", _value);
+    }
+
+    public TMP_Text quickIndex;
+    public Color enabledColor, disabledColor;
+    void CheckActive()
+    {
+        quickIndex.gameObject.SetActive(slotType != SlotType.Empty);
+
+        isActive = (inDist == true && cooling == false);
+        quickIndex.color = isActive == true ? enabledColor : disabledColor;
     }
 }

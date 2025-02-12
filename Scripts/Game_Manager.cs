@@ -87,34 +87,59 @@ public class Game_Manager : MonoBehaviour
     Coroutine casting;
     void InputSlot(int _index)
     {
-        Debug.LogWarning("슬롯 : " + _index.ToString());
         currentIndex = _index;
-        SetSkillText(currentIndex);
-        Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-        if (slotArray[currentIndex].GetIsActive == true)
+
+        UI_InvenSlot[] quickSlots = UI_Manager.instance.inventory.GetQuickSlot;
+        switch (quickSlots[_index].slotType)
+        {
+            case UI_InvenSlot.SlotType.Empty:
+                Debug.LogWarning($"슬롯 {_index} : 비어 있음");
+                break;
+
+            case UI_InvenSlot.SlotType.Skill:
+                Debug.LogWarning($"슬롯 {_index} : 스킬");
+                ActionSkill(quickSlots[_index]);
+                break;
+
+            case UI_InvenSlot.SlotType.Item:
+                Debug.LogWarning($"슬롯 {_index} : 아이템");
+                break;
+        }
+        return;
+
+
+    }
+
+    void ActionSkill(UI_InvenSlot _Slot)
+    {
+        Data_Manager.SkillStruct skillStruct = _Slot.skillStruct;
+        UI_Manager.instance.SkillText(skillStruct.skillDescription);
+        //SetSkillText(_index);
+        //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
+        if (_Slot.GetIsActive == true)
         {
             Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);// 삐지엠테스트
-            if (skillStructs[currentIndex].castingTime > 0)
+            if (skillStruct.castingTime > 0)
             {
                 if (casting != null)
                     StopCoroutine(casting);
-                casting = StartCoroutine(Casting(slotArray[currentIndex]));
+                casting = StartCoroutine(Casting(_Slot));
             }
             else
             {
                 Fire();
-                slotArray[currentIndex].CoolingSlot();
+                _Slot.CoolingSlot();
             }
         }
         else
         {
-            UI_Manager.instance.SetWarning(0, "쿨타임 중");
+            UI_Manager.instance.SetWarning(0, "사용할 수 없음");
         }
     }
 
-    IEnumerator Casting(Skill_Slot _slotArray)
+    IEnumerator Casting(UI_InvenSlot _Slot)
     {
-        float castingTime = 1f / skillStructs[currentIndex].castingTime;
+        float castingTime = 1f / _Slot.skillStruct.castingTime;
         float normalize = 0f;
         while (normalize < 1f && inputDir == 0)
         {
@@ -127,7 +152,7 @@ public class Game_Manager : MonoBehaviour
         if (inputDir == 0)
         {
             Fire();
-            _slotArray.CoolingSlot();
+            _Slot.CoolingSlot();
         }
     }
 
@@ -461,58 +486,58 @@ public class Game_Manager : MonoBehaviour
     //public Skill_Slot slot;
     //public Transform slotParent;
     //public Skill_Slot[] slotArray;
-    public Data_Manager.SkillStruct[] skillStructs;
+    //public Data_Manager.SkillStruct[] skillStructs;
 
     void TestSkillSetting()
     {
-        skillStructs = new Data_Manager.SkillStruct[4];
-        skillStructs[0] = Singleton_Data.INSTANCE.Dict_Skill["10001"];
-        skillStructs[1] = Singleton_Data.INSTANCE.Dict_Skill["10002"];
-        skillStructs[2] = Singleton_Data.INSTANCE.Dict_Skill["10003"];
-        skillStructs[3] = Singleton_Data.INSTANCE.Dict_Skill["10004"];
+        //skillStructs = new Data_Manager.SkillStruct[4];
+        //skillStructs[0] = Singleton_Data.INSTANCE.Dict_Skill["10001"];
+        //skillStructs[1] = Singleton_Data.INSTANCE.Dict_Skill["10002"];
+        //skillStructs[2] = Singleton_Data.INSTANCE.Dict_Skill["10003"];
+        //skillStructs[3] = Singleton_Data.INSTANCE.Dict_Skill["10004"];
         TestSkillName();
 
-        UI_Manager.instance.SetSkillSlot(InputSlot, skillStructs);// 슬롯 세팅
+        UI_Manager.instance.SetSkillSlot(InputSlot);// 슬롯 세팅
     }
 
     void TestSkillName()
     {
-        for (int i = 0; i < skillStructs.Length; i++)
-        {
-            skillStructs[i].skillName = SetString(skillStructs[i].skillName);
-            string explanation = SetString(skillStructs[i].skillDescription);
-            string color = "FF0000";// 에너지
-            string e = $"<color=#{color}>에너지 : {skillStructs[i].energyType.ToString()} {skillStructs[i].energyAmount.ToString()}</color>";
-            explanation = explanation.Replace("{e}", e);
+        //for (int i = 0; i < skillStructs.Length; i++)
+        //{
+        //    skillStructs[i].skillName = SetString(skillStructs[i].skillName);
+        //    string explanation = SetString(skillStructs[i].skillDescription);
+        //    string color = "FF0000";// 에너지
+        //    string e = $"<color=#{color}>에너지 : {skillStructs[i].energyType.ToString()} {skillStructs[i].energyAmount.ToString()}</color>";
+        //    explanation = explanation.Replace("{e}", e);
 
-            color = "00FF00";// 레벨
-            string l = $"<color=#{color}>레벨 : {skillStructs[i].level.ToString()}</color>";
-            explanation = explanation.Replace("{l}", l);
+        //    color = "00FF00";// 레벨
+        //    string l = $"<color=#{color}>레벨 : {skillStructs[i].level.ToString()}</color>";
+        //    explanation = explanation.Replace("{l}", l);
 
-            color = "0000FF";// 캐스팅 타임
-            string a = $"<color=#{color}>캐스팅 : {skillStructs[i].castingTime.ToString()}</color>";
-            explanation = explanation.Replace("{a}", a);
+        //    color = "0000FF";// 캐스팅 타임
+        //    string a = $"<color=#{color}>캐스팅 : {skillStructs[i].castingTime.ToString()}</color>";
+        //    explanation = explanation.Replace("{a}", a);
 
-            color = "000000";// 쿨타임
-            string o = $"<color=#{color}>쿨타임 : {skillStructs[i].coolingTime.ToString()}</color>";
-            explanation = explanation.Replace("{o}", o);
+        //    color = "000000";// 쿨타임
+        //    string o = $"<color=#{color}>쿨타임 : {skillStructs[i].coolingTime.ToString()}</color>";
+        //    explanation = explanation.Replace("{o}", o);
 
-            color = "FFFF00";// 효과 거리
-            string d = $"<color=#{color}>효과 거리 : {skillStructs[i].distance.ToString()}</color>";
-            explanation = explanation.Replace("{d}", d);
+        //    color = "FFFF00";// 효과 거리
+        //    string d = $"<color=#{color}>효과 거리 : {skillStructs[i].distance.ToString()}</color>";
+        //    explanation = explanation.Replace("{d}", d);
 
-            color = "FF00FF";// 효과 정도 (데미지 같은...)
-            string v = $"<color=#{color}>효과 정도 : {skillStructs[i].energyAmount.ToString()}</color>";
-            explanation = explanation.Replace("{v}", v);
+        //    color = "FF00FF";// 효과 정도 (데미지 같은...)
+        //    string v = $"<color=#{color}>효과 정도 : {skillStructs[i].energyAmount.ToString()}</color>";
+        //    explanation = explanation.Replace("{v}", v);
 
-            skillStructs[i].skillDescription = explanation;
-        }
+        //    skillStructs[i].skillDescription = explanation;
+        //}
     }
 
-    void SetSkillText(int _index)
-    {
-        UI_Manager.instance.SkillText(skillStructs[_index].skillDescription);
-    }
+    //void SetSkillText(int _index)
+    //{
+    //    UI_Manager.instance.SkillText(skillStructs[_index].skillDescription);
+    //}
 
     string SetString(string _id)
     {
@@ -556,15 +581,16 @@ public class Game_Manager : MonoBehaviour
         instBullet.SetTarget(target, unitSize);
     }
 
-    void CheckDistance()
+    public void CheckDistance()
     {
         if (target != null)
         {
             targetDistance = Vector3.Distance(target.position, player.transform.position);
-            for (int i = 0; i < skillStructs.Length; i++)
+            UI_InvenSlot[] quickSlots = UI_Manager.instance.inventory.GetQuickSlot;
+            for (int i = 0; i < quickSlots.Length; i++)
             {
-                Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-                slotArray[i].InDistance(skillStructs[i].distance > targetDistance);
+                //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
+                quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > targetDistance);
             }
         }
     }

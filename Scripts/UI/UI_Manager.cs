@@ -153,7 +153,7 @@ public class UI_Manager : MonoBehaviour
 
     public Skill_Slot slot;
     public Transform slotParent;
-    public Skill_Slot[] slotArray;
+    //public Skill_Slot[] slotArray;
     public delegate void DelegateAction(int index);
 
     public CanvasGroup castingCanvas;
@@ -164,17 +164,17 @@ public class UI_Manager : MonoBehaviour
 
 
 
-    public void SetSkillSlot(DelegateAction _action, Data_Manager.SkillStruct[] _skillStruct)
+    public void SetSkillSlot(DelegateAction _action)
     {
-        slotArray = new Skill_Slot[_skillStruct.Length];
-        for (int i = 0; i < slotArray.Length; i++)
-        {
-            int index = i;
-            slotArray[index] = Instantiate(slot, slotParent);
-            slotArray[index].button.onClick.AddListener(delegate { _action(index); });
-            string quickIndex = (index + 1).ToString();// 단축키
-            slotArray[index].SetSlot(quickIndex, _skillStruct[index]);
-        }
+        //slotArray = new Skill_Slot[_skillStruct.Length];
+        //for (int i = 0; i < slotArray.Length; i++)
+        //{
+        //    int index = i;
+        //    slotArray[index] = Instantiate(slot, slotParent);
+        //    slotArray[index].button.onClick.AddListener(delegate { _action(index); });
+        //    string quickIndex = (index + 1).ToString();// 단축키
+        //    slotArray[index].SetSlot(quickIndex, _skillStruct[index]);
+        //}
         SkillCasting(0f);
 
         inventory.SetInventory();

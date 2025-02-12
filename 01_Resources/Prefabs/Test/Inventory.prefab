@@ -284,7 +284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dragIcon: {fileID: 8949795274039828368}
   slotParent: {fileID: 1411702088298671037}
-  invenSlot: {fileID: 7295553450702254928, guid: d7fefbc596335f04ba035df1ccaae425, type: 3}
+  invenSlot: {fileID: 4205827422401548466, guid: d7fefbc596335f04ba035df1ccaae425, type: 3}
   skillStruct:
   - ID: 10001
     skillName: 10010
