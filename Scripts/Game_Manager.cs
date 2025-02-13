@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UIElements.Experimental;
 
 public class Game_Manager : MonoBehaviour
 {
     public string BGMSound;
 
     private Camera mainCamera;
-    public Transform player;
-    public Transform guide;
+    public Unit_Animation player;
+    public Transform playerParent, guide;
 
     [SerializeField] Vector3 direction;
     public float moveSpeed = 1f;
@@ -43,6 +42,7 @@ public class Game_Manager : MonoBehaviour
 
     void Start()
     {
+        player = Instantiate(player, playerParent);
         TestSkillSetting();
 
         mainCamera = Camera.main;
@@ -82,8 +82,15 @@ public class Game_Manager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_D = InputRight;
 
         Singleton_Controller.INSTANCE.key_Tab = NextTarget;
-        //Singleton_Controller.INSTANCE.key_SpaceBar = Fire;
+        Singleton_Controller.INSTANCE.key_SpaceBar = Test;
     }
+
+    void Test(bool _input)
+    {
+        if (_input)
+            player.PlayAnimation(3);
+    }
+
     Coroutine casting;
     void InputSlot(int _index)
     {
@@ -342,7 +349,7 @@ public class Game_Manager : MonoBehaviour
     {
         Vector3 dir = new Vector3(_direction.x, 0, _direction.y);
         Vector3 temp = mainCamera.transform.TransformDirection(dir).normalized;
-        direction = player.transform.position + new Vector3(temp.x, 0f, temp.z);
+        direction = playerParent.transform.position + new Vector3(temp.x, 0f, temp.z);
         guide.transform.position = dir;
         Moving();
         Rotate();
@@ -350,8 +357,8 @@ public class Game_Manager : MonoBehaviour
 
     void Moving()
     {
-        Vector3 movePoint = Vector3.Lerp(player.transform.position, direction, Time.deltaTime * moveSpeed);
-        player.transform.position = movePoint;
+        Vector3 movePoint = Vector3.Lerp(playerParent.transform.position, direction, Time.deltaTime * moveSpeed);
+        playerParent.transform.position = movePoint;
         CheckDistance();
     }
 
@@ -363,19 +370,19 @@ public class Game_Manager : MonoBehaviour
                 if (direction == Vector3.zero)
                     return;
 
-                Vector3 offset = (direction - player.transform.position).normalized;
-                Quaternion rotatePoint = Quaternion.Lerp(player.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-                player.transform.rotation = rotatePoint;
+                Vector3 offset = (direction - playerParent.transform.position).normalized;
+                Quaternion rotatePoint = Quaternion.Lerp(playerParent.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
+                playerParent.transform.rotation = rotatePoint;
                 break;
 
             case RotateType.Focus:
                 Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
-                Vector3 front = player.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
+                Vector3 front = playerParent.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
                 guide.transform.position = front;
 
-                offset = (front - player.transform.position).normalized;
-                rotatePoint = Quaternion.Lerp(player.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-                player.transform.rotation = rotatePoint;
+                offset = (front - playerParent.transform.position).normalized;
+                rotatePoint = Quaternion.Lerp(playerParent.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
+                playerParent.transform.rotation = rotatePoint;
 
                 if (inputMouseRight == false && inputDir != 0)
                 {
@@ -407,15 +414,15 @@ public class Game_Manager : MonoBehaviour
         if (_input == false)
         {
             visibleTargets.Clear();
-            Collider[] targetsInViewRadius = Physics.OverlapSphere(player.transform.position, viewRadius, targetMask);
+            Collider[] targetsInViewRadius = Physics.OverlapSphere(playerParent.transform.position, viewRadius, targetMask);
             for (int i = 0; i < targetsInViewRadius.Length; i++)
             {
                 Transform temp = targetsInViewRadius[i].transform;
-                Vector3 dirToTarget = (temp.position - player.transform.position).normalized;
-                if (Vector3.Angle(player.transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
+                Vector3 dirToTarget = (temp.position - playerParent.transform.position).normalized;
+                if (Vector3.Angle(playerParent.transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
                 {
-                    float dstToTarget = (player.transform.position - temp.position).magnitude;
-                    if (Physics.Raycast(player.transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
+                    float dstToTarget = (playerParent.transform.position - temp.position).magnitude;
+                    if (Physics.Raycast(playerParent.transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
                     {
                         visibleTargets.Add(temp);
                     }
@@ -440,7 +447,7 @@ public class Game_Manager : MonoBehaviour
     {
         if (_angleIsGlobal == false)
         {
-            _angleInDegrees += player.transform.eulerAngles.y;
+            _angleInDegrees += playerParent.transform.eulerAngles.y;
         }
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
@@ -448,16 +455,16 @@ public class Game_Manager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (player != null)
+        if (playerParent != null)
         {
             Handles.color = Color.red;
-            Handles.DrawWireArc(player.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
+            Handles.DrawWireArc(playerParent.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
 
             Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
             Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
 
-            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleA * viewRadius);
-            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
+            Handles.DrawLine(playerParent.transform.position, playerParent.transform.position + viewAngleA * viewRadius);
+            Handles.DrawLine(playerParent.transform.position, playerParent.transform.position + viewAngleB * viewRadius);
 
             if (target != null)
             {
@@ -471,7 +478,7 @@ public class Game_Manager : MonoBehaviour
                 };
 
                 Handles.color = Gizmos.color = color;
-                Handles.DrawLine(player.transform.position, target.transform.position);
+                Handles.DrawLine(playerParent.transform.position, target.transform.position);
                 Handles.Label(target.transform.position, targetDistance.ToString("N2"), fontStyle);
                 Gizmos.DrawSphere(target.transform.position, 0.3f);
             }
@@ -577,7 +584,7 @@ public class Game_Manager : MonoBehaviour
             return;
 
         Skill_Bullet instBullet = Instantiate(bullet, this.transform);
-        instBullet.transform.position = player.position;
+        instBullet.transform.position = playerParent.position;
         instBullet.SetTarget(target, unitSize);
     }
 
@@ -585,7 +592,7 @@ public class Game_Manager : MonoBehaviour
     {
         if (target != null)
         {
-            targetDistance = Vector3.Distance(target.position, player.transform.position);
+            targetDistance = Vector3.Distance(target.position, playerParent.transform.position);
             UI_InvenSlot[] quickSlots = UI_Manager.instance.inventory.GetQuickSlot;
             for (int i = 0; i < quickSlots.Length; i++)
             {
@@ -598,7 +605,7 @@ public class Game_Manager : MonoBehaviour
     public Transform[] testTarget;
     void FollowTest()
     {
-        CameraManager.instance.SetTarget(player);
+        CameraManager.instance.SetTarget(playerParent);
         for (int i = 0; i < testTarget.Length; i++)
         {
             UI_Manager.instance.AddHPUI(testTarget[i]);

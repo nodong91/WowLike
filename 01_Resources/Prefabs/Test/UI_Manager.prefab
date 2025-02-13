@@ -646,10 +646,10 @@ MonoBehaviour:
   uiHP: {fileID: 6641963062922865520, guid: 10fb987d72051764ba28832d70c6c30d, type: 3}
   slot: {fileID: 7347728704314639755, guid: 7282e9dbefd405b4b8e85544e9f276e4, type: 3}
   slotParent: {fileID: 6956491619727060629}
-  slotArray: []
   castingCanvas: {fileID: 7884853098549017217}
   castingBar: {fileID: 5770155300661719724}
   warningText: {fileID: 7196011793199420300}
+  inventory: {fileID: 0}
 --- !u!1 &5271039858401017536
 GameObject:
   m_ObjectHideFlags: 0

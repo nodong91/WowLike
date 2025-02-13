@@ -8,8 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PONE_Pone_Tile 1
-  m_Shader: {fileID: -6465566751694194690, guid: 77d569aa274687541beef5451c839756,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 77d569aa274687541beef5451c839756, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
