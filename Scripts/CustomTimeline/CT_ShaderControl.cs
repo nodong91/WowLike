@@ -89,5 +89,10 @@ namespace P01.Editor
             }
             Debug.Log(_controlClass.controlType.ToString() + " : " + _controlClass.SetName);
         }
+
+        public void CinemachineBrainController()
+        {
+
+        }
     }
 }
