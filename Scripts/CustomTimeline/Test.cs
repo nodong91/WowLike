@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.Timeline;
 
-public class CT_Cinemachie_Track : MonoBehaviour
+public class Test : Marker
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

@@ -28,16 +28,21 @@ public class CameraManager : MonoBehaviour
     public delegate void DelegateInputScroll(float _input);
     public DelegateInputScroll delegateInputScroll;
 
+    CinemachineBrain brain;
+
     public static CameraManager instance;
 
     private void Awake()
     {
         instance = this;
-        delegateInputScroll = InputScroll;
     }
 
     public void SetCameraManager()
     {
+        if (brain == null)
+            brain = Camera.main.gameObject.AddComponent<CinemachineBrain>();
+
+        delegateInputScroll = InputScroll;
         orbitalFollow = cinemachineCamera.GetComponent<CinemachineOrbitalFollow>();
         cinemachineBasicMultiChannelPerlin = cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
         rotationComposer = cinemachineCamera.GetComponent<CinemachineRotationComposer>();

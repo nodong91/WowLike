@@ -16,7 +16,6 @@ public class Data_Parse : MonoBehaviour
         sprites = new List<Sprite>();
         audioClip.Clear();
         CSV_Data.Clear();
-        dialog.Clear();
 
         if (ResourceFolders.Count == 0)
         {
@@ -159,11 +158,10 @@ public class Data_Parse : MonoBehaviour
     //}
 #endif
 
-    [Header(" [ CSV ] ")]
+    [Header(" [ Resource ] ")]
     /* 구글 스플레트 시트에서 "파일 - 다운로드 - 쉼표로 구분된 값" 으로 저장*/
     [SerializeField] List<TextAsset> CSV_Data = new List<TextAsset>();
     public List<TextAsset> GetCSV_Data { get { return CSV_Data; } }
-    public List<Data_Manager.DialogInfoamtion> dialog = new List<Data_Manager.DialogInfoamtion>();
     public List<AudioClip> audioClip = new List<AudioClip>();
     public List<Sprite> sprites = new List<Sprite>();
 }

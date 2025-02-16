@@ -27,7 +27,7 @@ public class Dialog_Manager : MonoBehaviour
     public Image nextMark;
     public Button button;
 
-    void Start()
+    public void SetDialogManager()
     {
         typingSpeed = defaultTypingSpeed;
         button.onClick.AddListener(SetTest);

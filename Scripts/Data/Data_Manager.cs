@@ -48,11 +48,33 @@ public class Data_Manager : Data_Parse
             {
                 if (csv_Type.Contains("String"))
                 {
-                    SetSkillString(GetCSV_Data[i]);
+                    skillString = SetTranslateString(GetCSV_Data[i]);
                 }
                 else
                 {
                     SetSkill(GetCSV_Data[i]);
+                }
+            }
+            else if (csv_Type.Contains("Unit"))
+            {
+                if (csv_Type.Contains("String"))
+                {
+                    unitString = SetTranslateString(GetCSV_Data[i]);
+                }
+                else
+                {
+                    SetUnit(GetCSV_Data[i]);
+                }
+            }
+            else if (csv_Type.Contains("Item"))
+            {
+                if (csv_Type.Contains("String"))
+                {
+                    itemString = SetTranslateString(GetCSV_Data[i]);
+                }
+                else
+                {
+                    SetItem(GetCSV_Data[i]);
                 }
             }
         }
@@ -89,7 +111,7 @@ public class Data_Manager : Data_Parse
 
     void SetSkill(TextAsset _textAsset)
     {
-        skills.Clear();
+        skillStruct.Clear();
         string[] data = _textAsset.text.Split(new char[] { '\n' });
         for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
         {
@@ -102,23 +124,72 @@ public class Data_Manager : Data_Parse
                 ID = elements[0].Trim(),
                 skillName = elements[1],
                 skillDescription = elements[2],
-                icon = FindSprite(elements[3]),
-                level = IntTryParse(elements[4]),
-                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[5]),// 기본 데미지의 몇%
-                value = FloatTryParse(elements[6]),
-                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[7]),// 기본 에너지의 몇%
-                energyAmount = FloatTryParse(elements[8]),
-                castingTime = FloatTryParse(elements[9]),// 0일 경우 즉시시전
-                coolingTime = FloatTryParse(elements[10]),
-                distance = FloatTryParse(elements[11]),
+                animationType = (Unit_Animation.AnimationType)Enum.Parse(typeof(Unit_Animation.AnimationType), elements[3]),
+                icon = FindSprite(elements[4]),
+                level = IntTryParse(elements[5]),
+                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[6]),// 기본 데미지의 몇%
+                value = FloatTryParse(elements[7]),
+                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[8]),// 기본 에너지의 몇%
+                energyAmount = FloatTryParse(elements[9]),
+                castingTime = FloatTryParse(elements[10]),// 0일 경우 즉시시전
+                coolingTime = FloatTryParse(elements[11]),
+                distance = FloatTryParse(elements[12]),
             };
-            skills.Add(tempData);
+            skillStruct.Add(tempData);
         }
     }
 
-    void SetSkillString(TextAsset _textAsset)
+    void SetUnit(TextAsset _textAsset)
     {
-        skillString.Clear();
+        unitStruct.Clear();
+        string[] data = _textAsset.text.Split(new char[] { '\n' });
+        for (int i = 1; i < data.Length; i++)// 첫째 라인 빼고 리스팅
+        {
+            string[] elements = data[i].Split(new char[] { ',' });
+
+            UnitStruct tempData = new UnitStruct
+            {
+                ID = elements[0].Trim(),
+                unitName = elements[1].Trim(),
+                unitDescription = elements[2].Trim(),
+                unitIcon = FindSprite(elements[3]),
+
+                strength = FloatTryParse(elements[4]),
+                agility = FloatTryParse(elements[5]),
+                intelligence = FloatTryParse(elements[6]),
+                constitution = FloatTryParse(elements[7]),
+            };
+            unitStruct.Add(tempData);
+        }
+    }
+
+    void SetItem(TextAsset _textAsset)
+    {
+        itemStruct.Clear();
+        string[] data = _textAsset.text.Split(new char[] { '\n' });
+        for (int i = 1; i < data.Length; i++)// 첫째 라인 빼고 리스팅
+        {
+            string[] elements = data[i].Split(new char[] { ',' });
+
+            ItemStruct tempData = new ItemStruct
+            {
+                ID = elements[0].Trim(),
+                itemName = elements[1].Trim(),
+                itemDescription = elements[2].Trim(),
+                itemIcon = FindSprite(elements[3]),
+
+                //strength = FloatTryParse(elements[4]),
+                //agility = FloatTryParse(elements[5]),
+                //intelligence = FloatTryParse(elements[6]),
+                //constitution = FloatTryParse(elements[7]),
+            };
+            itemStruct.Add(tempData);
+        }
+    }
+
+    List<TranslateString> SetTranslateString(TextAsset _textAsset)
+    {
+        List<TranslateString> tempString = new List<TranslateString>();
         string[] data = _textAsset.text.Split(new char[] { '\n' });
         for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
         {
@@ -126,7 +197,7 @@ public class Data_Manager : Data_Parse
             if (elements[0].Trim().Length == 0)// 아이디 표기가 없으면 제외
                 continue;
 
-            SkillString tempData = new SkillString
+            TranslateString tempData = new TranslateString
             {
                 ID = elements[0].Trim(),
                 KR = elements[1],
@@ -134,45 +205,13 @@ public class Data_Manager : Data_Parse
                 JP = elements[3],
                 CN = elements[4],
             };
-            skillString.Add(tempData);
+            tempString.Add(tempData);
         }
+        return tempString;
     }
-
-    //void SetUnitData(TextAsset _textAsset)
-    //{
-    //    string[] data = _textAsset.text.Split(new char[] { '\n' });
-    //    for (int i = 1; i < data.Length; i++)// 첫째 라인 빼고 리스팅
-    //    {
-    //        string[] elements = data[i].Split(new char[] { ',' });
-
-    //        List<Data_ItemSet> tempList = new List<Data_ItemSet>();
-    //        for (int m = 0; m < 3; m++)
-    //        {
-    //            Data_ItemSet tempItem = FindDefaultItem(elements[11 + m].Trim());
-    //            if (tempItem != null)
-    //                tempList.Add(tempItem);
-    //        }
-
-    //        UnitStruct tempData = new UnitStruct
-    //        {
-    //            ID = elements[0].Trim(),
-    //            unitName = elements[1].Trim(),
-    //            description = elements[2].Trim(),
-    //            icon = FindSprite(elements[3]),
-    //            unitClass = (UnitStruct.UnitClass)Enum.Parse(typeof(UnitStruct.UnitClass), elements[4]),
-
-    //            attack = FloatTryParse(elements[5]),
-    //            defense = FloatTryParse(elements[6]),
-    //            maxHealth = FloatTryParse(elements[7]),
-    //            criticalDamage = FloatTryParse(elements[8]),
-    //            recoveryHealth = FloatTryParse(elements[9]),
-    //            lifeSteal = FloatTryParse(elements[10]),
-    //            defaultItem = tempList
-    //        };
-    //        unitData.Add(tempData);
-    //    }
-    //}
 #endif
+
+    public Singleton_Data.Translation translation;// 번역 타입
 
     [System.Serializable]
     public class DialogInfoamtion
@@ -189,9 +228,11 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
+    [Header(" [ String ]")]
+    public List<DialogInfoamtion> dialog = new List<DialogInfoamtion>();
 
     [System.Serializable]
-    public class SkillString
+    public class TranslateString
     {
         public string ID;
         public string KR;
@@ -199,7 +240,9 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
-    public List<SkillString> skillString;
+    public List<TranslateString> skillString = new List<TranslateString>();
+    public List<TranslateString> unitString = new List<TranslateString>();
+    public List<TranslateString> itemString = new List<TranslateString>();
 
     [System.Serializable]
     public struct SkillStruct
@@ -208,6 +251,7 @@ public class Data_Manager : Data_Parse
         public string skillName;
         [TextArea]
         public string skillDescription;
+        public Unit_Animation.AnimationType animationType;
         public Sprite icon;
         public int level;
         public enum SkillType
@@ -230,8 +274,8 @@ public class Data_Manager : Data_Parse
         public float coolingTime;
         public float distance;
     }
-    public List<SkillStruct> skills;
-
+    [Header(" [ Data ]")]
+    public List<SkillStruct> skillStruct = new List<SkillStruct>();
 
     [System.Serializable]
     public struct ItemStruct
@@ -240,21 +284,22 @@ public class Data_Manager : Data_Parse
         public string itemName;
         [TextArea]
         public string itemDescription;
-        public Sprite icon;
+        public Sprite itemIcon;
     }
-    public List<ItemStruct> itemStruct;
+    public List<ItemStruct> itemStruct = new List<ItemStruct>();
 
     [System.Serializable]
-    public struct UnitInfomation
+    public struct UnitStruct
     {
         public string ID;
-        public string Name;
-        public string Description;// 설명
+        public string unitName;
+        public string unitDescription;// 설명
+        public Sprite unitIcon;
         //General
-        public int Strength;
-        public int Agility;
-        public int Intelligence;
-        public int Constitution;
+        public float strength;
+        public float agility;
+        public float intelligence;
+        public float constitution;
 
         public struct UnitAttributes
         {
@@ -270,21 +315,23 @@ public class Data_Manager : Data_Parse
 
         public void SetUnitAttributes()
         {
-            attributes.Health = Constitution;
-            attributes.Mana = Intelligence;
+            attributes.Health = constitution;
+            attributes.Mana = intelligence;
         }
     }
-    public List <UnitInfomation> unitInfomations;
-
-    public Singleton_Data.Translation translation;// 번역 타입
+    public List<UnitStruct> unitStruct = new List<UnitStruct>();
 
     private void Awake()
     {
         Singleton_Data.INSTANCE.translation = translation;
 
-        Singleton_Data.INSTANCE.SetDictionary_Dialog(dialog); 
+        Singleton_Data.INSTANCE.SetDictionary_Dialog(dialog);
         Singleton_Data.INSTANCE.SetDictionary_SkillTranslation(skillString);
-        Singleton_Data.INSTANCE.SetDictionary_Skill(skills);
+        Singleton_Data.INSTANCE.SetDictionary_Skill(skillStruct);
+        Singleton_Data.INSTANCE.SetDictionary_UnitTranslation(unitString);
+        Singleton_Data.INSTANCE.SetDictionary_Unit(unitStruct);
+        Singleton_Data.INSTANCE.SetDictionary_ItemTranslation(itemString);
+        Singleton_Data.INSTANCE.SetDictionary_Item(itemStruct);
         Singleton_Data.INSTANCE.SetDictionary_Audio(audioClip);
     }
 }

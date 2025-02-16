@@ -43,7 +43,7 @@ public class Game_Manager : MonoBehaviour
     void Start()
     {
         player = Instantiate(player, playerParent);
-        TestSkillSetting();
+        //TestSkillSetting();
 
         mainCamera = Camera.main;
         CameraManager.instance.SetCameraManager();
@@ -85,19 +85,13 @@ public class Game_Manager : MonoBehaviour
         Singleton_Controller.INSTANCE.key_SpaceBar = Test;
     }
 
-    void Test(bool _input)
-    {
-        if (_input)
-            player.PlayAnimation(3);
-    }
-
     Coroutine casting;
-    void InputSlot(int _index)
+    public void InputSlot(int _index)
     {
         currentIndex = _index;
 
-        UI_InvenSlot[] quickSlots = UI_Manager.instance.inventory.GetQuickSlot;
-        switch (quickSlots[_index].slotType)
+        UI_InvenSlot slot = UI_Manager.instance.GetQuickSlot(_index);
+        switch (slot.slotType)
         {
             case UI_InvenSlot.SlotType.Empty:
                 Debug.LogWarning($"슬롯 {_index} : 비어 있음");
@@ -105,7 +99,7 @@ public class Game_Manager : MonoBehaviour
 
             case UI_InvenSlot.SlotType.Skill:
                 Debug.LogWarning($"슬롯 {_index} : 스킬");
-                ActionSkill(quickSlots[_index]);
+                ActionSkill(slot);
                 break;
 
             case UI_InvenSlot.SlotType.Item:
@@ -113,16 +107,12 @@ public class Game_Manager : MonoBehaviour
                 break;
         }
         return;
-
-
     }
 
     void ActionSkill(UI_InvenSlot _Slot)
     {
         Data_Manager.SkillStruct skillStruct = _Slot.skillStruct;
         UI_Manager.instance.SkillText(skillStruct.skillDescription);
-        //SetSkillText(_index);
-        //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
         if (_Slot.GetIsActive == true)
         {
             Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);// 삐지엠테스트
@@ -134,7 +124,7 @@ public class Game_Manager : MonoBehaviour
             }
             else
             {
-                Fire();
+                Fire();// 즉시
                 _Slot.CoolingSlot();
             }
         }
@@ -158,7 +148,7 @@ public class Game_Manager : MonoBehaviour
 
         if (inputDir == 0)
         {
-            Fire();
+            Fire();// 캐스팅 완료
             _Slot.CoolingSlot();
         }
     }
@@ -486,24 +476,14 @@ public class Game_Manager : MonoBehaviour
     }
 #endif
 
-    public Skill_Bullet bullet;
+    public Skill_Instance instEffect, instSkill;
     public float unitSize = 1f;
     float targetDistance;
     public int currentIndex;
-    //public Skill_Slot slot;
-    //public Transform slotParent;
-    //public Skill_Slot[] slotArray;
-    //public Data_Manager.SkillStruct[] skillStructs;
 
     void TestSkillSetting()
     {
-        //skillStructs = new Data_Manager.SkillStruct[4];
-        //skillStructs[0] = Singleton_Data.INSTANCE.Dict_Skill["10001"];
-        //skillStructs[1] = Singleton_Data.INSTANCE.Dict_Skill["10002"];
-        //skillStructs[2] = Singleton_Data.INSTANCE.Dict_Skill["10003"];
-        //skillStructs[3] = Singleton_Data.INSTANCE.Dict_Skill["10004"];
         TestSkillName();
-
         UI_Manager.instance.SetSkillSlot(InputSlot);// 슬롯 세팅
     }
 
@@ -549,7 +529,7 @@ public class Game_Manager : MonoBehaviour
     string SetString(string _id)
     {
         Singleton_Data.Translation translation = Singleton_Data.INSTANCE.translation;
-        Data_Manager.SkillString skill = Singleton_Data.INSTANCE.Dict_SkillString[_id];
+        Data_Manager.TranslateString skill = Singleton_Data.INSTANCE.Dict_SkillString[_id];
         string temp = string.Empty;
         switch (translation)
         {
@@ -572,20 +552,37 @@ public class Game_Manager : MonoBehaviour
         return temp;
     }
 
-    //string SetDescription()
-    //{
-    //    string temp = string.Empty;
-    //    return temp;
-    //}
-
     private void Fire()
     {
         if (target == null)
             return;
 
-        Skill_Bullet instBullet = Instantiate(bullet, this.transform);
-        instBullet.transform.position = playerParent.position;
-        instBullet.SetTarget(target, unitSize);
+        if(instSkill == null)
+        {
+            instSkill = Instantiate(instEffect, this.transform);
+        }
+        instSkill.transform.position = playerParent.position;
+        instSkill.transform.rotation = playerParent.rotation;
+        instSkill.SetTarget(target, unitSize);
+
+        SlotAction();
+    }
+
+    void SlotAction()
+    {
+        UI_InvenSlot quickSlot = UI_Manager.instance.GetQuickSlot(currentIndex);
+        Data_Manager.SkillStruct skillStruct = quickSlot.skillStruct;
+        int index = (int)skillStruct.animationType;
+        player.PlayAnimation(index);
+        Debug.LogWarning($"{skillStruct.ID} + {skillStruct.animationType.ToString()}");
+    }
+
+    void Test(bool _input)
+    {
+        if (_input)
+        {
+            SlotAction();
+        }
     }
 
     public void CheckDistance()
@@ -593,12 +590,13 @@ public class Game_Manager : MonoBehaviour
         if (target != null)
         {
             targetDistance = Vector3.Distance(target.position, playerParent.transform.position);
-            UI_InvenSlot[] quickSlots = UI_Manager.instance.inventory.GetQuickSlot;
-            for (int i = 0; i < quickSlots.Length; i++)
-            {
-                //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-                quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > targetDistance);
-            }
+            UI_Manager.instance.CheckDistance(targetDistance);
+            //UI_InvenSlot[] quickSlots = UI_Manager.instance.GetInventory.GetQuickSlot;
+            //for (int i = 0; i < quickSlots.Length; i++)
+            //{
+            //    //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
+            //    quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > targetDistance);
+            //}
         }
     }
 

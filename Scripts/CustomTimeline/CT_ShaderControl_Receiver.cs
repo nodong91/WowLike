@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.Playables;
+using Unity.Cinemachine;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 using P01.Editor;
-[CustomEditor(typeof(CT_ShaderControl))]
-public class ShaderTestEditor : Editor
+[CustomEditor(typeof(CT_ShaderControl_Receiver))]
+public class CT_ShaderControl_Receiver_Editor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -13,7 +15,7 @@ public class ShaderTestEditor : Editor
         fontStyle.fontSize = 15;
         fontStyle.normal.textColor = Color.yellow;
 
-        CT_ShaderControl Inspector = target as CT_ShaderControl;
+        CT_ShaderControl_Receiver Inspector = target as CT_ShaderControl_Receiver;
         if (GUILayout.Button("SetRenderer", fontStyle, GUILayout.Height(30f)))
         {
             Inspector.SetData();
@@ -29,7 +31,7 @@ public class ShaderTestEditor : Editor
 namespace P01.Editor
 {
     [RequireComponent(typeof(PlayableDirector))]
-    public class CT_ShaderControl : MonoBehaviour
+    public class CT_ShaderControl_Receiver : MonoBehaviour
     {
         public void SetData()
         {
@@ -88,11 +90,6 @@ namespace P01.Editor
                 }
             }
             Debug.Log(_controlClass.controlType.ToString() + " : " + _controlClass.SetName);
-        }
-
-        public void CinemachineBrainController()
-        {
-
         }
     }
 }

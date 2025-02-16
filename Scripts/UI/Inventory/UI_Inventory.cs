@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,12 +7,26 @@ public class UI_Inventory : MonoBehaviour
     public Image dragIcon;
     public Transform slotParent;
     public UI_InvenSlot invenSlot;
-
-    public Data_Manager.SkillStruct[] skillStruct;
-    public Data_Manager.ItemStruct[] itemStruct;
+    private UI_InvenSlot dragSlot, enterSlot;
+    public Transform quickParent;
+    public UI_InvenSlot[] quickSlots;
+    public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
 
     public void SetInventory()
     {
+        List<string> skillIDs = new List<string>();
+        List<string> itemIDs = new List<string>();
+
+        foreach (var child in Singleton_Data.INSTANCE.Dict_Skill)
+        {
+            skillIDs.Add(child.Key);
+        }
+        foreach (var child in Singleton_Data.INSTANCE.Dict_Item)
+        {
+            itemIDs.Add(child.Key);
+        }
+
+
         for (int i = 0; i < 25; i++)
         {
             int randomType = Random.Range(0, 3);
@@ -19,14 +34,14 @@ public class UI_Inventory : MonoBehaviour
             switch (randomType)
             {
                 case 0:
-                    int index = Random.Range(0, skillStruct.Length);
-                    Data_Manager.SkillStruct skillSlot = skillStruct[index];
+                    string id = skillIDs[Random.Range(0, skillIDs.Count)];
+                    Data_Manager.SkillStruct skillSlot = Singleton_Data.INSTANCE.Dict_Skill[id];
                     inst.SetSkillSlot(skillSlot);
                     break;
 
                 case 1:
-                    index = Random.Range(0, itemStruct.Length);
-                    Data_Manager.ItemStruct itemSlot = itemStruct[index];
+                    id = itemIDs[Random.Range(0, itemIDs.Count)];
+                    Data_Manager.ItemStruct itemSlot = Singleton_Data.INSTANCE.Dict_Item[id];
                     inst.SetItemSlot(itemSlot);
                     break;
 
@@ -39,9 +54,9 @@ public class UI_Inventory : MonoBehaviour
             inst.onEndDrag += OnEndDrag;
             inst.onPointerEnter += OnPointerEnter;
         }
+        SetQuickSlot();
     }
 
-    public UI_InvenSlot dragSlot, enterSlot;
     public void OnBeginDrag(UI_InvenSlot _slot)
     {
         dragSlot = _slot.slotType == UI_InvenSlot.SlotType.Empty ? null : _slot;
@@ -89,11 +104,8 @@ public class UI_Inventory : MonoBehaviour
 
 
 
-    public Transform quickParent;
-    UI_InvenSlot[] quickSlots;
-    public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
 
-    public void SetQuickSlot(UI_Manager.DelegateAction _action)
+    public void SetQuickSlot()
     {
         int quickAmount = 4;
         quickSlots = new UI_InvenSlot[quickAmount];
@@ -107,7 +119,8 @@ public class UI_Inventory : MonoBehaviour
             inst.onPointerEnter += OnPointerEnter;
 
             int index = i;
-            inst.deleGateAction = delegate { _action(index); };
+            //inst.deleGateAction = delegate { _action(index); };
+            inst.deleGateAction = delegate { Game_Manager.instance.InputSlot(index); };
             quickSlots[index] = inst;
         }
     }

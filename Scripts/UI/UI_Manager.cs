@@ -1,24 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_Manager : MonoBehaviour
 {
+    [Header("[ Manager ]")]
     public UI_Option uiOption;
+    private UI_Option instUIOption;
+    public Dialog_Manager dialog;
+    private Dialog_Manager instDialog;
+    public UI_Inventory inventory;
+    private UI_Inventory instInventory;
+    public Transform managerParent;
 
     public Button openButton, exitButton;
     public CanvasGroup canvas;
     bool open;
     [Header("[ Instance ]")]
     public Transform instanceParent;
-    public Dialog_Manager dialog;
     public TMPro.TMP_Text testText;
     public Dictionary<Transform, FollowStruct> dictFollow = new Dictionary<Transform, FollowStruct>();
     Coroutine followUI;
     public UI_HP uiHP;
+
+    public Skill_Slot slot;
+    public Transform slotParent;
+    //public Skill_Slot[] slotArray;
+    public delegate void DelegateAction(int index);
+
+    public CanvasGroup castingCanvas;
+    public Image castingBar;
+    public TMPro.TMP_Text warningText;
+    Coroutine warningCoroutine;
 
     public static UI_Manager instance;
 
@@ -29,10 +43,20 @@ public class UI_Manager : MonoBehaviour
 
     public void SetUIManager()
     {
+        InstanceManager();
         canvas.gameObject.SetActive(open);
         openButton.onClick.AddListener(OpenCanvas);
         exitButton.onClick.AddListener(QuitGame);
-        uiOption.SetAudioManager();
+    }
+
+    void InstanceManager()
+    {
+        instUIOption = Instantiate(uiOption, managerParent);
+        instUIOption.SetAudioManager();
+        instDialog = Instantiate(dialog, managerParent);
+        instDialog.SetDialogManager();
+        instInventory = Instantiate(inventory, managerParent);
+        instInventory.SetInventory();
     }
 
     void OpenCanvas()
@@ -151,15 +175,6 @@ public class UI_Manager : MonoBehaviour
 
 
 
-    public Skill_Slot slot;
-    public Transform slotParent;
-    //public Skill_Slot[] slotArray;
-    public delegate void DelegateAction(int index);
-
-    public CanvasGroup castingCanvas;
-    public Image castingBar;
-    public TMPro.TMP_Text warningText;
-    Coroutine warningCoroutine;
 
 
 
@@ -177,8 +192,8 @@ public class UI_Manager : MonoBehaviour
         //}
         SkillCasting(0f);
 
-        inventory.SetInventory();
-        inventory.SetQuickSlot(_action);
+        instInventory.SetInventory();
+        //inventory.SetQuickSlot(_action);
     }
 
     public void SkillCasting(float _value)
@@ -232,5 +247,29 @@ public class UI_Manager : MonoBehaviour
         }
         warningText.alpha = 0f;
     }
-    public UI_Inventory inventory;
+
+
+
+
+
+
+
+
+
+
+
+    public void CheckDistance(float _distance)
+    {
+        UI_InvenSlot[] quickSlots = instInventory.GetQuickSlot;
+        for (int i = 0; i < quickSlots.Length; i++)
+        {
+            //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
+            quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > _distance);
+        }
+    }
+
+    public UI_InvenSlot GetQuickSlot(int _index)
+    {
+        return instInventory.GetQuickSlot[_index];
+    }
 }

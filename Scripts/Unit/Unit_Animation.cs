@@ -72,14 +72,17 @@ public class Unit_Animation : MonoBehaviour
         AnimationClip aniClip = AnimationDatas[_index].animationClips[Random.Range(0, AnimationDatas[_index].animationClips.Count)];
         if (AnimationDatas[_index].animationClips.Count > 0) // 애니메이션 클립이 있다면
         {
+            //MoveAnimation(0f);// 이동 정지
             string actionState = actionBool ? "01" : "02";// 두개의 애니메이션을 교대로 출력
             actionBool = !actionBool;
             // 애니메이션 클립 오버라이드 (클립 이름을 키로 사용)
             clipOverrides["Action" + actionState] = aniClip;
             animatorOverrideController.ApplyOverrides(clipOverrides);
-            //MoveAnimation(0f);// 이동 정지
 
             animator.Play("S_Action" + actionState, -1, 0);// 애니메이션 스테이트
+            animator.SetBool("B_Hold", true);// B_Hold 파라메타 필요
+
+            //Debug.LogWarning($"{aniClip.name}    {"Action" + actionState}       {"S_Action" + actionState}");
             //switch (AnimationDatas[_index].playType)
             //{
             //    case AniClipClass.PlayType.Trigger:

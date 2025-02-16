@@ -11,23 +11,23 @@ public class CT_ShaderControl_ClipEditor : Editor
     public override void OnInspectorGUI()
     {
         CT_ShaderControl_Clip Inspector = target as CT_ShaderControl_Clip;
-        Inspector.controlType = (CT_ShaderControl.ShaderControlType)EditorGUILayout.EnumPopup("Control Type", Inspector.controlType);
+        Inspector.controlType = (CT_ShaderControl_Receiver.ShaderControlType)EditorGUILayout.EnumPopup("Control Type", Inspector.controlType);
 
         switch (Inspector.controlType)
         {
-            case CT_ShaderControl.ShaderControlType.SetFloat:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetFloat:
                 Inspector.FloatVal = EditorGUILayout.FloatField("Float", Inspector.FloatVal);
                 break;
 
-            case CT_ShaderControl.ShaderControlType.SetVector:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetVector:
                 Inspector.VectorVal = EditorGUILayout.Vector4Field("Vector", Inspector.VectorVal);
                 break;
 
-            case CT_ShaderControl.ShaderControlType.SetColor:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetColor:
                 Inspector.ColorVal = EditorGUILayout.ColorField(new GUIContent("Color"), Inspector.ColorVal);
                 break;
 
-            case CT_ShaderControl.ShaderControlType.SetHDRColor:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetHDRColor:
                 Inspector.HDRColorVal = EditorGUILayout.ColorField(new GUIContent("HDR Color"), Inspector.HDRColorVal, true, true, true);
                 break;
         }
@@ -45,22 +45,22 @@ public class CT_ShaderControl_ClipEditor : Editor
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
         switch (Inspector.controlType)
         {
-            case CT_ShaderControl.ShaderControlType.SetFloat:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetFloat:
                 SetButton("_Damage", Inspector);
                 SetButton("_Specular_Strength", Inspector);
                 SetButton("_Rimlight_Strangth", Inspector); 
                 SetButton("_PortalAmount", Inspector);
                 break;
 
-            case CT_ShaderControl.ShaderControlType.SetVector:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetVector:
                 Inspector.VectorVal = EditorGUILayout.Vector4Field("Vector", Inspector.VectorVal);
                 break;
                 
-            case CT_ShaderControl.ShaderControlType.SetColor:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetColor:
                 SetButton("_MainColor", Inspector);
                 break;
 
-            case CT_ShaderControl.ShaderControlType.SetHDRColor:
+            case CT_ShaderControl_Receiver.ShaderControlType.SetHDRColor:
                 SetButton("_EmissionColor", Inspector);
                 SetButton("_DamageColor", Inspector);
                 break;
@@ -91,7 +91,7 @@ namespace P01.Editor
 {
     public class CT_ShaderControl_Clip : PlayableAsset // 트랙에 표시
     {
-        public CT_ShaderControl.ShaderControlType controlType = CT_ShaderControl.ShaderControlType.SetFloat;
+        public CT_ShaderControl_Receiver.ShaderControlType controlType = CT_ShaderControl_Receiver.ShaderControlType.SetFloat;
         public string NameVal = "";
         public float FloatVal = 0;
         public Vector4 VectorVal = Vector4.zero;
@@ -115,7 +115,7 @@ namespace P01.Editor
 
     public class CT_ShaderControl_Behaviour : PlayableBehaviour // 트랙 내용 적용
     {
-        public CT_ShaderControl.ShaderControlType controlType = CT_ShaderControl.ShaderControlType.SetFloat;
+        public CT_ShaderControl_Receiver.ShaderControlType controlType = CT_ShaderControl_Receiver.ShaderControlType.SetFloat;
         public string NameVal = "";
         public float FloatVal = 0;
         public Vector4 VectorVal = Vector4.zero;
@@ -130,7 +130,7 @@ namespace P01.Editor
         {
             int inputCount = playable.GetInputCount();
 
-            CT_ShaderControl.ShaderControlType finalType = CT_ShaderControl.ShaderControlType.SetFloat;
+            CT_ShaderControl_Receiver.ShaderControlType finalType = CT_ShaderControl_Receiver.ShaderControlType.SetFloat;
             string finalName = "";
             float finalFloat = 0;
             Vector4 finalVector4 = Vector4.zero;
@@ -159,8 +159,8 @@ namespace P01.Editor
             if (totalWeight < 0.5f)
                 return;
 
-            CT_ShaderControl test = playerData as CT_ShaderControl;
-            CT_ShaderControl.ControlClass controlClass = new()
+            CT_ShaderControl_Receiver test = playerData as CT_ShaderControl_Receiver;
+            CT_ShaderControl_Receiver.ControlClass controlClass = new()
             {
                 controlType = finalType,
                 SetName = finalName,

@@ -163,7 +163,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     {
         slotType = SlotType.Item;
         itemStruct = _itemStruct;
-        icon.sprite = _itemStruct.icon;
+        icon.sprite = _itemStruct.itemIcon;
     }
 
 
