@@ -42,19 +42,28 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        onBeginDrag?.Invoke(this);
-        icon.gameObject.SetActive(false);
+        if(eventData.button == PointerEventData.InputButton.Left)
+        {
+            onBeginDrag?.Invoke(this);
+            icon.gameObject.SetActive(false);
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        onDrag?.Invoke(eventData.position);
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            onDrag?.Invoke(eventData.position);
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        onEndDrag?.Invoke(this);
-        icon.gameObject.SetActive(true);
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            onEndDrag?.Invoke(this);
+            icon.gameObject.SetActive(true);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

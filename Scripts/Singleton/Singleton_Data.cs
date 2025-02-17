@@ -1,21 +1,21 @@
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Singleton_Data : MonoSingleton<Singleton_Data>
 {
-    public Dictionary<string, Data_Manager.DialogInfoamtion> Dict_Dialog = new Dictionary<string, Data_Manager.DialogInfoamtion>();
-    public Dictionary<string, Data_Manager.TranslateString> Dict_SkillString = new Dictionary<string, Data_Manager.TranslateString>();
-    public Dictionary<string, Data_Manager.TranslateString> Dict_UnitString = new Dictionary<string, Data_Manager.TranslateString>();
-    public Dictionary<string, Data_Manager.TranslateString> Dict_ItemString = new Dictionary<string, Data_Manager.TranslateString>();
+    public Dictionary<string, Data_Manager.DialogStruct> Dict_Dialog = new Dictionary<string, Data_Manager.DialogStruct>();
+    public Dictionary<string, Data_Manager.TranslateString> Dict_DialogString = new Dictionary<string, Data_Manager.TranslateString>();
+    public Dictionary<string, Data_Manager.TranslateString> Dict_TranslateString = new Dictionary<string, Data_Manager.TranslateString>();
     public Dictionary<string, Data_Manager.SkillStruct> Dict_Skill = new Dictionary<string, Data_Manager.SkillStruct>();
     public Dictionary<string, Data_Manager.UnitStruct> Dict_Unit = new Dictionary<string, Data_Manager.UnitStruct>();
     public Dictionary<string, Data_Manager.ItemStruct> Dict_Item = new Dictionary<string, Data_Manager.ItemStruct>();
     public Dictionary<string, AudioClip> Dict_Audio = new Dictionary<string, AudioClip>();
     public Translation translation;
 
-    public void SetDictionary_Dialog(List<Data_Manager.DialogInfoamtion> _data)
+    public void SetDictionary_Dialog(List<Data_Manager.DialogStruct> _data)
     {
-        Dict_Dialog = new Dictionary<string, Data_Manager.DialogInfoamtion>();
+        Dict_Dialog = new Dictionary<string, Data_Manager.DialogStruct>();
         for (int i = 0; i < _data.Count; i++)
         {
             string id = _data[i].ID;
@@ -30,18 +30,60 @@ public class Singleton_Data : MonoSingleton<Singleton_Data>
         }
     }
 
-    public void SetDictionary_SkillTranslation(List<Data_Manager.TranslateString> _data)
+    //public void SetDictionary_SkillTranslation(List<Data_Manager.TranslateString> _data)
+    //{
+    //    Dict_SkillString = SetTranslation(_data);
+    //}
+
+    //public void SetDictionary_UnitTranslation(List<Data_Manager.TranslateString> _data)
+    //{
+    //    Dict_UnitString = SetTranslation(_data);
+    //}
+
+    //public void SetDictionary_ItemTranslation(List<Data_Manager.TranslateString> _data)
+    //{
+    //    Dict_ItemString = SetTranslation(_data);
+    //}
+
+    public void SetDictionary_DialogString(List<Data_Manager.TranslateString> _data)
     {
-        Dict_SkillString = SetTranslation(_data);
-    }
-    public void SetDictionary_UnitTranslation(List<Data_Manager.TranslateString> _data)
-    {
-        Dict_UnitString = SetTranslation(_data);
+        Dict_DialogString = SetTranslation(_data);
     }
 
-    public void SetDictionary_ItemTranslation(List<Data_Manager.TranslateString> _data)
+    public void SetDictionary_TranslationString(List<Data_Manager.TranslateString> _data)
     {
-        Dict_ItemString = SetTranslation(_data);
+        Dict_TranslateString = SetTranslation(_data);
+    }
+
+    public string TryTranslation(int _type, string _id)
+    {
+        Dictionary<string, Data_Manager.TranslateString> temp = default;
+        switch (_type)
+        {
+            case 0:
+                temp = Dict_DialogString;
+                break;
+
+            case 1:
+                temp = Dict_TranslateString;
+                break;
+        }
+
+        switch (translation)
+        {
+            case Translation.Korean:
+                return temp[_id].KR;
+
+            case Translation.English:
+                return temp[_id].EN;
+
+            case Translation.Japanese:
+                return temp[_id].JP;
+
+            case Translation.Chinese:
+                return temp[_id].CN;
+        }
+        return null;
     }
 
     Dictionary<string, Data_Manager.TranslateString> SetTranslation(List<Data_Manager.TranslateString> _data)
@@ -121,30 +163,30 @@ public class Singleton_Data : MonoSingleton<Singleton_Data>
         Chinese
     }
 
-    public string TryDialogTranslation(string _ID)
-    {
-        Data_Manager.DialogInfoamtion dialogTranslation = Dict_Dialog[_ID];
-        string temp = "";
-        switch (translation)
-        {
-            case Translation.Korean:
-                temp = dialogTranslation.KR;
-                break;
+    //public string TryDialogTranslation(string _ID)
+    //{
+    //    Data_Manager.DialogInfoamtion dialogTranslation = Dict_Dialog[_ID];
+    //    string temp = "";
+    //    switch (translation)
+    //    {
+    //        case Translation.Korean:
+    //            temp = dialogTranslation.KR;
+    //            break;
 
-            case Translation.English:
-                temp = dialogTranslation.EN;
-                break;
+    //        case Translation.English:
+    //            temp = dialogTranslation.EN;
+    //            break;
 
-            case Translation.Japanese:
-                temp = dialogTranslation.JP;
-                break;
+    //        case Translation.Japanese:
+    //            temp = dialogTranslation.JP;
+    //            break;
 
-            case Translation.Chinese:
-                temp = dialogTranslation.CN;
-                break;
-        }
-        return temp;
-    }
+    //        case Translation.Chinese:
+    //            temp = dialogTranslation.CN;
+    //            break;
+    //    }
+    //    return temp;
+    //}
 
     public void SetDictionary_Audio(List<AudioClip> _data)
     {

@@ -394,7 +394,8 @@ public class Game_Manager : MonoBehaviour
 
 
 
-    public Transform target;
+    private Transform target;
+    public Transform GetTarget { get { return target; } }
     public Transform targetGuide;
     public int targetIndex;
     public LayerMask targetMask, obstacleMask;
@@ -476,7 +477,8 @@ public class Game_Manager : MonoBehaviour
     }
 #endif
 
-    public Skill_Instance instEffect, instSkill;
+    public Skill_Instance instEffect;
+    Skill_Instance instBullet;
     public float unitSize = 1f;
     float targetDistance;
     public int currentIndex;
@@ -529,7 +531,7 @@ public class Game_Manager : MonoBehaviour
     string SetString(string _id)
     {
         Singleton_Data.Translation translation = Singleton_Data.INSTANCE.translation;
-        Data_Manager.TranslateString skill = Singleton_Data.INSTANCE.Dict_SkillString[_id];
+        Data_Manager.TranslateString skill = Singleton_Data.INSTANCE.Dict_TranslateString[_id];
         string temp = string.Empty;
         switch (translation)
         {
@@ -557,13 +559,13 @@ public class Game_Manager : MonoBehaviour
         if (target == null)
             return;
 
-        if(instSkill == null)
+        if (instBullet == null)
         {
-            instSkill = Instantiate(instEffect, this.transform);
+            instBullet = Instantiate(instEffect, this.transform);
         }
-        instSkill.transform.position = playerParent.position;
-        instSkill.transform.rotation = playerParent.rotation;
-        instSkill.SetTarget(target, unitSize);
+        instBullet.transform.position = playerParent.position;
+        instBullet.transform.rotation = playerParent.rotation;
+        instBullet.SetTarget(target, unitSize);
 
         SlotAction();
     }

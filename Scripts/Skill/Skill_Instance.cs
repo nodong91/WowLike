@@ -120,6 +120,7 @@ public class Skill_Instance : MonoBehaviour
             normalize += Time.deltaTime * 0.3f;
             targetPosition = new Vector3(_target.position.x, transform.position.y, _target.position.z);
             bullet.transform.position = Vector3.MoveTowards(bullet.transform.position, targetPosition, Time.deltaTime * bulletSpeed);// น฿ป็
+            bullet.transform.LookAt(targetPosition);
             if ((targetPosition - bullet.transform.position).magnitude < targetSize)
             {
                 fire = false;
@@ -139,7 +140,7 @@ public class Skill_Instance : MonoBehaviour
 
     void Skill_Impact(Vector3 _target)
     {
-        Vector3 offset = (bullet.transform.position-_target ).normalized;
+        Vector3 offset = (bullet.transform.position - _target).normalized;
         hitEffect.transform.rotation = Quaternion.LookRotation(offset);
         hitEffect.transform.position = _target + offset * targetSize;
 

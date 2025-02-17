@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using static Data_Manager;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -37,52 +39,66 @@ public class Data_Manager : Data_Parse
     public override void DataSetting()
     {
         base.DataSetting();
+        translateString = new List<TranslateString>();
+        dialogString = new List<TranslateString>();
         for (int i = 0; i < GetCSV_Data.Count; i++)
         {
             string csv_Type = GetCSV_Data[i].name;
-            if (csv_Type.Contains("Dialog"))
+            if (csv_Type.Contains("Translate"))
+            {
+                if (csv_Type.Contains("Dialog"))
+                {
+                    dialogString = SetTranslateString(dialogString, GetCSV_Data[i]);
+                }
+                else
+                {
+                    translateString = SetTranslateString(translateString, GetCSV_Data[i]);
+                }
+            }
+            else if (csv_Type.Contains("Dialog"))
             {
                 SetDialogData(GetCSV_Data[i]);
             }
             else if (csv_Type.Contains("Skill"))
             {
-                if (csv_Type.Contains("String"))
-                {
-                    skillString = SetTranslateString(GetCSV_Data[i]);
-                }
-                else
-                {
-                    SetSkill(GetCSV_Data[i]);
-                }
+                //if (csv_Type.Contains("String"))
+                //{
+                //    skillString = SetTranslateString(GetCSV_Data[i]);
+                //}
+                //else
+                //{
+                SetSkill(GetCSV_Data[i]);
+                //}
             }
             else if (csv_Type.Contains("Unit"))
             {
-                if (csv_Type.Contains("String"))
-                {
-                    unitString = SetTranslateString(GetCSV_Data[i]);
-                }
-                else
-                {
-                    SetUnit(GetCSV_Data[i]);
-                }
+                //if (csv_Type.Contains("String"))
+                //{
+                //    unitString = SetTranslateString(GetCSV_Data[i]);
+                //}
+                //else
+                //{
+                SetUnit(GetCSV_Data[i]);
+                //}
             }
             else if (csv_Type.Contains("Item"))
             {
-                if (csv_Type.Contains("String"))
-                {
-                    itemString = SetTranslateString(GetCSV_Data[i]);
-                }
-                else
-                {
-                    SetItem(GetCSV_Data[i]);
-                }
+                //if (csv_Type.Contains("String"))
+                //{
+                //    itemString = SetTranslateString(GetCSV_Data[i]);
+                //}
+                //else
+                //{
+                SetItem(GetCSV_Data[i]);
+                //}
             }
+
         }
     }
 
     void SetDialogData(TextAsset _textAsset)
     {
-        dialog.Clear();
+        dialogStruct.Clear();
         string[] data = _textAsset.text.Split(new char[] { '\n' });
         for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
         {
@@ -90,7 +106,7 @@ public class Data_Manager : Data_Parse
             if (elements[0].Trim().Length == 0)// 아이디 표기가 없으면 제외
                 continue;
 
-            DialogInfoamtion tempData = new DialogInfoamtion
+            DialogStruct tempData = new DialogStruct
             {
                 ID = elements[0].Trim(),
                 textStyle = elements[1].Trim().Length > 0 ?
@@ -100,12 +116,12 @@ public class Data_Manager : Data_Parse
                 bold = elements[4] == "TRUE" ? true : false,
                 speed = FloatTryParse(elements[5].Trim()),
 
-                KR = elements[6],
-                EN = elements[7],
-                JP = elements[8],
-                CN = elements[9],
+                //KR = elements[6],
+                //EN = elements[7],
+                //JP = elements[8],
+                //CN = elements[9],
             };
-            dialog.Add(tempData);
+            dialogStruct.Add(tempData);
         }
     }
 
@@ -187,9 +203,8 @@ public class Data_Manager : Data_Parse
         }
     }
 
-    List<TranslateString> SetTranslateString(TextAsset _textAsset)
+    List<TranslateString> SetTranslateString(List<TranslateString> _tempString, TextAsset _textAsset)
     {
-        List<TranslateString> tempString = new List<TranslateString>();
         string[] data = _textAsset.text.Split(new char[] { '\n' });
         for (int i = 1; i < data.Length; i++)// 첫째 라인(목록) 빼고 리스팅
         {
@@ -205,16 +220,16 @@ public class Data_Manager : Data_Parse
                 JP = elements[3],
                 CN = elements[4],
             };
-            tempString.Add(tempData);
+            _tempString.Add(tempData);
         }
-        return tempString;
+        return _tempString;
     }
 #endif
 
     public Singleton_Data.Translation translation;// 번역 타입
 
     [System.Serializable]
-    public class DialogInfoamtion
+    public class DialogStruct
     {
         public string ID;
         public string color;
@@ -222,14 +237,9 @@ public class Data_Manager : Data_Parse
         public bool bold;
         public Data_DialogType.TextStyle textStyle;
         public float speed;
-
-        public string KR;
-        public string EN;
-        public string JP;
-        public string CN;
     }
     [Header(" [ String ]")]
-    public List<DialogInfoamtion> dialog = new List<DialogInfoamtion>();
+    public List<DialogStruct> dialogStruct = new List<DialogStruct>();
 
     [System.Serializable]
     public class TranslateString
@@ -240,9 +250,8 @@ public class Data_Manager : Data_Parse
         public string JP;
         public string CN;
     }
-    public List<TranslateString> skillString = new List<TranslateString>();
-    public List<TranslateString> unitString = new List<TranslateString>();
-    public List<TranslateString> itemString = new List<TranslateString>();
+    public List<TranslateString> dialogString = new List<TranslateString>();
+    public List<TranslateString> translateString = new List<TranslateString>();
 
     [System.Serializable]
     public struct SkillStruct
@@ -325,13 +334,14 @@ public class Data_Manager : Data_Parse
     {
         Singleton_Data.INSTANCE.translation = translation;
 
-        Singleton_Data.INSTANCE.SetDictionary_Dialog(dialog);
-        Singleton_Data.INSTANCE.SetDictionary_SkillTranslation(skillString);
+        Singleton_Data.INSTANCE.SetDictionary_Dialog(dialogStruct);
+        Singleton_Data.INSTANCE.SetDictionary_DialogString(dialogString);
+
         Singleton_Data.INSTANCE.SetDictionary_Skill(skillStruct);
-        Singleton_Data.INSTANCE.SetDictionary_UnitTranslation(unitString);
         Singleton_Data.INSTANCE.SetDictionary_Unit(unitStruct);
-        Singleton_Data.INSTANCE.SetDictionary_ItemTranslation(itemString);
         Singleton_Data.INSTANCE.SetDictionary_Item(itemStruct);
+        Singleton_Data.INSTANCE.SetDictionary_TranslationString(translateString);
+
         Singleton_Data.INSTANCE.SetDictionary_Audio(audioClip);
     }
 }

@@ -1,8 +1,8 @@
-ID,AnimationType,Size,ColorHex,Bold,Speed,Korean,English,Japanese,Chinese,왜인지 모르겠지만 마지막 리스팅이 오류가 있음
-50010,None,,,,,레이드,Raid,レイド,突袭行动,리스팅 오류를 막기 위한 라인
-50011,A,25,00FF20,TRUE,0.5,센터,Center,センター,中心,
-50012,F,25,FF0000,FALSE,0,육성,Nurture,育成,育成,
-11,None,,0000FF,,,{50010} {50011}이 {50012},{50010} {50011}is {50012},{50010} {50011}が {50012},{50010} {50011}之 {50012},
-0,C,,,,,,,,,
-1,D,,,,,,,,,
-2,F,,,,,,,,,
+ID,AnimationType,Size,ColorHex,Bold,Speed
+D10010,None,,,,
+D10011,A,25,00FF20,TRUE,0.5
+D10012,F,25,FF0000,FALSE,0
+D10013,None,,0000FF,,
+D10014,C,,,,
+D10015,D,,,,
+D10016,F,,,,

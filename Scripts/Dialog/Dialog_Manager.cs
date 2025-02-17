@@ -50,7 +50,7 @@ public class Dialog_Manager : MonoBehaviour
 
     void AddFollow()
     {
-        target = Game_Manager.instance.target;// 임시 타겟
+        target = Game_Manager.instance.GetTarget;// 임시 타겟
         if (target == null)
             return;
 
@@ -106,8 +106,8 @@ public class Dialog_Manager : MonoBehaviour
 
     string TryDialog(string _string)
     {
-        Data_Manager.DialogInfoamtion mainDialog = Singleton_Data.INSTANCE.Dict_Dialog[_string];
-        string mainString = Singleton_Data.INSTANCE.TryDialogTranslation(_string);
+        Data_Manager.DialogStruct mainDialog = Singleton_Data.INSTANCE.Dict_Dialog[_string];
+        string mainString = Singleton_Data.INSTANCE.TryTranslation(0, _string);
         actionBool = false;
         List<string> ids = new List<string>();
         string[] start = mainString.Split(inID);// id추출
@@ -130,8 +130,8 @@ public class Dialog_Manager : MonoBehaviour
         for (int i = 0; i < ids.Count; i++)
         {
             string setting = inID + ids[i] + outID;
-            Data_Manager.DialogInfoamtion temp = Singleton_Data.INSTANCE.Dict_Dialog[ids[i]];
-            string tempText = Singleton_Data.INSTANCE.TryDialogTranslation(ids[i]);
+            Data_Manager.DialogStruct temp = Singleton_Data.INSTANCE.Dict_Dialog[ids[i]];
+            string tempText = Singleton_Data.INSTANCE.TryTranslation(0, ids[i]);
             if (temp.textStyle != Data_DialogType.TextStyle.None)
                 actionBool = true;
             int startPoint = setIndex.IndexOf(setting);// 시작 위치
