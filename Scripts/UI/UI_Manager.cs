@@ -178,24 +178,6 @@ public class UI_Manager : MonoBehaviour
 
 
 
-
-    public void SetSkillSlot(DelegateAction _action)
-    {
-        //slotArray = new Skill_Slot[_skillStruct.Length];
-        //for (int i = 0; i < slotArray.Length; i++)
-        //{
-        //    int index = i;
-        //    slotArray[index] = Instantiate(slot, slotParent);
-        //    slotArray[index].button.onClick.AddListener(delegate { _action(index); });
-        //    string quickIndex = (index + 1).ToString();// ´ÜÃàÅ°
-        //    slotArray[index].SetSlot(quickIndex, _skillStruct[index]);
-        //}
-        SkillCasting(0f);
-
-        instInventory.SetInventory();
-        //inventory.SetQuickSlot(_action);
-    }
-
     public void SkillCasting(float _value)
     {
         castingBar.fillAmount = _value;

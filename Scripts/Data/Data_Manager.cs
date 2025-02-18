@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using static Data_Manager;
 
 
 #if UNITY_EDITOR
@@ -226,8 +225,6 @@ public class Data_Manager : Data_Parse
     }
 #endif
 
-    public Singleton_Data.Translation translation;// 번역 타입
-
     [System.Serializable]
     public class DialogStruct
     {
@@ -332,8 +329,6 @@ public class Data_Manager : Data_Parse
 
     private void Awake()
     {
-        Singleton_Data.INSTANCE.translation = translation;
-
         Singleton_Data.INSTANCE.SetDictionary_Dialog(dialogStruct);
         Singleton_Data.INSTANCE.SetDictionary_DialogString(dialogString);
 

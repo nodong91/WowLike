@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Name: CT_Cinemachine_Marker
   m_EditorClassIdentifier: 
   m_Time: 0
-  brainStyles: 2
+  brainStyles: 3
   brainTime: 1
   retroactive: 0
   emitOnce: 0

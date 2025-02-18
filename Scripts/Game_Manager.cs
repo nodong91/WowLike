@@ -112,7 +112,7 @@ public class Game_Manager : MonoBehaviour
     void ActionSkill(UI_InvenSlot _Slot)
     {
         Data_Manager.SkillStruct skillStruct = _Slot.skillStruct;
-        UI_Manager.instance.SkillText(skillStruct.skillDescription);
+        UI_Manager.instance.SkillText(TestSkillName());
         if (_Slot.GetIsActive == true)
         {
             Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);// 삐지엠테스트
@@ -298,25 +298,25 @@ public class Game_Manager : MonoBehaviour
 
     void SetDirection()
     {
-        direction = Vector2.zero;
+        Vector2 setDirection = Vector2.zero;
         // 같은 종류가 포함되어 있으면
         if ((inputDir & InputDir.Up) != 0)// 위쪽
         {
-            direction = new Vector2(direction.x, 1);
+            setDirection = new Vector2(setDirection.x, 1);
         }
         if ((inputDir & InputDir.Left) != 0)// 왼쪽
         {
-            direction = new Vector2(-1, direction.y);
+            setDirection = new Vector2(-1, setDirection.y);
         }
         if ((inputDir & InputDir.Down) != 0)// 아래쪽
         {
-            direction = new Vector2(direction.x, -1);
+            setDirection = new Vector2(setDirection.x, -1);
         }
         if ((inputDir & InputDir.Right) != 0)// 오른쪽
         {
-            direction = new Vector2(1, direction.y);
+            setDirection = new Vector2(1, setDirection.y);
         }
-        OutputDirection(direction);
+        OutputDirection(setDirection);
     }
 
     void OutputDirection(Vector2 _direction)
@@ -483,44 +483,36 @@ public class Game_Manager : MonoBehaviour
     float targetDistance;
     public int currentIndex;
 
-    void TestSkillSetting()
+    string TestSkillName()
     {
-        TestSkillName();
-        UI_Manager.instance.SetSkillSlot(InputSlot);// 슬롯 세팅
-    }
+        UI_InvenSlot quickSlot = UI_Manager.instance.GetQuickSlot(currentIndex);
+        //quickSlot.skillStruct.skillName = SetString(quickSlot.skillStruct.skillName);
+        string explanation = SetString(quickSlot.skillStruct.skillDescription);
+        string color = "FF0000";// 에너지
+        string e = $"<color=#{color}>에너지 : {quickSlot.skillStruct.energyType.ToString()} {quickSlot.skillStruct.energyAmount.ToString()}</color>";
+        explanation = explanation.Replace("{e}", e);
 
-    void TestSkillName()
-    {
-        //for (int i = 0; i < skillStructs.Length; i++)
-        //{
-        //    skillStructs[i].skillName = SetString(skillStructs[i].skillName);
-        //    string explanation = SetString(skillStructs[i].skillDescription);
-        //    string color = "FF0000";// 에너지
-        //    string e = $"<color=#{color}>에너지 : {skillStructs[i].energyType.ToString()} {skillStructs[i].energyAmount.ToString()}</color>";
-        //    explanation = explanation.Replace("{e}", e);
+        color = "00FF00";// 레벨
+        string l = $"<color=#{color}>레벨 : {quickSlot.skillStruct.level.ToString()}</color>";
+        explanation = explanation.Replace("{l}", l);
 
-        //    color = "00FF00";// 레벨
-        //    string l = $"<color=#{color}>레벨 : {skillStructs[i].level.ToString()}</color>";
-        //    explanation = explanation.Replace("{l}", l);
+        color = "0000FF";// 캐스팅 타임
+        string a = $"<color=#{color}>캐스팅 : {quickSlot.skillStruct.castingTime.ToString()}</color>";
+        explanation = explanation.Replace("{a}", a);
 
-        //    color = "0000FF";// 캐스팅 타임
-        //    string a = $"<color=#{color}>캐스팅 : {skillStructs[i].castingTime.ToString()}</color>";
-        //    explanation = explanation.Replace("{a}", a);
+        color = "000000";// 쿨타임
+        string o = $"<color=#{color}>쿨타임 : {quickSlot.skillStruct.coolingTime.ToString()}</color>";
+        explanation = explanation.Replace("{o}", o);
 
-        //    color = "000000";// 쿨타임
-        //    string o = $"<color=#{color}>쿨타임 : {skillStructs[i].coolingTime.ToString()}</color>";
-        //    explanation = explanation.Replace("{o}", o);
+        color = "FFFF00";// 효과 거리
+        string d = $"<color=#{color}>효과 거리 : {quickSlot.skillStruct.distance.ToString()}</color>";
+        explanation = explanation.Replace("{d}", d);
 
-        //    color = "FFFF00";// 효과 거리
-        //    string d = $"<color=#{color}>효과 거리 : {skillStructs[i].distance.ToString()}</color>";
-        //    explanation = explanation.Replace("{d}", d);
+        color = "FF00FF";// 효과 정도 (데미지 같은...)
+        string v = $"<color=#{color}>효과 정도 : {quickSlot.skillStruct.energyAmount.ToString()}</color>";
+        explanation = explanation.Replace("{v}", v);
 
-        //    color = "FF00FF";// 효과 정도 (데미지 같은...)
-        //    string v = $"<color=#{color}>효과 정도 : {skillStructs[i].energyAmount.ToString()}</color>";
-        //    explanation = explanation.Replace("{v}", v);
-
-        //    skillStructs[i].skillDescription = explanation;
-        //}
+        return explanation;
     }
 
     //void SetSkillText(int _index)

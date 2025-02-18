@@ -7,21 +7,20 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UI_Cartoon 1
-  m_Shader: {fileID: -6465566751694194690, guid: 727bceccfdb949149a789708cd6d3cd0, type: 3}
+  m_Name: New Shader Graph
+  m_Shader: {fileID: -6465566751694194690, guid: 26b760147575a2e42a3055f855c29146, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _ENUM_A
-  - _FILL_METHOD_HORIZONTAL
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties: _CellDensity _CellRotate _MsinColor
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -43,18 +42,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Background: 1
-    - _Boolean: 0
-    - _CellDensity: 1
-    - _CellRotate: 45
+    - _AlphaClip: 0.5
+    - _BlurX: 0.015
+    - _BlurY: 0.015
     - _ColorMask: 15
-    - _ENUM: 0
-    - _FILL_METHOD: 0
-    - _FillAmount: 0.25
-    - _FillEdge: 1
-    - _Float: 0.2
-    - _Float_1: 0.545
-    - _Rotate: 45
+    - _Float: 0
+    - _Float_1: 1
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -62,13 +57,7 @@ Material:
     - _StencilWriteMask: 255
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
-    - _UV_Rotate: 0
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _FillMinMax: {r: 0.98, g: -0.71, b: 0, a: 0}
-    - _MainTiling: {r: 1, g: 1.2, b: 0, a: 0}
-    - _MsinColor: {r: 1, g: 0.83335185, b: 0.44811314, a: 1}
-    - _UV_Speed: {r: 0, g: 0, b: 0, a: 0}
-    - _Vector2: {r: 0.8, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

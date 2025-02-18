@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
+using static Data_DialogType;
 
 public class CameraTest : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class CameraTest : MonoBehaviour
     private Camera mainCam;
     private CinemachineBrain brain;
     public CinemachineBlendDefinition.Styles brainStyles;
-    public float brainTime;
+    public float brainTime, actionTime;
 
     void Start()
     {
@@ -16,16 +17,25 @@ public class CameraTest : MonoBehaviour
         brain = mainCam.GetComponent<CinemachineBrain>();
         brain.DefaultBlend.Style = brainStyles;
         brain.DefaultBlend.Time = brainTime;
+        actionTime = 1f / brainTime;
 
         focus.gameObject.SetActive(false);
 
         SetCanvas();
+        CloseCanvas();
     }
 
     private Vector2 prevVector;
     private Vector3 prevWorldVector;
     public float speed;
-    bool zoomIn;
+    public bool zoomIn;
+    Coroutine canvasAction;
+    public struct RectStruct
+    {
+        public Vector2 anchor;
+        public Vector2 pivot;
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -40,7 +50,6 @@ public class CameraTest : MonoBehaviour
             if (dist < 0.01f)
             {
                 Click();
-                zoomIn = !zoomIn;
             }
         }
         else if (Input.GetMouseButton(0))
@@ -61,55 +70,62 @@ public class CameraTest : MonoBehaviour
 
         if (zoomIn == true)
         {
-            focus.gameObject.SetActive(false);
-            RectStruct sideStruct = new RectStruct
-            {
-                anchor = new Vector2(anchor.x, 0f),
-                pivot = new Vector2(0f, 0.5f)
-            };
-
-            RectStruct centerStruct = new RectStruct
-            {
-                anchor = new Vector2(0f,0f),
-                pivot = new Vector2(0.5f, 0f)
-            };
-            canvasAction = StartCoroutine(CanvasActing(sideStruct, centerStruct));
+            zoomIn = false;
+            CloseCanvas();
         }
         else
         {
             Transform temp = RayCasting();
             if (temp != null)
             {
+                zoomIn = true;
                 target.position = temp.position;
-                focus.gameObject.SetActive(true);
-
-                RectStruct sideStruct = new RectStruct
-                {
-                    anchor = new Vector2(0f, 0f),
-                    pivot = new Vector2(1f, 0.5f)
-                };
-
-                RectStruct centerStruct = new RectStruct
-                {
-                    anchor = new Vector2(0f, -anchor.y),
-                    pivot = new Vector2(0.5f, 1f)
-                };
-                canvasAction = StartCoroutine(CanvasActing(sideStruct, centerStruct));
+                OpenCanvas();
             }
         }
     }
-    Coroutine canvasAction;
-    public struct RectStruct
+
+    void OpenCanvas()
     {
-        public Vector2 anchor;
-        public Vector2 pivot;
+        focus.gameObject.SetActive(true);
+
+        RectStruct sideStruct = new RectStruct
+        {
+            anchor = new Vector2(0f, 0f),
+            pivot = new Vector2(1f, 0.5f)
+        };
+
+        RectStruct centerStruct = new RectStruct
+        {
+            anchor = new Vector2(0f, -anchor.y),
+            pivot = new Vector2(0.5f, 1f)
+        };
+        canvasAction = StartCoroutine(CanvasActing(sideStruct, centerStruct));
     }
+
+    void CloseCanvas()
+    {
+        focus.gameObject.SetActive(false);
+        RectStruct sideStruct = new RectStruct
+        {
+            anchor = new Vector2(anchor.x, 0f),
+            pivot = new Vector2(0f, 0.5f)
+        };
+
+        RectStruct centerStruct = new RectStruct
+        {
+            anchor = new Vector2(0f, 0f),
+            pivot = new Vector2(0.5f, 0f)
+        };
+        canvasAction = StartCoroutine(CanvasActing(sideStruct, centerStruct));
+    }
+
     IEnumerator CanvasActing(RectStruct _side, RectStruct _center)
     {
         float normalize = 0f;
         while (normalize < 1f)
         {
-            normalize += Time.deltaTime * 5f;
+            normalize += Time.deltaTime * actionTime;
             sideBox.anchoredPosition = Vector2.Lerp(sideBox.anchoredPosition, _side.anchor, normalize);
             sideBox.pivot = Vector2.Lerp(sideBox.pivot, _side.pivot, normalize);
 
