@@ -60,36 +60,15 @@ public class Data_Manager : Data_Parse
             }
             else if (csv_Type.Contains("Skill"))
             {
-                //if (csv_Type.Contains("String"))
-                //{
-                //    skillString = SetTranslateString(GetCSV_Data[i]);
-                //}
-                //else
-                //{
                 SetSkill(GetCSV_Data[i]);
-                //}
             }
             else if (csv_Type.Contains("Unit"))
             {
-                //if (csv_Type.Contains("String"))
-                //{
-                //    unitString = SetTranslateString(GetCSV_Data[i]);
-                //}
-                //else
-                //{
                 SetUnit(GetCSV_Data[i]);
-                //}
             }
             else if (csv_Type.Contains("Item"))
             {
-                //if (csv_Type.Contains("String"))
-                //{
-                //    itemString = SetTranslateString(GetCSV_Data[i]);
-                //}
-                //else
-                //{
                 SetItem(GetCSV_Data[i]);
-                //}
             }
 
         }
@@ -140,7 +119,7 @@ public class Data_Manager : Data_Parse
                 skillName = elements[1],
                 skillDescription = elements[2],
                 animationType = (Unit_Animation.AnimationType)Enum.Parse(typeof(Unit_Animation.AnimationType), elements[3]),
-                icon = FindSprite(elements[4]),
+                icon = FindSprite(elements[4].Trim()),
                 level = IntTryParse(elements[5]),
                 skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[6]),// 기본 데미지의 몇%
                 value = FloatTryParse(elements[7]),
@@ -167,7 +146,7 @@ public class Data_Manager : Data_Parse
                 ID = elements[0].Trim(),
                 unitName = elements[1].Trim(),
                 unitDescription = elements[2].Trim(),
-                unitIcon = FindSprite(elements[3]),
+                unitIcon = FindSprite(elements[3].Trim()),
 
                 strength = FloatTryParse(elements[4]),
                 agility = FloatTryParse(elements[5]),
@@ -191,12 +170,7 @@ public class Data_Manager : Data_Parse
                 ID = elements[0].Trim(),
                 itemName = elements[1].Trim(),
                 itemDescription = elements[2].Trim(),
-                itemIcon = FindSprite(elements[3]),
-
-                //strength = FloatTryParse(elements[4]),
-                //agility = FloatTryParse(elements[5]),
-                //intelligence = FloatTryParse(elements[6]),
-                //constitution = FloatTryParse(elements[7]),
+                itemIcon = FindSprite(elements[3].Trim()),
             };
             itemStruct.Add(tempData);
         }

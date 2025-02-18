@@ -9,10 +9,11 @@ public class Game_Manager : MonoBehaviour
 
     private Camera mainCamera;
     public Unit_Animation player;
-    public Transform playerParent, guide;
+    public Transform playerParent;
 
-    [SerializeField] Vector3 direction;
-    public float moveSpeed = 1f;
+    Vector3 direction;
+    public Vector2 moveDIR;
+    public float moveSpeed, maxSpeed = 1f;
     public float rotateSpeed = 10f;
     Coroutine inputDirection;
     Coroutine mouseRight;
@@ -316,6 +317,7 @@ public class Game_Manager : MonoBehaviour
         {
             setDirection = new Vector2(1, setDirection.y);
         }
+        moveDIR = setDirection;
         OutputDirection(setDirection);
     }
 
@@ -328,26 +330,33 @@ public class Game_Manager : MonoBehaviour
 
     IEnumerator Co_OutputDirection(Vector2 _direction)
     {
-        while (inputDir != 0)
-        {
-            SetDirection(_direction);
-            yield return null;
-        }
-    }
+        float targetSpeed = _direction == Vector2.zero ? 0f : 1f;
+        float normalize = 0f;
 
-    void SetDirection(Vector3 _direction)
-    {
-        Vector3 dir = new Vector3(_direction.x, 0, _direction.y);
-        Vector3 temp = mainCamera.transform.TransformDirection(dir).normalized;
-        direction = playerParent.transform.position + new Vector3(temp.x, 0f, temp.z);
-        guide.transform.position = dir;
-        Moving();
-        Rotate();
+        while (moveSpeed > 0 || moveDIR != Vector2.zero)
+        {
+            if (moveDIR != Vector2.zero)
+            {
+                Vector3 dir = new Vector3(_direction.x, 0, _direction.y);
+                Vector3 temp = mainCamera.transform.TransformDirection(dir);
+                direction = playerParent.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
+                Moving();
+                Rotate();
+            }
+            yield return null;
+
+            normalize += Time.deltaTime;
+            moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, normalize);
+            float x = rotateType == RotateType.Normal ? 1f : _direction.x;
+            float y = rotateType == RotateType.Normal ? 0f : _direction.y;
+            player.MoveAnimation(moveSpeed, x, y);
+        }
     }
 
     void Moving()
     {
-        Vector3 movePoint = Vector3.Lerp(playerParent.transform.position, direction, Time.deltaTime * moveSpeed);
+        float tempSpeed = moveSpeed * maxSpeed;
+        Vector3 movePoint = Vector3.Lerp(playerParent.transform.position, direction, Time.deltaTime * tempSpeed);
         playerParent.transform.position = movePoint;
         CheckDistance();
     }
@@ -368,7 +377,6 @@ public class Game_Manager : MonoBehaviour
             case RotateType.Focus:
                 Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
                 Vector3 front = playerParent.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
-                guide.transform.position = front;
 
                 offset = (front - playerParent.transform.position).normalized;
                 rotatePoint = Quaternion.Lerp(playerParent.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);

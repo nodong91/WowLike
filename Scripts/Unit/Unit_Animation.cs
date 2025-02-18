@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Unit_Animation : MonoBehaviour
 {
+    public Data_Animation dataAnimation;
     public List<Data_Animation.AniClipClass> AnimationDatas;
 
     public enum AnimationType
@@ -21,8 +22,6 @@ public class Unit_Animation : MonoBehaviour
 
     private Animator animator;
     private bool actionBool;
-
-    public Data_Animation dataAnimation;
 
     private void Start()
     {
@@ -80,7 +79,7 @@ public class Unit_Animation : MonoBehaviour
             animatorOverrideController.ApplyOverrides(clipOverrides);
 
             animator.Play("S_Action" + actionState, -1, 0);// 애니메이션 스테이트
-            animator.SetBool("B_Hold", true);// B_Hold 파라메타 필요
+            //animator.SetBool("B_Hold", true);// B_Hold 파라메타 필요
 
             //Debug.LogWarning($"{aniClip.name}    {"Action" + actionState}       {"S_Action" + actionState}");
             //switch (AnimationDatas[_index].playType)
@@ -111,5 +110,12 @@ public class Unit_Animation : MonoBehaviour
             //}
         }
         return aniClip.length * _animatorSpeed;
+    }
+
+    public void MoveAnimation(float _moveSpeed, float _moveX, float _moveY)
+    {
+        animator.SetFloat("F_MoveSpeed", _moveSpeed);
+        animator.SetFloat("F_Move_X", _moveX);
+        animator.SetFloat("F_Move_Y", _moveY);
     }
 }
