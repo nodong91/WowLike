@@ -181,6 +181,7 @@ namespace P01.Editor
                             for (int i = 0; i < fbxs.Count; i++)
                             {
                                 EditorUtility.SetDirty(fbxs[i].data);
+                                Debug.LogWarning(fbxs[i].data);
                                 fbxs[i].importer.SaveAndReimport();
                             }
                             break;

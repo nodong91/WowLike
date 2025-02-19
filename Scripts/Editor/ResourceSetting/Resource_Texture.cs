@@ -75,7 +75,7 @@ namespace P01
                         SortTexture("Android");
                     }
 
-                    if (SetButton("iOS", setWidth, setHight))
+                    if (SetButton("iOS", setHight))
                     {
                         SortTexture("iOS");
                     }
@@ -121,7 +121,7 @@ namespace P01
                         var iOSOverrides = textures[i].importer.GetPlatformTextureSettings("iOS");
                         buttonText.normal.textColor = iOSOverrides.overridden ? Color.green : Color.red;
                         format = iOSOverrides.overridden ? iOSOverrides.format.ToString() : "None";
-                        if (GUILayout.Button(format, buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
+                        if (GUILayout.Button(format, buttonText,  GUILayout.Height(setHight)))
                         {
                             iOSOverrides.overridden = !iOSOverrides.overridden;
                             //iOSOverrides.format = TextureImporterFormat.ETC2_RGB4;
@@ -324,6 +324,18 @@ namespace P01
 
             string orderStr = "오더 세팅";
             return GUILayout.Button(new GUIContent(_name, orderStr), textStyle, GUILayout.Width(_setWidth), GUILayout.Height(_setHight));
+        }
+
+        public bool SetButton(string _name, float _setHight)
+        {
+            GUIStyle textStyle = new GUIStyle(GUI.skin.button)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                normal = { textColor = Color.yellow },
+                fontStyle = FontStyle.Bold,
+                fontSize = 15
+            };
+            return GUILayout.Button(new GUIContent(_name), textStyle, GUILayout.Height(_setHight));
         }
     }
 }

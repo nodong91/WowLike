@@ -52,7 +52,7 @@ ModelImporter:
       name: mat_amber_weapon_01
     second: {fileID: 2100000, guid: 2536cf72d5aadb34788e4a043eae8fe4, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 0
     materialName: 1
     materialSearch: 1
     materialLocation: 1
@@ -63,8 +63,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: m_amber_battleuniform_01/Root_Master
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -125,7 +123,7 @@ ModelImporter:
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
   referencedClips: []
-  importAnimation: 0
+  importAnimation: 1
   humanDescription:
     serializedVersion: 3
     human: []
@@ -146,7 +144,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

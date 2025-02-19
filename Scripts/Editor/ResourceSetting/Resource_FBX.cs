@@ -46,10 +46,6 @@ namespace P01
             EditorGUILayout.BeginVertical("box");
             {
                 EditorGUILayout.BeginHorizontal("box");
-                if (SetButton("FBX", setWidth, setHight))
-                {
-                    SortFBX("FBX");
-                }
                 if (SetButton("Read/Write", setWidth, setHight))
                 {
                     SortFBX("Read/Write");
@@ -66,73 +62,61 @@ namespace P01
                 {
                     SortFBX("MaterialImportMode");
                 }
-                if (SetButton("AnimationType", setWidth, setHight))
+                if (SetButton("AnimationType", setHight))
                 {
                     SortFBX("AnimationType");
                 }
+                if (SetButton("FBX", setWidth, setHight))
+                {
+                    SortFBX("FBX");
+                }
                 EditorGUILayout.EndHorizontal();
 
-                //EditorGUILayout.BeginHorizontal();
-                //GUILayout.Label("FBX", centerText, GUILayout.Width(setWidth));
-                //if (GUILayout.Button(isReadable.ToString(), GUILayout.Width(setWidth)))
-                //{
-                //    isReadable = !isReadable;
-                //}
-                //if (GUILayout.Button(constraints.ToString(), GUILayout.Width(setWidth)))
-                //{
-                //    constraints = !constraints;
-                //}
-                //if (GUILayout.Button(animation.ToString(), GUILayout.Width(setWidth)))
-                //{
-                //    animation = !animation;
-                //}
-
-                //materialMode = (ModelImporterMaterialImportMode)EditorGUILayout.EnumPopup("", materialMode, GUILayout.Width(setWidth));
-                //animMode = (ModelImporterAnimationType)EditorGUILayout.EnumPopup("", animMode, GUILayout.Width(setWidth));
-                //EditorGUILayout.EndHorizontal();
                 setHight = 20f;
+                buttonText.fontSize = 13;
+                buttonText.fontStyle = FontStyle.Normal;
+
                 scrollFBX = EditorGUILayout.BeginScrollView(scrollFBX);
                 for (int i = 0; i < fbxs.Count; i++)
                 {
                     EditorGUILayout.BeginHorizontal();
                     fbxs[i].data = EditorGUILayout.ObjectField("", fbxs[i].data, typeof(GameObject), false, GUILayout.Width(setWidth), GUILayout.Height(setHight)) as GameObject;
-                    buttonText.fontSize = 13;
-                    buttonText.fontStyle = FontStyle.Normal;
-                    buttonText.normal.textColor = fbxs[i].importer.isReadable ? Color.green : Color.red;
-                    if (GUILayout.Button(fbxs[i].importer.isReadable.ToString(), buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
-                    {
-                        fbxs[i].importer.isReadable = !fbxs[i].importer.isReadable;
-                    }
+
                     buttonText.normal.textColor = fbxs[i].importer.importConstraints ? Color.green : Color.red;
                     if (GUILayout.Button(fbxs[i].importer.importConstraints.ToString(), buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
                     {
                         fbxs[i].importer.importConstraints = !fbxs[i].importer.importConstraints;
                     }
-                    //GUILayout.Label(fbxs[i].importer.importConstraints.ToString(), centerText, GUILayout.Width(setWidth));
+
                     buttonText.normal.textColor = fbxs[i].importer.importAnimation ? Color.green : Color.red;
                     if (GUILayout.Button(fbxs[i].importer.importAnimation.ToString(), buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
                     {
                         fbxs[i].importer.importAnimation = !fbxs[i].importer.importAnimation;
                     }
-                    //GUILayout.Label(fbxs[i].importer.importAnimation.ToString(), centerText, GUILayout.Width(setWidth));
 
                     buttonText.normal.textColor = fbxs[i].importer.materialImportMode == ModelImporterMaterialImportMode.None ? Color.red : Color.green;
-                    fbxs[i].importer.materialImportMode = (ModelImporterMaterialImportMode)EditorGUILayout.EnumPopup("", fbxs[i].importer.materialImportMode, buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight));
-                    //GUILayout.Label(fbxs[i].importer.materialImportMode.ToString(), centerText, GUILayout.Width(setWidth));
-                    buttonText.normal.textColor = fbxs[i].importer.animationType == ModelImporterAnimationType.None ? Color.red : Color.green;
-                    fbxs[i].importer.animationType = (ModelImporterAnimationType)EditorGUILayout.EnumPopup("", fbxs[i].importer.animationType, buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight));
-                    //GUILayout.Label(fbxs[i].importer.animationType.ToString(), centerText, GUILayout.Width(setWidth));
+                    fbxs[i].importer.materialImportMode = (ModelImporterMaterialImportMode)EditorGUILayout.EnumPopup
+                        ("", fbxs[i].importer.materialImportMode, buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight));
 
-                    //buttonText.normal.textColor = Color.yellow;
-                    //if (GUILayout.Button("Remove", buttonText, GUILayout.Width(setWidth)))
+
+                    //buttonText.normal.textColor = fbxs[i].importer.importAnimation ? Color.green : Color.red;
+                    //if (GUILayout.Button(fbxs[i].importer.importAnimation.ToString(), buttonText,  GUILayout.Height(setHight)))
                     //{
-                    //    fbxs.Remove(fbxs[i]);
-                    //    EditorGUILayout.EndHorizontal();
-                    //    break;
+                    //    fbxs[i].importer.importAnimation = !fbxs[i].importer.importAnimation;
                     //}
+                    buttonText.normal.textColor = fbxs[i].importer.animationType == ModelImporterAnimationType.None ? Color.red : Color.green;
+                    fbxs[i].importer.animationType = (ModelImporterAnimationType)EditorGUILayout.EnumPopup
+                        ("", fbxs[i].importer.animationType, buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight));
+
+                    buttonText.normal.textColor = fbxs[i].importer.isReadable ? Color.green : Color.red;
+                    if (GUILayout.Button(fbxs[i].importer.isReadable.ToString(), buttonText,  GUILayout.Height(setHight)))
+                    {
+                        fbxs[i].importer.isReadable = !fbxs[i].importer.isReadable;
+                    }
                     EditorGUILayout.EndHorizontal();
                 }
                 EditorGUILayout.EndScrollView();
+                SetMaterialImportMode();
             }
             EditorGUILayout.EndVertical();
             //if (GUILayout.Button("Save Project", buttonText, GUILayout.Height(50f)))
@@ -144,6 +128,30 @@ namespace P01
             //    //}
             //    AssetDatabase.SaveAssets();
             //}
+        }
+
+        void SetMaterialImportMode()
+        {
+            GUIStyle buttonText = new(GUI.skin.button)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                normal = { textColor = Color.yellow },
+                fontSize = 15,
+                fontStyle = FontStyle.Bold,
+            };
+
+            if (GUILayout.Button(new GUIContent("가장 위 내용으로 모두 변경"), buttonText, GUILayout.Height(30f)))
+            {
+                ModelImporter importer = fbxs[0].importer;
+                for (int i = 0; i < fbxs.Count; i++)
+                {
+                    fbxs[i].importer.isReadable = importer.isReadable;
+                    fbxs[i].importer.importConstraints = importer.importConstraints;
+                    fbxs[i].importer.importAnimation = importer.importAnimation;
+                    fbxs[i].importer.materialImportMode = importer.materialImportMode;
+                    fbxs[i].importer.animationType = importer.animationType;
+                }
+            }
         }
 
         public void FindFBX(string[] _paths)

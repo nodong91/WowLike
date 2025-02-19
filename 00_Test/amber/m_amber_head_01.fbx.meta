@@ -42,7 +42,7 @@ ModelImporter:
       name: mat_amber_head
     second: {instanceID: 0}
   materials:
-    materialImportMode: 2
+    materialImportMode: 0
     materialName: 1
     materialSearch: 1
     materialLocation: 0
@@ -53,8 +53,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: m_amber_head_01/Root_Master
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -115,7 +113,7 @@ ModelImporter:
     blendShapeNormalImportMode: 2
     normalSmoothingSource: 0
   referencedClips: []
-  importAnimation: 0
+  importAnimation: 1
   humanDescription:
     serializedVersion: 3
     human: []
@@ -136,7 +134,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 0
   remapMaterialsIfMaterialImportModeIsNone: 0

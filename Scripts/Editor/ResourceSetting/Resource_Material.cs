@@ -41,7 +41,7 @@ namespace P01
                 normal = { textColor = Color.white },
                 alignment = TextAnchor.MiddleLeft
             };
-           
+
             EditorGUILayout.BeginVertical("box");
             {
                 EditorGUILayout.BeginHorizontal("box");
@@ -57,6 +57,10 @@ namespace P01
                 {
                     SortMaterial("EnableGPUInstancing");
                 }
+                if (SetButton("Remove Listing", setHight))
+                {
+
+                }
                 EditorGUILayout.EndHorizontal();
                 setHight = 20f;
                 scrollMaterial = EditorGUILayout.BeginScrollView(scrollMaterial);
@@ -71,27 +75,54 @@ namespace P01
                     //GUILayout.Label(shaderName, centerText, GUILayout.Width(setWidth));
                     EditorGUILayout.ObjectField("", materials[i].shader, typeof(Shader), true, GUILayout.Width(setWidth), GUILayout.Height(setHight));
                     //setShader = (SetShader)EditorGUILayout.EnumPopup("", setShader, centerText, GUILayout.Width(setWidth), GUILayout.Height(setHight));
-                    aaaa = EditorGUILayout.ObjectField("", aaaa, typeof(Shader), true, GUILayout.Width(setWidth), GUILayout.Height(setHight))as Shader;
+                    //aaaa = EditorGUILayout.ObjectField("", aaaa, typeof(Shader), true, GUILayout.Width(setWidth), GUILayout.Height(setHight))as Shader;
                     //GUILayout.Label(matName, centerText, GUILayout.Width(setWidth));
                     buttonText.normal.textColor = materials[i].enableInstancing ? Color.green : Color.red;
                     if (GUILayout.Button(materials[i].enableInstancing.ToString(), buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
                     {
                         materials[i].enableInstancing = !materials[i].enableInstancing;
                     }
-                    //buttonText.normal.textColor = Color.yellow;
-                    //if (GUILayout.Button("Remove", buttonText, GUILayout.Width(setWidth)))
-                    //{
-                    //    materials.Remove(materials[i]);
-                    //    EditorGUILayout.EndHorizontal();
-                    //    break;
-                    //}
+
+                    buttonText.normal.textColor = Color.white;
+                    if (GUILayout.Button("Remove", buttonText, GUILayout.Height(setHight)))
+                    {
+                        materials.Remove(materials[i]);
+                    }
                     EditorGUILayout.EndHorizontal();
                 }
                 EditorGUILayout.EndScrollView();
+
+                buttonText.normal.textColor = Color.yellow;
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("HiddenListing", buttonText, GUILayout.Height(30f)))
+                {
+                    List<Material> tempMaterials = new List<Material>();
+                    for (int i = 0; i < materials.Count; i++)
+                    {
+                        string name = materials[i].shader.name;
+                        if (name.Contains("Error") == true)
+                        {
+                            tempMaterials.Add(materials[i]);
+                        }
+                    }
+                    materials = tempMaterials;
+                }
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                change = EditorGUILayout.ObjectField("", change, typeof(Shader), true, GUILayout.Height(30f)) as Shader;
+                if (GUILayout.Button("All Change Shader", buttonText, GUILayout.Height(30f)))
+                {
+                    for (int i = 0; i < materials.Count; i++)
+                    {
+                        materials[i].shader = change;
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndVertical();
         }
-
+        Shader change;
         public void FindMaterial(string[] _paths)
         {
             materials.Clear();

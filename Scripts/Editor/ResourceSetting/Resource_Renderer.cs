@@ -69,7 +69,7 @@ namespace P01
                         SortRenderer("Static Shadow");
                     }
 
-                    if (SetButton("Illumination", setWidth, setHight))
+                    if (SetButton("Illumination",  setHight))
                     {
                         SortRenderer("Illumination");
                     }
@@ -113,7 +113,7 @@ namespace P01
                         var flags = (StaticEditorFlags)GameObjectUtility.GetStaticEditorFlags(renderers[i].renderer.gameObject);
                         bool illumination = flags == StaticEditorFlags.ContributeGI;
                         buttonText.normal.textColor = illumination == true ? Color.green : Color.red;
-                        if (GUILayout.Button(flags.ToString(), buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
+                        if (GUILayout.Button(flags.ToString(), buttonText,  GUILayout.Height(setHight)))
                         {
                             if (flags == StaticEditorFlags.ContributeGI)
                                 flags = 0;

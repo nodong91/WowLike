@@ -171,7 +171,6 @@ namespace P01.Editor
 
         void SortCategory()
         {
-
             GUI.color = Color.white;
             float buttonNum = 8f;
             float width = (position.width - 7f * (buttonNum - 1f)) / buttonNum;
@@ -379,28 +378,97 @@ namespace P01.Editor
 
         private void OnGUI()
         {
-            GUILayout.Label("Chase Results:", EditorStyles.boldLabel);
-            scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height - 50));
+            //GUILayout.Label("Chase Results:", EditorStyles.boldLabel);
+            SortCategory();
+            GUILayout.Space(5);
+
+            GUI.color = Color.white;
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(position.height - 50));
+
+            GUIStyle buttonText = new(GUI.skin.button)
+            {
+                fontSize = 15,
+                fontStyle = FontStyle.Normal,
+                normal = { textColor = Color.white },
+                alignment = TextAnchor.MiddleLeft
+            };
 
             // 경로를 버튼으로 표시
             foreach (var dependency in chaseDependencies)
             {
-                if (GUILayout.Button(dependency, GUILayout.Width(position.width - 20)))
+                string[] fileExtension = dependency.ToString().Split('.');
+                string[] fileName = dependency.ToString().Split('/');
+
+                if (fileExtension[^1].Equals(showFile) || showFile == "")
                 {
-                    Object targetObject = AssetDatabase.LoadAssetAtPath<Object>(dependency);
-                    if (targetObject != null)
+                    if (GUILayout.Button(fileName[^1], buttonText))
                     {
-                        EditorGUIUtility.PingObject(targetObject);  // 경로 추적
-                    }
-                    else
-                    {
-                        EditorUtility.DisplayDialog("Error", $"Could not find object at path: {dependency}", "OK");
+                        Object targetObject = AssetDatabase.LoadAssetAtPath<Object>(dependency);
+                        if (targetObject != null)
+                        {
+                            EditorGUIUtility.PingObject(targetObject);  // 경로 추적
+                        }
+                        else
+                        {
+                            EditorUtility.DisplayDialog("Error", $"Could not find object at path: {dependency}", "OK");
+                        }
                     }
                 }
             }
 
             EditorGUILayout.EndScrollView();
         }
+
+        string showFile = "";
+        void SortCategory()
+        {
+            GUI.color = Color.white;
+            float buttonNum = 8f;
+            float width = (position.width - 7f * (buttonNum - 1f)) / buttonNum;
+            GUILayout.BeginHorizontal();
+            GUI.color = showFile == "" ? Color.yellow : Color.white;
+            if (GUILayout.Button("All", GUILayout.Width(width)))
+            {
+                showFile = "";
+            }
+            GUI.color = showFile == "unity" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Scene", GUILayout.Width(width)))
+            {
+                showFile = "unity";
+            }
+            GUI.color = showFile == "asset" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Asset", GUILayout.Width(width)))
+            {
+                showFile = "asset";
+            }
+            GUI.color = showFile == "prefab" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Prefab", GUILayout.Width(width)))
+            {
+                showFile = "prefab";
+            }
+            GUI.color = showFile == "cs" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Script", GUILayout.Width(width)))
+            {
+                showFile = "cs";
+            }
+            GUI.color = showFile == "mat" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Material", GUILayout.Width(width)))
+            {
+                showFile = "mat";
+            }
+            GUI.color = showFile == "shadergraph" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Shader", GUILayout.Width(width)))
+            {
+                showFile = "shadergraph";
+            }
+            GUI.color = showFile == "anim" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Anim"))
+            {
+                showFile = "anim";
+            }
+            GUILayout.EndHorizontal();
+        }
+
     }
 
 }
