@@ -23,11 +23,6 @@ public class Unit_Animation : MonoBehaviour
     private Animator animator;
     private bool actionBool;
 
-    private void Start()
-    {
-        SetAnimator();
-    }
-
     public void SetAnimator()
     {
         AnimationDatas = dataAnimation.AnimationDatas;

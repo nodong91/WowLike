@@ -12,6 +12,9 @@ public class UI_Inventory : MonoBehaviour
     public UI_InvenSlot[] quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
 
+
+    public UI_InvenSlot[] lootingSlots;
+
     public void SetInventory()
     {
         List<string> skillIDs = new List<string>();
@@ -31,6 +34,7 @@ public class UI_Inventory : MonoBehaviour
         {
             int randomType = Random.Range(0, 3);
             UI_InvenSlot inst = Instantiate(invenSlot, slotParent);
+            inst.SetSlot(UI_InvenSlot.SlotType.Inventory);
             switch (randomType)
             {
                 case 0:
@@ -55,11 +59,26 @@ public class UI_Inventory : MonoBehaviour
             inst.onPointerEnter += OnPointerEnter;
         }
         SetQuickSlot();
+        SetLooting();
+    }
+    public Transform lootingParent;
+    void SetLooting()
+    {
+        for (int i = 0; i < 16; i++)
+        {
+            UI_InvenSlot inst = Instantiate(invenSlot, lootingParent);
+            inst.SetSlot(UI_InvenSlot.SlotType.Looting);
+            inst.SetEmptySlot();
+            inst.onBeginDrag += OnBeginDrag;
+            inst.onDrag += OnDrag;
+            inst.onEndDrag += OnEndDrag;
+            inst.onPointerEnter += OnPointerEnter;
+        }
     }
 
     public void OnBeginDrag(UI_InvenSlot _slot)
     {
-        dragSlot = _slot.slotType == UI_InvenSlot.SlotType.Empty ? null : _slot;
+        dragSlot = _slot.itemType == UI_InvenSlot.ItemType.Empty ? null : _slot;
         if (dragSlot != null)
         {
             dragIcon.sprite = _slot.icon.sprite;
@@ -112,6 +131,8 @@ public class UI_Inventory : MonoBehaviour
         for (int i = 0; i < quickAmount; i++)
         {
             UI_InvenSlot inst = Instantiate(invenSlot, quickParent);
+            inst.SetSlot(UI_InvenSlot.SlotType.Quick);
+            inst.SetQuickIndex((i + 1).ToString());
 
             inst.onBeginDrag += OnBeginDrag;
             inst.onDrag += OnDrag;
