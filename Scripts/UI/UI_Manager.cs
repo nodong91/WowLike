@@ -110,12 +110,12 @@ public class UI_Manager : MonoBehaviour
     public struct FollowStruct
     {
         public Transform followTarget;
-        public Vector3 followOoffset;
+        public Vector3 followOffset;
 
         public FollowStruct(Transform _target, Vector3 _offset)
         {
             followTarget = _target;
-            followOoffset = _offset;
+            followOffset = _offset;
         }
     }
 
@@ -140,7 +140,7 @@ public class UI_Manager : MonoBehaviour
         FollowStruct followStruct = new FollowStruct
         {
             followTarget = _target,
-            followOoffset = Vector3.up,
+            followOffset = Vector3.up,
         };
         UI_HP inst = Instantiate(uiHP, instanceParent);
         AddFollowUI(inst.transform, followStruct);
@@ -159,7 +159,7 @@ public class UI_Manager : MonoBehaviour
         {
             foreach (var child in _follows)
             {
-                Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value.followTarget.position + child.Value.followOoffset);
+                Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value.followTarget.position + child.Value.followOffset);
                 child.Key.position = screenPosition;
             }
             yield return null;
@@ -167,6 +167,35 @@ public class UI_Manager : MonoBehaviour
     }
 
 
+    public void AddFollowUI1(Transform _addFollow, FollowStruct _addStruct, Camera _uiCam)
+    {
+        if (dictFollow.ContainsKey(_addFollow) == false)
+        {
+            dictFollow.Add(_addFollow, _addStruct);
+            StartFollowing1(_uiCam);
+        }
+    }
+
+    void StartFollowing1(Camera _uiCam)
+    {
+        if (followUI != null)
+            StopCoroutine(followUI);
+        followUI = StartCoroutine(StartFollowing1(dictFollow, _uiCam));
+    }
+
+    IEnumerator StartFollowing1(Dictionary<Transform, FollowStruct> _follows, Camera _uiCam)
+    {
+        while (dictFollow.Count > 0)
+        {
+            foreach (var child in _follows)
+            {
+                Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value.followTarget.position + child.Value.followOffset);
+                Vector3 followPosition = _uiCam.ScreenToWorldPoint(screenPosition);
+                child.Key.position = followPosition;
+            }
+            yield return null;
+        }
+    }
 
 
 

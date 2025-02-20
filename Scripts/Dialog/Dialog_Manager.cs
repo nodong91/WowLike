@@ -57,7 +57,7 @@ public class Dialog_Manager : MonoBehaviour
         UI_Manager.FollowStruct followStruct = new UI_Manager.FollowStruct
         {
             followTarget = target,
-            followOoffset = offset,
+            followOffset = offset,
         };
         UI_Manager.instance.AddFollowUI(transform, followStruct);
     }

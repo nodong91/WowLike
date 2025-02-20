@@ -130,7 +130,7 @@ namespace P01.Editor
                 {
                     GUILayout.BeginHorizontal("box");
                     {
-                        GUILayout.Label($"{sortedObjects[i].name} ({fileExtension})", fontStyle);
+                        GUILayout.Label($"{sortedObjects[i].name} <color=#808080>({fileExtension})</color>", fontStyle);
                         GUILayout.FlexibleSpace();// 공간만들기
                         GUI.color = Color.cyan;
                         if (sortedObjects[i] is SceneAsset)
@@ -172,7 +172,7 @@ namespace P01.Editor
         void SortCategory()
         {
             GUI.color = Color.white;
-            float buttonNum = 8f;
+            float buttonNum = 9f;
             float width = (position.width - 7f * (buttonNum - 1f)) / buttonNum;
             GUILayout.BeginHorizontal();
             GUI.color = showFile == "" ? Color.yellow : Color.white;
@@ -204,6 +204,11 @@ namespace P01.Editor
             if (GUILayout.Button("Material", GUILayout.Width(width)))
             {
                 showFile = "mat";
+            }
+            GUI.color = showFile == "png" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Png", GUILayout.Width(width)))
+            {
+                showFile = "png";
             }
             GUI.color = showFile == "shadergraph" ? Color.yellow : Color.white;
             if (GUILayout.Button("Shader", GUILayout.Width(width)))
@@ -415,7 +420,6 @@ namespace P01.Editor
                     }
                 }
             }
-
             EditorGUILayout.EndScrollView();
         }
 
@@ -423,7 +427,7 @@ namespace P01.Editor
         void SortCategory()
         {
             GUI.color = Color.white;
-            float buttonNum = 8f;
+            float buttonNum = 9f;
             float width = (position.width - 7f * (buttonNum - 1f)) / buttonNum;
             GUILayout.BeginHorizontal();
             GUI.color = showFile == "" ? Color.yellow : Color.white;
@@ -456,6 +460,11 @@ namespace P01.Editor
             {
                 showFile = "mat";
             }
+            GUI.color = showFile == "png" ? Color.yellow : Color.white;
+            if (GUILayout.Button("Png", GUILayout.Width(width)))
+            {
+                showFile = "png";
+            }
             GUI.color = showFile == "shadergraph" ? Color.yellow : Color.white;
             if (GUILayout.Button("Shader", GUILayout.Width(width)))
             {
@@ -468,8 +477,6 @@ namespace P01.Editor
             }
             GUILayout.EndHorizontal();
         }
-
     }
-
 }
 #endif
