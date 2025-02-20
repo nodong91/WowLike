@@ -8,15 +8,8 @@ public class Game_Manager : MonoBehaviour
     public string BGMSound;
 
     private Camera mainCamera;
-    public Unit_Animation player;
-    public Transform playerParent;
+    public Unit_Manager player;
 
-    Vector3 direction;
-    public Vector2 moveDIR;
-    public float moveSpeed, maxSpeed = 1f;
-    public float rotateSpeed = 10f;
-    Coroutine inputDirection;
-    Coroutine mouseRight;
     [System.Flags]
     public enum InputDir
     {
@@ -31,7 +24,11 @@ public class Game_Manager : MonoBehaviour
         Normal,
         Focus
     }
-    public RotateType rotateType;
+    [SerializeField] private RotateType rotateType;
+    public RotateType TryRotateType()
+    {
+        return rotateType;
+    }
     //[Header("Instance")]
 
     public static Game_Manager instance;
@@ -43,12 +40,13 @@ public class Game_Manager : MonoBehaviour
 
     void Start()
     {
-        player = Instantiate(player, playerParent);
+        player = Instantiate(player, transform);
+        checkDistance += player.CheckDistance;
         //TestSkillSetting();
 
         mainCamera = Camera.main;
         CameraManager.instance.SetCameraManager();
-        CameraManager.instance.rotateDelegate = Rotate;
+        CameraManager.instance.rotateDelegate = player.Rotate;
         FollowTest();
         Singleton_Controller.INSTANCE.SetController();
 
@@ -92,18 +90,18 @@ public class Game_Manager : MonoBehaviour
         currentIndex = _index;
 
         UI_InvenSlot slot = UI_Manager.instance.GetQuickSlot(_index);
-        switch (slot.slotType)
+        switch (slot.itemType)
         {
-            case UI_InvenSlot.SlotType.Empty:
+            case UI_InvenSlot.ItemType.Empty:
                 Debug.LogWarning($"슬롯 {_index} : 비어 있음");
                 break;
 
-            case UI_InvenSlot.SlotType.Skill:
+            case UI_InvenSlot.ItemType.Skill:
                 Debug.LogWarning($"슬롯 {_index} : 스킬");
                 ActionSkill(slot);
                 break;
 
-            case UI_InvenSlot.SlotType.Item:
+            case UI_InvenSlot.ItemType.Item:
                 Debug.LogWarning($"슬롯 {_index} : 아이템");
                 break;
         }
@@ -112,6 +110,18 @@ public class Game_Manager : MonoBehaviour
 
     void ActionSkill(UI_InvenSlot _Slot)
     {
+        if (target == null)
+        {
+            UI_Manager.instance.SetWarning(0,"대상이 필요합니다.");
+            return;
+        }
+
+        if (VisibleTarget(target) == false)
+        {
+            UI_Manager.instance.SetWarning(0, "대상이 앞에 있어야 합니다.");
+            return;
+        }
+
         Data_Manager.SkillStruct skillStruct = _Slot.skillStruct;
         UI_Manager.instance.SkillText(TestSkillName());
         if (_Slot.GetIsActive == true)
@@ -125,8 +135,7 @@ public class Game_Manager : MonoBehaviour
             }
             else
             {
-                Fire();// 즉시
-                _Slot.CoolingSlot();
+                Fire(_Slot);// 즉시
             }
         }
         else
@@ -149,8 +158,7 @@ public class Game_Manager : MonoBehaviour
 
         if (inputDir == 0)
         {
-            Fire();// 캐스팅 완료
-            _Slot.CoolingSlot();
+            Fire(_Slot);// 캐스팅 완료
         }
     }
 
@@ -239,7 +247,11 @@ public class Game_Manager : MonoBehaviour
 
             target = hit.transform;
             targetGuide.transform.position = target.position;
-            CheckDistance();
+            player.CheckDistance();
+        }
+        else
+        {
+            target = null;
         }
     }
 
@@ -317,90 +329,20 @@ public class Game_Manager : MonoBehaviour
         {
             setDirection = new Vector2(1, setDirection.y);
         }
-        moveDIR = setDirection;
-        OutputDirection(setDirection);
-    }
+        player.OutputDirection(setDirection);
 
-    void OutputDirection(Vector2 _direction)
-    {
-        if (inputDirection != null)
-            StopCoroutine(inputDirection);
-        inputDirection = StartCoroutine(Co_OutputDirection(_direction));
-    }
 
-    IEnumerator Co_OutputDirection(Vector2 _direction)
-    {
-        float targetSpeed = _direction == Vector2.zero ? 0f : 1f;
-        float normalize = 0f;
-
-        while (moveSpeed > 0 || moveDIR != Vector2.zero)
+        if (inputMouseRight == false && inputDir != 0)
         {
-            if (moveDIR != Vector2.zero)
-            {
-                Vector3 dir = new Vector3(_direction.x, 0, _direction.y);
-                Vector3 temp = mainCamera.transform.TransformDirection(dir);
-                direction = playerParent.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
-                Moving();
-                Rotate();
-            }
-            yield return null;
-
-            normalize += Time.deltaTime;
-            moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, normalize);
-            float x = rotateType == RotateType.Normal ? 1f : _direction.x;
-            float y = rotateType == RotateType.Normal ? 0f : _direction.y;
-            player.MoveAnimation(moveSpeed, x, y);
-        }
-    }
-
-    void Moving()
-    {
-        float tempSpeed = moveSpeed * maxSpeed;
-        Vector3 movePoint = Vector3.Lerp(playerParent.transform.position, direction, Time.deltaTime * tempSpeed);
-        playerParent.transform.position = movePoint;
-        CheckDistance();
-    }
-
-    void Rotate()
-    {
-        switch (rotateType)
-        {
-            case RotateType.Normal:
-                if (direction == Vector3.zero)
-                    return;
-
-                Vector3 offset = (direction - playerParent.transform.position).normalized;
-                Quaternion rotatePoint = Quaternion.Lerp(playerParent.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-                playerParent.transform.rotation = rotatePoint;
-                break;
-
-            case RotateType.Focus:
-                Vector3 temp = mainCamera.transform.TransformDirection(Vector3.forward);
-                Vector3 front = playerParent.transform.position + new Vector3(temp.x, 0f, temp.z).normalized;
-
-                offset = (front - playerParent.transform.position).normalized;
-                rotatePoint = Quaternion.Lerp(playerParent.transform.rotation, Quaternion.LookRotation(offset), Time.deltaTime * rotateSpeed);
-                playerParent.transform.rotation = rotatePoint;
-
-                if (inputMouseRight == false && inputDir != 0)
-                {
-                    rotateType = RotateType.Normal;
-                }
-                break;
+            rotateType = RotateType.Normal;
         }
     }
 
 
 
 
-
-
-
-
-
-
-
-
+    public delegate float CheckDistance();
+    public CheckDistance checkDistance;
 
     private Transform target;
     public Transform GetTarget { get { return target; } }
@@ -413,15 +355,15 @@ public class Game_Manager : MonoBehaviour
         if (_input == false)
         {
             visibleTargets.Clear();
-            Collider[] targetsInViewRadius = Physics.OverlapSphere(playerParent.transform.position, viewRadius, targetMask);
+            Collider[] targetsInViewRadius = Physics.OverlapSphere(player.transform.position, viewRadius, targetMask);
             for (int i = 0; i < targetsInViewRadius.Length; i++)
             {
                 Transform temp = targetsInViewRadius[i].transform;
-                Vector3 dirToTarget = (temp.position - playerParent.transform.position).normalized;
-                if (Vector3.Angle(playerParent.transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
+                Vector3 dirToTarget = (temp.position - player.transform.position).normalized;
+                if (Vector3.Angle(player.transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
                 {
-                    float dstToTarget = (playerParent.transform.position - temp.position).magnitude;
-                    if (Physics.Raycast(playerParent.transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
+                    float dstToTarget = (player.transform.position - temp.position).magnitude;
+                    if (Physics.Raycast(player.transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
                     {
                         visibleTargets.Add(temp);
                     }
@@ -435,9 +377,10 @@ public class Game_Manager : MonoBehaviour
                 targetIndex = 0;
             target = visibleTargets[targetIndex].transform;
             targetGuide.transform.position = target.position;
-            CheckDistance();
+            player.CheckDistance();
         }
     }
+
 
     public float viewRadius;
     public float viewAngle;
@@ -446,24 +389,46 @@ public class Game_Manager : MonoBehaviour
     {
         if (_angleIsGlobal == false)
         {
-            _angleInDegrees += playerParent.transform.eulerAngles.y;
+            _angleInDegrees += player.transform.eulerAngles.y;
         }
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
+    //private void Update()
+    //{
+    //    if (target != null)
+    //    {
+    //        string color = VisibleTarget(target) ? "FF0000" : "FFFFFF";
+    //        Debug.LogWarning($"<color=#{color}>{VisibleTarget(target)}</color>");
+    //    }
+    //}
 
+    bool VisibleTarget(Transform _target)// 보이는지 확인
+    {
+        Vector3 dirToTarget = (_target.position - player.transform.position).normalized;
+        if (Vector3.Angle(player.transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
+        {
+            float dstToTarget = (player.transform.position - _target.position).magnitude;
+            if (Physics.Raycast(player.transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
+            {
+                //visibleTargets.Add(_target);
+                return true;
+            }
+        }
+        return false;
+    }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (playerParent != null)
+        if (player != null)
         {
             Handles.color = Color.red;
-            Handles.DrawWireArc(playerParent.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
+            Handles.DrawWireArc(player.transform.position, Vector3.up, Vector3.forward, 360f, viewRadius);
 
             Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
             Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
 
-            Handles.DrawLine(playerParent.transform.position, playerParent.transform.position + viewAngleA * viewRadius);
-            Handles.DrawLine(playerParent.transform.position, playerParent.transform.position + viewAngleB * viewRadius);
+            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleA * viewRadius);
+            Handles.DrawLine(player.transform.position, player.transform.position + viewAngleB * viewRadius);
 
             if (target != null)
             {
@@ -477,18 +442,35 @@ public class Game_Manager : MonoBehaviour
                 };
 
                 Handles.color = Gizmos.color = color;
-                Handles.DrawLine(playerParent.transform.position, target.transform.position);
-                Handles.Label(target.transform.position, targetDistance.ToString("N2"), fontStyle);
+                Handles.DrawLine(player.transform.position, target.transform.position);
+                string tempColor = VisibleTarget(target) ? "0000FF" : "FF0000";
+                tempColor = $"<color=#{tempColor}>{VisibleTarget(target)}</color>";
+                Handles.Label(target.transform.position, $"{tempColor} : {checkDistance().ToString("N2")}", fontStyle);
                 Gizmos.DrawSphere(target.transform.position, 0.3f);
             }
         }
     }
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public Skill_Instance instEffect;
     Skill_Instance instBullet;
     public float unitSize = 1f;
-    float targetDistance;
+    //float targetDistance;
     public int currentIndex;
 
     string TestSkillName()
@@ -554,17 +536,18 @@ public class Game_Manager : MonoBehaviour
         return temp;
     }
 
-    private void Fire()
+    private void Fire(UI_InvenSlot _Slot)
     {
-        if (target == null)
+        if (target == null || VisibleTarget(target) == false)
             return;
 
+        _Slot.CoolingSlot();
         if (instBullet == null)
         {
             instBullet = Instantiate(instEffect, this.transform);
         }
-        instBullet.transform.position = playerParent.position;
-        instBullet.transform.rotation = playerParent.rotation;
+        instBullet.transform.position = player.transform.position;
+        instBullet.transform.rotation = player.transform.rotation;
         instBullet.SetTarget(target, unitSize);
 
         SlotAction();
@@ -587,25 +570,25 @@ public class Game_Manager : MonoBehaviour
         }
     }
 
-    public void CheckDistance()
-    {
-        if (target != null)
-        {
-            targetDistance = Vector3.Distance(target.position, playerParent.transform.position);
-            UI_Manager.instance.CheckDistance(targetDistance);
-            //UI_InvenSlot[] quickSlots = UI_Manager.instance.GetInventory.GetQuickSlot;
-            //for (int i = 0; i < quickSlots.Length; i++)
-            //{
-            //    //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-            //    quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > targetDistance);
-            //}
-        }
-    }
+    //public void CheckDistance()
+    //{
+    //    if (target != null)
+    //    {
+    //        targetDistance = Vector3.Distance(target.position, playerParent.transform.position);
+    //        UI_Manager.instance.CheckDistance(targetDistance);
+    //        //UI_InvenSlot[] quickSlots = UI_Manager.instance.GetInventory.GetQuickSlot;
+    //        //for (int i = 0; i < quickSlots.Length; i++)
+    //        //{
+    //        //    //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
+    //        //    quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > targetDistance);
+    //        //}
+    //    }
+    //}
 
     public Transform[] testTarget;
     void FollowTest()
     {
-        CameraManager.instance.SetTarget(playerParent);
+        CameraManager.instance.SetTarget(player.transform);
         for (int i = 0; i < testTarget.Length; i++)
         {
             UI_Manager.instance.AddHPUI(testTarget[i]);

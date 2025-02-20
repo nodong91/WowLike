@@ -2,15 +2,21 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
-using TMPro;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    public enum SlotType
+    public enum ItemType
     {
         Empty,
         Item,
         Skill
+    }
+    public ItemType itemType;
+    public enum SlotType
+    {
+        Inventory,
+        Looting,
+        Quick
     }
     public SlotType slotType;
 
@@ -42,10 +48,11 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if(eventData.button == PointerEventData.InputButton.Left)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
             onBeginDrag?.Invoke(this);
             icon.gameObject.SetActive(false);
+            itemIndex.gameObject.SetActive(false);
         }
     }
 
@@ -62,7 +69,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             onEndDrag?.Invoke(this);
-            icon.gameObject.SetActive(true);
+            icon.gameObject.SetActive(icon.sprite != null);
         }
     }
 
@@ -79,17 +86,23 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
 
 
-    public UI_InvenSlot slotClone;
     public Data_Manager.ItemStruct itemStruct;
     public Data_Manager.SkillStruct skillStruct;
-    public bool quick;
 
     public delegate void DeleGateAction();
     public DeleGateAction deleGateAction;
 
-    void Start()
+    public void SetSlot(SlotType _slotType)
     {
+        slotType = _slotType;
         icon.material = Instantiate(icon.material);
+    }
+
+    public void SetQuickIndex(string _quick)
+    {
+        quickIndex.text = _quick;
+        SetEmptySlot();
+        quickIndex.gameObject.SetActive(true);
     }
 
     void ClickLeft()
@@ -116,20 +129,20 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         }
 
         //_slot ¹Ù²Ü ½½·Ô
-        switch (_enterSlot.slotType)
+        switch (_enterSlot.itemType)
         {
-            case SlotType.Empty:
+            case ItemType.Empty:
                 _enterSlot.TakeSlot(this);
                 SetEmptySlot();
                 break;
 
-            case SlotType.Item:
+            case ItemType.Item:
                 Data_Manager.ItemStruct itemSkill = _enterSlot.itemStruct;// ¹Ì¸® ÀúÀå
                 _enterSlot.TakeSlot(this);
                 SetItemSlot(itemSkill);
                 break;
 
-            case SlotType.Skill:
+            case ItemType.Skill:
                 Data_Manager.SkillStruct slotSkill = _enterSlot.skillStruct;// ¹Ì¸® ÀúÀå
                 _enterSlot.TakeSlot(this);// °¡Á®¿Â ½½·Ô ¹Ù²Þ
                 SetSkillSlot(slotSkill);// ³» ½½·Ô ¹Ù²Þ
@@ -139,40 +152,53 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     void TakeSlot(UI_InvenSlot _dragSlot)
     {
-        switch (_dragSlot.slotType)
+        switch (_dragSlot.itemType)
         {
-            case SlotType.Empty:
+            case ItemType.Empty:
+                SetEmptySlot();
                 break;
 
-            case SlotType.Item:
+            case ItemType.Item:
                 SetItemSlot(_dragSlot.itemStruct);
                 break;
 
-            case SlotType.Skill:
+            case ItemType.Skill:
                 SetSkillSlot(_dragSlot.skillStruct);
                 break;
         }
-        Game_Manager.instance.CheckDistance();
+        Game_Manager.instance.checkDistance();
     }
 
     public void SetEmptySlot()
     {
-        slotType = SlotType.Empty;
+        itemType = ItemType.Empty;
         icon.sprite = null;
+        icon.gameObject.SetActive(false);
+
+        itemIndex.gameObject.SetActive(false);
+        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
     }
 
     public void SetSkillSlot(Data_Manager.SkillStruct _skillStruct)
     {
-        slotType = SlotType.Skill;
+        itemType = ItemType.Skill;
         skillStruct = _skillStruct;
         icon.sprite = _skillStruct.icon;
+        icon.gameObject.SetActive(true);
+
+        itemIndex.gameObject.SetActive(false);
+        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
     }
 
     public void SetItemSlot(Data_Manager.ItemStruct _itemStruct)
     {
-        slotType = SlotType.Item;
+        itemType = ItemType.Item;
         itemStruct = _itemStruct;
         icon.sprite = _itemStruct.itemIcon;
+        icon.gameObject.SetActive(true);
+
+        itemIndex.gameObject.SetActive(true);
+        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
     }
 
 
@@ -215,12 +241,10 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         icon.material.SetFloat("_FillAmount", _value);
     }
 
-    public TMP_Text quickIndex;
+    public TMPro.TMP_Text itemIndex, quickIndex;
     public Color enabledColor, disabledColor;
     void CheckActive()
     {
-        quickIndex.gameObject.SetActive(slotType != SlotType.Empty);
-
         isActive = (inDist == true && cooling == false);
         quickIndex.color = isActive == true ? enabledColor : disabledColor;
     }
