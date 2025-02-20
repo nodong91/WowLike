@@ -8,12 +8,9 @@ public class UI_Inventory : MonoBehaviour
     public Transform slotParent;
     public UI_InvenSlot invenSlot;
     private UI_InvenSlot dragSlot, enterSlot;
-    public Transform quickParent;
-    public UI_InvenSlot[] quickSlots;
+    public Transform lootingParent, quickParent;
+    public UI_InvenSlot[] lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
-
-
-    public UI_InvenSlot[] lootingSlots;
 
     public void SetInventory()
     {
@@ -60,20 +57,6 @@ public class UI_Inventory : MonoBehaviour
         }
         SetQuickSlot();
         SetLooting();
-    }
-    public Transform lootingParent;
-    void SetLooting()
-    {
-        for (int i = 0; i < 16; i++)
-        {
-            UI_InvenSlot inst = Instantiate(invenSlot, lootingParent);
-            inst.SetSlot(UI_InvenSlot.SlotType.Looting);
-            inst.SetEmptySlot();
-            inst.onBeginDrag += OnBeginDrag;
-            inst.onDrag += OnDrag;
-            inst.onEndDrag += OnEndDrag;
-            inst.onPointerEnter += OnPointerEnter;
-        }
     }
 
     public void OnBeginDrag(UI_InvenSlot _slot)
@@ -123,8 +106,61 @@ public class UI_Inventory : MonoBehaviour
 
 
 
+    void SetLooting()
+    {
+        int lootingAmount = 16;
+        lootingSlots = new UI_InvenSlot[lootingAmount];
+        for (int i = 0; i < lootingAmount; i++)
+        {
+            UI_InvenSlot inst = Instantiate(invenSlot, lootingParent);
+            inst.SetSlot(UI_InvenSlot.SlotType.Looting);
+            inst.SetEmptySlot();
+            inst.onBeginDrag += OnBeginDrag;
+            inst.onDrag += OnDrag;
+            inst.onEndDrag += OnEndDrag;
+            inst.onPointerEnter += OnPointerEnter;
 
-    public void SetQuickSlot()
+            lootingSlots[i] = inst;
+        }
+        AddLooting(null);
+    }
+
+    public void AddLooting(string[] _ids)
+    {
+        if (_ids != null)
+        {
+            lootingParent.gameObject.SetActive(true);
+            for (int i = 0; i < lootingSlots.Length; i++)
+            {
+                if (i < _ids.Length)
+                {
+                    string id = _ids[i];
+                    switch (id[0].ToString().ToLower())
+                    {
+                        case "s":
+                            Data_Manager.SkillStruct skillSlot = Singleton_Data.INSTANCE.Dict_Skill[id];
+                            lootingSlots[i].SetSkillSlot(skillSlot);
+                            break;
+
+                        case "t":
+                            Data_Manager.ItemStruct itemSlot = Singleton_Data.INSTANCE.Dict_Item[id];
+                            lootingSlots[i].SetItemSlot(itemSlot);
+                            break;
+                    }
+                }
+                else
+                {
+                    lootingSlots[i].SetEmptySlot();
+                }
+            }
+        }
+        else
+        {
+            lootingParent.gameObject.SetActive(false);
+        }
+    }
+
+    void SetQuickSlot()
     {
         int quickAmount = 4;
         quickSlots = new UI_InvenSlot[quickAmount];

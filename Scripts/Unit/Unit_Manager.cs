@@ -3,6 +3,26 @@ using System.Collections;
 
 public class Unit_Manager : Unit_Animation
 {
+    public Data_Looting lootingData;
+    public string[] GetLooting()// 죽는다면 미리 세팅
+    {
+        string[] ids = new string[6];
+        for (int i = 0; i < ids.Length; i++)
+        {
+            int randomIndex = Random.Range(0, lootingData.lootingID.Length - 1);
+            ids[i] = lootingData.lootingID[randomIndex];
+        }
+        return ids;
+    }
+
+
+
+    public enum UnitState
+    {
+        Idle,
+        Dead
+    }
+    public UnitState state;
     public Unit_Status status;
     Coroutine inputDirection;
     public float moveSpeed, maxSpeed = 1f;
@@ -53,7 +73,7 @@ public class Unit_Manager : Unit_Animation
 
     void Moving()
     {
-        float moveAmount = (rotateType() == Game_Manager.RotateType.Normal) ? maxSpeed : maxSpeed * 0.3f;
+        float moveAmount = (rotateType() == Game_Manager.RotateType.Normal) ? maxSpeed : maxSpeed * 0.7f;
         float tempSpeed = moveSpeed * moveAmount;
         Vector3 movePoint = Vector3.Lerp(transform.position, direction, Time.deltaTime * tempSpeed);
         transform.position = movePoint;

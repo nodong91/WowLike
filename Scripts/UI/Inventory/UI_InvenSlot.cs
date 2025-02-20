@@ -173,8 +173,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     {
         itemType = ItemType.Empty;
         icon.sprite = null;
-        icon.gameObject.SetActive(false);
 
+        icon.gameObject.SetActive(false);
         itemIndex.gameObject.SetActive(false);
         quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
     }
@@ -184,8 +184,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         itemType = ItemType.Skill;
         skillStruct = _skillStruct;
         icon.sprite = _skillStruct.icon;
-        icon.gameObject.SetActive(true);
 
+        icon.gameObject.SetActive(true);
         itemIndex.gameObject.SetActive(false);
         quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
     }
@@ -195,8 +195,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         itemType = ItemType.Item;
         itemStruct = _itemStruct;
         icon.sprite = _itemStruct.itemIcon;
-        icon.gameObject.SetActive(true);
 
+        icon.gameObject.SetActive(true);
         itemIndex.gameObject.SetActive(true);
         quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 public class Unit_Animation : MonoBehaviour
 {
     public Data_Animation dataAnimation;
-    public List<Data_Animation.AniClipClass> AnimationDatas;
+    private List<Data_Animation.AniClipClass> animationDatas;
 
     public enum AnimationType
     {
@@ -25,7 +25,10 @@ public class Unit_Animation : MonoBehaviour
 
     public void SetAnimator()
     {
-        AnimationDatas = dataAnimation.AnimationDatas;
+        if (dataAnimation == null)
+            return;
+
+        animationDatas = dataAnimation.AnimationDatas;
 
         animator = GetComponent<Animator>();
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
@@ -51,9 +54,9 @@ public class Unit_Animation : MonoBehaviour
     AnimationClip TryAnimationClip(int _index)
     {
         AnimationClip clip = null;
-        if (AnimationDatas[_index].animationClips.Count > 0)
+        if (animationDatas[_index].animationClips.Count > 0)
         {
-            clip = AnimationDatas[_index].animationClips[0];
+            clip = animationDatas[_index].animationClips[0];
         }
         return clip;
     }
@@ -63,8 +66,8 @@ public class Unit_Animation : MonoBehaviour
         animator.speed = _animatorSpeed;
         animationType = (AnimationType)_index;
         // 애니메이션 클립 랜덤
-        AnimationClip aniClip = AnimationDatas[_index].animationClips[Random.Range(0, AnimationDatas[_index].animationClips.Count)];
-        if (AnimationDatas[_index].animationClips.Count > 0) // 애니메이션 클립이 있다면
+        AnimationClip aniClip = animationDatas[_index].animationClips[Random.Range(0, animationDatas[_index].animationClips.Count)];
+        if (animationDatas[_index].animationClips.Count > 0) // 애니메이션 클립이 있다면
         {
             //MoveAnimation(0f);// 이동 정지
             string actionState = actionBool ? "01" : "02";// 두개의 애니메이션을 교대로 출력

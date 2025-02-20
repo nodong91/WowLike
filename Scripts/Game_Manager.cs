@@ -9,6 +9,7 @@ public class Game_Manager : MonoBehaviour
 
     private Camera mainCamera;
     public Unit_Manager player;
+    public Dictionary<GameObject, Unit_Manager> units = new Dictionary<GameObject, Unit_Manager>();
 
     [System.Flags]
     public enum InputDir
@@ -42,6 +43,12 @@ public class Game_Manager : MonoBehaviour
     {
         player = Instantiate(player, transform);
         checkDistance += player.CheckDistance;
+
+        units = new Dictionary<GameObject, Unit_Manager>();
+        for (int i = 0; i < testTarget.Length; i++)
+        {
+            units[testTarget[i].gameObject] = testTarget[i];
+        }
         //TestSkillSetting();
 
         mainCamera = Camera.main;
@@ -55,6 +62,8 @@ public class Game_Manager : MonoBehaviour
         SetETC();
 
         UI_Manager.instance.SetUIManager();
+        lootingItem += UI_Manager.instance.GetInventory.AddLooting;
+
         Singleton_Audio.INSTANCE.Audio_SetBGM(BGMSound);
     }
 
@@ -112,7 +121,7 @@ public class Game_Manager : MonoBehaviour
     {
         if (target == null)
         {
-            UI_Manager.instance.SetWarning(0,"대상이 필요합니다.");
+            UI_Manager.instance.SetWarning(0, "대상이 필요합니다.");
             return;
         }
 
@@ -236,25 +245,6 @@ public class Game_Manager : MonoBehaviour
         }
     }
 
-    void LeftRayCasting()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //int layerMask = 1 << 8;
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~layerMask))
-        {
-            Debug.LogWarning("히트!! " + hit.collider.gameObject.name);
-            Debug.DrawLine(mainCamera.transform.position, hit.point, Color.red, 0.3f);
-
-            target = hit.transform;
-            targetGuide.transform.position = target.position;
-            player.CheckDistance();
-        }
-        else
-        {
-            target = null;
-        }
-    }
-
     void InputMouseRight(bool _input)
     {
         inputMouseRight = _input;
@@ -339,7 +329,8 @@ public class Game_Manager : MonoBehaviour
     }
 
 
-
+    public delegate void LootingItem(string[] _ids);
+    public LootingItem lootingItem;
 
     public delegate float CheckDistance();
     public CheckDistance checkDistance;
@@ -350,6 +341,44 @@ public class Game_Manager : MonoBehaviour
     public int targetIndex;
     public LayerMask targetMask, obstacleMask;
     public List<Transform> visibleTargets = new List<Transform>();
+
+    void LeftRayCasting()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //int layerMask = 1 << 8;
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~layerMask))
+        {
+            Debug.LogWarning("히트!! " + hit.collider.gameObject.name);
+            Debug.DrawLine(mainCamera.transform.position, hit.point, Color.red, 0.3f);
+
+            target = hit.transform;
+            targetGuide.transform.position = target.position;
+
+            float dist = player.CheckDistance();
+            if (units.ContainsKey(target.gameObject))// 클릭한 오브젝트가 유닛인 경우
+            {
+                if (dist < 2f)
+                {
+                    Unit_Manager hitUnit = units[target.gameObject];
+                    if (hitUnit.state == Unit_Manager.UnitState.Dead)
+                    {
+                        string[] ids = hitUnit.GetLooting();
+                        lootingItem(ids);
+                    }
+                }
+                else
+                {
+
+                }
+            }
+        }
+        else
+        {
+            target = null;
+            lootingItem(null);
+        }
+    }
+
     void NextTarget(bool _input)
     {
         if (_input == false)
@@ -393,14 +422,6 @@ public class Game_Manager : MonoBehaviour
         }
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
-    //private void Update()
-    //{
-    //    if (target != null)
-    //    {
-    //        string color = VisibleTarget(target) ? "FF0000" : "FFFFFF";
-    //        Debug.LogWarning($"<color=#{color}>{VisibleTarget(target)}</color>");
-    //    }
-    //}
 
     bool VisibleTarget(Transform _target)// 보이는지 확인
     {
@@ -470,13 +491,11 @@ public class Game_Manager : MonoBehaviour
     public Skill_Instance instEffect;
     Skill_Instance instBullet;
     public float unitSize = 1f;
-    //float targetDistance;
     public int currentIndex;
 
     string TestSkillName()
     {
         UI_InvenSlot quickSlot = UI_Manager.instance.GetQuickSlot(currentIndex);
-        //quickSlot.skillStruct.skillName = SetString(quickSlot.skillStruct.skillName);
         string explanation = SetString(quickSlot.skillStruct.skillDescription);
         string color = "FF0000";// 에너지
         string e = $"<color=#{color}>에너지 : {quickSlot.skillStruct.energyType.ToString()} {quickSlot.skillStruct.energyAmount.ToString()}</color>";
@@ -504,11 +523,6 @@ public class Game_Manager : MonoBehaviour
 
         return explanation;
     }
-
-    //void SetSkillText(int _index)
-    //{
-    //    UI_Manager.instance.SkillText(skillStructs[_index].skillDescription);
-    //}
 
     string SetString(string _id)
     {
@@ -570,28 +584,13 @@ public class Game_Manager : MonoBehaviour
         }
     }
 
-    //public void CheckDistance()
-    //{
-    //    if (target != null)
-    //    {
-    //        targetDistance = Vector3.Distance(target.position, playerParent.transform.position);
-    //        UI_Manager.instance.CheckDistance(targetDistance);
-    //        //UI_InvenSlot[] quickSlots = UI_Manager.instance.GetInventory.GetQuickSlot;
-    //        //for (int i = 0; i < quickSlots.Length; i++)
-    //        //{
-    //        //    //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-    //        //    quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > targetDistance);
-    //        //}
-    //    }
-    //}
-
-    public Transform[] testTarget;
+    public Unit_Manager[] testTarget;
     void FollowTest()
     {
         CameraManager.instance.SetTarget(player.transform);
         for (int i = 0; i < testTarget.Length; i++)
         {
-            UI_Manager.instance.AddHPUI(testTarget[i]);
+            UI_Manager.instance.AddHPUI(testTarget[i].transform);
         }
     }
 }

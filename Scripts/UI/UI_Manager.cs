@@ -2,18 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static Game_Manager;
 
 public class UI_Manager : MonoBehaviour
 {
     [Header("[ Manager ]")]
-    public UI_Option uiOption;
+    [SerializeField] private UI_Option uiOption;
     private UI_Option instUIOption;
-    public Dialog_Manager dialog;
+    [SerializeField] Dialog_Manager dialog;
     private Dialog_Manager instDialog;
-    public UI_Inventory inventory;
+    [SerializeField] UI_Inventory inventory;
     private UI_Inventory instInventory;
+    public UI_Inventory GetInventory { get { return instInventory; } }
     public Transform managerParent;
 
+    [Header("[ Button ]")]
     public Button openButton, exitButton;
     public CanvasGroup canvas;
     bool open;
