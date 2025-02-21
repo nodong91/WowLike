@@ -60,14 +60,17 @@ public class Unit_AI : MonoBehaviour
                     {
                         // 멀면 이동
                         Vector3 targetPosition = MoveState(target.transform);
-                        //agent.SetDestination(targetPosition);
-                        //StateMachine(State.Move);
+                        agent.SetDestination(targetPosition);
+                        Debug.LogWarning($" Distance : {distance}");
+                        yield return null;
+
+                        StateMachine(State.Move);
                     }
-                    //else
-                    //{
-                    //    // 가까우면 공격
-                    //    StateMachine(State.Attack);
-                    //}
+                    else
+                    {
+                        // 가까우면 공격
+                        StateMachine(State.Attack);
+                    }
                     break;
 
                 case State.Move:
@@ -80,11 +83,11 @@ public class Unit_AI : MonoBehaviour
                     break;
 
                 case State.RunAway:
-                    //remainingDistance = agent.remainingDistance;
-                    //if (remainingDistance == 0f)
-                    //{
-                    //    state = State.Idle;
-                    //}
+                    remainingDistance = agent.remainingDistance;
+                    if (remainingDistance == 0f)
+                    {
+                        state = State.Idle;
+                    }
                     break;
 
                 case State.Attack:

@@ -655,8 +655,8 @@ MonoBehaviour:
   renderers:
   - {fileID: 112219009}
   - {fileID: 1402975585}
-  frontValue: 45
-  backValue: 90
+  frontValue: 0
+  backValue: 0
   run: 0
   viewRadius: 3
   viewAngle: 0
@@ -887,8 +887,8 @@ MonoBehaviour:
   renderers:
   - {fileID: 1930101429}
   - {fileID: 46433843}
-  frontValue: 45
-  backValue: 90
+  frontValue: 0
+  backValue: 0
   run: 1
   viewRadius: 7
   viewAngle: 0
