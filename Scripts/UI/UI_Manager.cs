@@ -169,24 +169,23 @@ public class UI_Manager : MonoBehaviour
         }
     }
 
-
-    public void AddFollowUI1(Transform _addFollow, FollowStruct _addStruct, Camera _uiCam)
+    public void AddFollowUI_UICamera(Transform _addFollow, FollowStruct _addStruct, Camera _uiCam)
     {
         if (dictFollow.ContainsKey(_addFollow) == false)
         {
             dictFollow.Add(_addFollow, _addStruct);
-            StartFollowing1(_uiCam);
+            StartFollowing_UICamera(_uiCam);
         }
     }
 
-    void StartFollowing1(Camera _uiCam)
+    void StartFollowing_UICamera(Camera _uiCam)
     {
         if (followUI != null)
             StopCoroutine(followUI);
-        followUI = StartCoroutine(StartFollowing1(dictFollow, _uiCam));
+        followUI = StartCoroutine(StartFollowing_UICamera(dictFollow, _uiCam));
     }
 
-    IEnumerator StartFollowing1(Dictionary<Transform, FollowStruct> _follows, Camera _uiCam)
+    IEnumerator StartFollowing_UICamera(Dictionary<Transform, FollowStruct> _follows, Camera _uiCam)
     {
         while (dictFollow.Count > 0)
         {

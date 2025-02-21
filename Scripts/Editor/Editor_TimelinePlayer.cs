@@ -99,6 +99,7 @@ namespace P01.Editor
                 }
                 if (cinemachineCameras.Count > 0)
                 {
+                    GUILayout.Label($"타임라인 오브젝트 :");
                     GUILayout.Space(10);
                     for (int i = 0; i < playableDirectors.Length; i++)
                     {
@@ -108,7 +109,7 @@ namespace P01.Editor
                     }
                     GUILayout.Space(10);
 
-                    if (GUILayout.Button("Enabled List", buttonText, GUILayout.Height(30f)))
+                    if (GUILayout.Button("시네머신 카메라", buttonText, GUILayout.Height(30f)))
                     {
                         toggleObject = !toggleObject;
                     }
@@ -168,6 +169,12 @@ namespace P01.Editor
             {
                 guiText.normal.textColor = Color.gray;
                 GUILayout.Space(10f);
+                GUILayout.Label($" 0. '미리 세팅' 버튼 눌러 주세요.", guiText);
+                GUILayout.Label($" 시네머신 카메라 = 씬 내에서 모든 카메라 찾기", guiText);
+                GUILayout.Label($" 우선 순위 높은 카메라를 못찾는 경우가 있음", guiText);
+                GUILayout.Label($" 토글 스위치로 온오프", guiText);
+                GUILayout.Space(5f);
+
                 GUILayout.Label($" 1. '▶' 버튼 눌러 주세요.", guiText);
                 GUILayout.Label($" 2. '연출 시작' 버튼 눌러 주세요.", guiText);
 

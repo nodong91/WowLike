@@ -14,6 +14,6 @@ public class FollowTest : MonoBehaviour
             followTarget = target,
             followOffset = offset
         };
-        UI_Manager.instance.AddFollowUI1(image, followTarget, uiCam);
+        UI_Manager.instance.AddFollowUI_UICamera(image, followTarget, uiCam);
     }
 }
