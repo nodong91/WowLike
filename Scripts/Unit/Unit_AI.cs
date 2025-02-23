@@ -141,7 +141,6 @@ public class Unit_AI : MonoBehaviour
 
     void IdleState()
     {
-        agent.isStopped = false;
         if (target == null || target.state == State.Dead) // 타겟이 없는 경우
         {
             float dist = float.MaxValue;
@@ -323,8 +322,9 @@ public class Unit_AI : MonoBehaviour
 
     void StopMove()
     {
-        agent.ResetPath();
-        agent.isStopped = true;
+        //agent.ResetPath();
+        //agent.isStopped = true;
+        agent.SetDestination(transform.position);
     }
 
     void DeadState()
