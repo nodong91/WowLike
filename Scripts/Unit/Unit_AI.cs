@@ -1,60 +1,63 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-
-
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.AI;
-using static Unit_AI;
+using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
 public class Unit_AI : MonoBehaviour
 {
     public NavMeshAgent agent;
     Unit_AI target;
+    Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
+
+    public delegate List<Unit_AI> UNITLIST();
+    public UNITLIST unitList;
+    public UNITLIST monsterList;
 
     public enum State
     {
         None,
+        Dead,
+        Attack,
         Idle,
+        Escape,
         Move,
         Chase,
-        Escape,
-        Attack,
         Damage,
-        Dead
     }
     public State state = State.None;
     float distance;
-    Coroutine stateMachine;
     public Renderer[] renderers;
     Unit_AI takeTarget;
-    Coroutine takeDamage;
+    Coroutine stateMachine, takeDamage;
     [Header(" [ Status ]")]
     public float unitSize;
     public float healthPoint = 10f;
+    public float damage = 1f;
     public float moveSpeed;
     public Vector2 viewRadius;
     public float viewAngle;
 
-
     public enum JobType
     {
         Fighter,
-        Ranger
+        Ranger,
+        Sorcerer
     }
     public JobType jobType = JobType.Fighter;
     Vector3 targetPosition;
+    public float randomValue = 45f;
+
     public float attackCoolTime = 1.5f;
     public bool attackCooling = false;
-    public float randomValue = 45f;
     float escapeCoolTime = 3f;
     public bool escapeCooling = false;
-    Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
+
     Coroutine aggroCoroutine;
     public LayerMask targetMask, obstacleMask;
 
@@ -65,33 +68,70 @@ public class Unit_AI : MonoBehaviour
     }
     public GroupType groupType;
 
-    public void ResetBattle()
-    {
-        healthPoint = 10f;
-        SetUnit();
-    }
+
+
+
+
+
+
 
     public void SetUnit()
     {
         agent.updateRotation = false;
         agent.speed = moveSpeed;
+
+        unitList = Unit_AI_Manager.instance.UnitList;
+        monsterList = Unit_AI_Manager.instance.MonsterList;
+    }
+
+    public void ResetBattle()
+    {
+        if (state == State.Dead)
+        {
+            Rebirth();
+        }
+        healthPoint = 10f;
+        target = null;
+        attackCooling = false;
+        escapeCooling = false;
+        aggroDict.Clear();
+
         StateMachine(State.Idle);
-        stateMachine = StartCoroutine(StateMachine());
+        StartBattle();
+    }
+
+    void Rebirth()
+    {
+        state = State.None;
+        StartCoroutine(DeadActing());
+    }
+
+    public void CommendMoveing(Vector3 _point)
+    {
+        target = null;
+        StateMachine(State.None);
+        Destination(_point);
     }
 
     void StateMachine(State _state)
     {
-        if (state != State.Dead)
-        {
-            state = _state;
-            agent.avoidancePriority = 50 - (int)_state;
-        }
+        state = _state;
+        agent.avoidancePriority = (int)_state;
+        //StartBattle();
+    }
+
+    void StartBattle()
+    {
+        if (stateMachine != null)
+            StopCoroutine(stateMachine);
+        stateMachine = StartCoroutine(StateMachine());
     }
 
     IEnumerator StateMachine()
     {
         while (state != State.Dead)
         {
+            Debug.LogWarning(gameObject.name);
             switch (state)
             {
                 case State.None:
@@ -104,9 +144,16 @@ public class Unit_AI : MonoBehaviour
 
                 case State.Move:// 공격할게 없을 때 배회
                     MoveState();
-                    float randomTime = Random.Range(0f, 3f);
+                    float randomTime = Random.Range(1f, 3f);
                     yield return new WaitForSeconds(randomTime);
-                    StateMachine(State.Idle);
+                    if (state == State.Move)
+                    {
+                        StateMachine(State.Idle);
+                    }
+                    //else
+                    //{
+                    //    Debug.LogError("State.Move" + state);
+                    //}
                     break;
 
                 case State.Chase:
@@ -120,13 +167,27 @@ public class Unit_AI : MonoBehaviour
                 case State.Attack:
                     AttackState();
                     yield return new WaitForSeconds(1f);// 글로벌 쿨타임? 애니메이션 길이?
-                    StateMachine(State.Idle);
+                    if (state == State.Attack)
+                    {
+                        StateMachine(State.Idle);
+                    }
+                    //else
+                    //{
+                    //    Debug.LogError("State.Attack" + state);
+                    //}
                     break;
 
                 case State.Damage:
                     DamageState();
-                    yield return new WaitForSeconds(0.5f);// 애니메이션 길이?
-                    StateMachine(State.Idle);
+                    yield return new WaitForSeconds(3f / 1f);// 애니메이션 길이?
+                    if (state == State.Damage)
+                    {
+                        StateMachine(State.Idle);
+                    }
+                    //else
+                    //{
+                    //    Debug.LogError("State.Damage" + state);
+                    //}
                     break;
 
                 case State.Dead:
@@ -134,7 +195,10 @@ public class Unit_AI : MonoBehaviour
                     break;
             }
             yield return null;
-            transform.LookAt(target.transform.position);
+            if (target != null)
+            {
+                transform.LookAt(target.transform.position);
+            }
         }
         DeadState();
     }
@@ -144,7 +208,7 @@ public class Unit_AI : MonoBehaviour
         if (target == null || target.state == State.Dead) // 타겟이 없는 경우
         {
             float dist = float.MaxValue;
-            List<Unit_AI> units = groupType == GroupType.Unit ? Unit_AI_Manager.instance.monsters : Unit_AI_Manager.instance.units;
+            List<Unit_AI> units = groupType == GroupType.Unit ? monsterList() : unitList();
             for (int i = 0; i < units.Count; i++)
             {
                 Unit_AI unit = units[i];
@@ -165,10 +229,11 @@ public class Unit_AI : MonoBehaviour
             {
                 StateMachine(State.Escape);
                 // 가까워 지면 도망
-                targetPosition = GetEscapePoint(target.transform);
-                agent.SetDestination(targetPosition);
+                float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
+                targetPosition = GetBackPoint(target.transform, randomIndex);
+                Destination(targetPosition);
 
-                StartCoroutine(EscapeCooling());
+                StartCoroutine(EscapeCooling());// 계속 도망만 치면 한대도 못때림
             }
             else
             {
@@ -180,8 +245,8 @@ public class Unit_AI : MonoBehaviour
     void ChaseState()
     {
         // 멀면 추적
-        targetPosition = GetMovePoint(target.transform, 0f);
-        agent.SetDestination(targetPosition);
+        targetPosition = GetFrontPoint(target.transform, 0f);
+        Destination(targetPosition);
 
         //float remainingDistance = agent.remainingDistance;
         distance = (target.transform.position - transform.position).magnitude;
@@ -195,7 +260,6 @@ public class Unit_AI : MonoBehaviour
             }
             else
             {
-
                 StateMachine(State.Move);
             }
         }
@@ -204,8 +268,8 @@ public class Unit_AI : MonoBehaviour
     void MoveState()// 배회
     {
         float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-        targetPosition = GetMovePoint(target.transform, randomIndex);
-        agent.SetDestination(targetPosition);
+        targetPosition = GetFrontPoint(target.transform, randomIndex);
+        Destination(targetPosition);
     }
 
     void EscapeState()
@@ -219,16 +283,23 @@ public class Unit_AI : MonoBehaviour
 
     void AttackState()
     {
-        StopMove();
-        target.TakeDamage(this, 1f);
+        Destination(transform.position);
+        target.TakeDamage(this, damage);
     }
 
     void DamageState()
     {
-        StopMove();
+        Vector3 targetPoint = GetBackPoint(takeTarget.transform, 0f, 1f);
+        if (float.IsInfinity(targetPoint.x))
+            targetPoint = transform.position;
+
+        if (takeDamage != null)
+            StopCoroutine(takeDamage);
+        takeDamage = StartCoroutine(TakeDamage(targetPoint));
+        //KnockBack();
     }
 
-    Vector3 GetMovePoint(Transform _from, float _random)
+    Vector3 GetFrontPoint(Transform _from, float _random)
     {
         float angle = GetAngle(_from.position, transform.position);
         float setDistance = target.unitSize + unitSize + viewRadius.y;
@@ -241,12 +312,11 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    Vector3 GetEscapePoint(Transform _from)
+    Vector3 GetBackPoint(Transform _from, float _random, float _dist = 0)
     {
         float angle = GetAngle(_from.position, transform.position);
-        float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-        float setDistance = target.unitSize + unitSize + viewRadius.x;
-        Vector3 dirFromAngle = DirFromAngle(randomIndex + angle, true);
+        float setDistance = _dist > 0 ? _dist : target.unitSize + unitSize + viewRadius.x;
+        Vector3 dirFromAngle = DirFromAngle(_random + angle, true);
         Vector3 targetPosition = transform.position + dirFromAngle * setDistance;
 
         NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, setDistance, -1);
@@ -278,8 +348,6 @@ public class Unit_AI : MonoBehaviour
 
     public void TakeDamage(Unit_AI _from, float _damage)
     {
-        StateMachine(State.Damage);
-
         healthPoint -= _damage;
         if (healthPoint <= 0)
         {
@@ -288,6 +356,8 @@ public class Unit_AI : MonoBehaviour
         }
 
         takeTarget = _from;
+        StateMachine(State.Damage);
+
         float aggro = 0f;
         switch (_from.jobType)
         {
@@ -296,22 +366,27 @@ public class Unit_AI : MonoBehaviour
                 break;
 
             case JobType.Ranger:
-                aggro = 0.9f;
+                aggro = 0.5f;
+                break;
+
+            case JobType.Sorcerer:
+                aggro = 0.3f;
                 break;
         }
         target = AddAggro(_from, _damage * aggro);
-
-        if (takeDamage != null)
-            StopCoroutine(takeDamage);
-        takeDamage = StartCoroutine(TakeDamage());
     }
 
-    IEnumerator TakeDamage()
+    IEnumerator TakeDamage(Vector3 _knockBack)
     {
         float normalize = 0f;
         while (normalize < 1f)
         {
             normalize += Time.deltaTime * 3f;
+
+            Vector3 position = Vector3.Lerp(transform.position, _knockBack, normalize);
+            transform.position = position;
+            Destination(position);
+
             for (int i = 0; i < renderers.Length; i++)
             {
                 renderers[i].material.SetFloat("_Damage", 1f - normalize);
@@ -320,17 +395,16 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    void StopMove()
+    void Destination(Vector3 _point)
     {
         //agent.ResetPath();
         //agent.isStopped = true;
-        agent.SetDestination(transform.position);
+        agent.SetDestination(_point);
     }
 
     void DeadState()
     {
-        Debug.LogWarning("DeadState");
-        StopMove();
+        Destination(transform.position);
         switch (groupType)
         {
             case GroupType.Unit:
@@ -346,24 +420,19 @@ public class Unit_AI : MonoBehaviour
 
     IEnumerator DeadActing()
     {
+        float targetAmount = state == State.Dead ? 1f : 0f;
         float normalize = 0f;
         while (normalize < 1f)
         {
             normalize += Time.deltaTime;
             for (int i = 0; i < renderers.Length; i++)
             {
-                renderers[i].material.SetFloat("_BlackNWhite", normalize);
+                float deadAmount = Mathf.Lerp(1f - targetAmount, targetAmount, normalize);
+                renderers[i].material.SetFloat("_BlackNWhite", deadAmount);
             }
             yield return null;
         }
     }
-
-
-
-
-
-
-
 
     public Vector3 DirFromAngle(float _angleInDegrees, bool _angleIsGlobal)
     {
@@ -382,7 +451,6 @@ public class Unit_AI : MonoBehaviour
             float dstToTarget = (transform.position - _target.position).magnitude;
             if (Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
             {
-                //visibleTargets.Add(_target);
                 return true;
             }
         }
@@ -391,27 +459,17 @@ public class Unit_AI : MonoBehaviour
 
     public float CheckDistance()
     {
-        //Transform target = Game_Manager.instance.GetTarget;
         if (target != null)
         {
             float targetDistance = Vector3.Distance(target.transform.position, transform.position);
-            //UI_Manager.instance.CheckDistance(targetDistance);
-            //UI_InvenSlot[] quickSlots = UI_Manager.instance.GetInventory.GetQuickSlot;
-            //for (int i = 0; i < quickSlots.Length; i++)
-            //{
-            //    //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-            //    quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > targetDistance);
-            //}
             return targetDistance;
         }
         return 0f;
     }
 
-
-
     public void BattleOver()
     {
-        StopMove();
+        Destination(transform.position);
         StopAllCoroutines();
         Debug.LogWarning("BattleOver : " + gameObject.name);
     }
@@ -434,43 +492,44 @@ public class Unit_AI : MonoBehaviour
     Unit_AI AddAggro(Unit_AI _unit, float _aggro)
     {
         if (aggroDict.ContainsKey(_unit) == true)
-            aggroDict[_unit] += _aggro;
-        else
-            aggroDict[_unit] = _aggro;
-
-        float value = 0f;
-        foreach (var child in aggroDict)
         {
-            if (child.Value > value)
-            {
-                value = child.Value;
-                _unit = child.Key;
-            }
+            aggroDict[_unit] += _aggro;
         }
-
-        //if (aggroCoroutine != null)
-        //    StopCoroutine(aggroCoroutine);
-        //aggroCoroutine = StartCoroutine(DecreaseAggro());
+        else
+        {
+            aggroDict[_unit] = _aggro;
+        }
+        //if (aggroCoroutine == null)
+        //    aggroCoroutine = StartCoroutine(DecreaseAggro());
         return _unit;
     }
+
+    void SetAggro()
+    {
+        testAggro.Clear();
+        tempDict.Clear();
+        foreach (var child in aggroDict)
+        {
+            Unit_AI unit = child.Key;
+            float value = child.Value ;
+
+            if (value > 0f)
+            {
+                tempDict[unit] = value;
+                testAggro.Add(value);
+            }
+        }
+        aggroDict = tempDict;
+    }
+    Dictionary<Unit_AI, float> tempDict = new Dictionary<Unit_AI, float>();
+    public List<float> testAggro = new List<float>();
 
     IEnumerator DecreaseAggro()
     {
         float value = 1f;
-        while (aggroDict.Count > 0 && state != State.Dead)
+        while (state != State.Dead)
         {
-            foreach (var child in aggroDict)
-            {
-                if (child.Value > 0)
-                {
-                    float aggro = child.Value - value;
-                    aggroDict[child.Key] = aggro;
-                }
-                else
-                {
-                    aggroDict.Remove(child.Key);
-                }
-            }
+            SetAggro();
             yield return new WaitForSeconds(value);
         }
     }
@@ -479,18 +538,6 @@ public class Unit_AI : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize);
-
-        Handles.color = (groupType == GroupType.Unit) ? Color.red : Color.blue;
-        Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize + viewRadius.x);
-        Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize + viewRadius.y);
-
-        Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
-        Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
-
-        Handles.DrawLine(transform.position, transform.position + viewAngleA * (unitSize + viewRadius.y));
-        Handles.DrawLine(transform.position, transform.position + viewAngleB * (unitSize + viewRadius.y));
-
         Color color = Color.green;
         GUIStyle fontStyle = new()
         {
@@ -500,17 +547,31 @@ public class Unit_AI : MonoBehaviour
             fontStyle = FontStyle.Bold,
         };
 
-        if (target != null)
+        if (state != State.Dead)
         {
-            Handles.color = Gizmos.color = color;
-            Handles.DrawLine(transform.position, target.transform.position);
-            string visibleTarget = VisibleTarget(target.transform) ? "0000FF" : "FF0000";
-            visibleTarget = $"<color=#{visibleTarget}>{VisibleTarget(target.transform)}</color>";
-            Vector3 textPosition = Vector3.Lerp(transform.position, target.transform.position, 0.5f);
-            Handles.Label(textPosition, $"( {visibleTarget} : {CheckDistance().ToString("N2")} )", fontStyle);
-            Gizmos.DrawSphere(targetPosition, 0.3f);
-        }
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize);
 
+            Handles.color = (groupType == GroupType.Unit) ? Color.red : Color.blue;
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize + viewRadius.x);
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize + viewRadius.y);
+
+            Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
+            Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
+
+            Handles.DrawLine(transform.position, transform.position + viewAngleA * (unitSize + viewRadius.y));
+            Handles.DrawLine(transform.position, transform.position + viewAngleB * (unitSize + viewRadius.y));
+
+            if (target != null)
+            {
+                Handles.color = Gizmos.color = color;
+                Handles.DrawLine(transform.position, target.transform.position);
+                string visibleTarget = VisibleTarget(target.transform) ? "0000FF" : "FF0000";
+                visibleTarget = $"<color=#{visibleTarget}>{VisibleTarget(target.transform)}</color>";
+                Vector3 textPosition = Vector3.Lerp(transform.position, target.transform.position, 0.5f);
+                Handles.Label(textPosition, $"( {visibleTarget} : {CheckDistance().ToString("N2")} )", fontStyle);
+                Gizmos.DrawSphere(targetPosition, 0.3f);
+            }
+        }
         fontStyle.fontSize = 30;
         string hp = healthPoint > 0 ? "00FF00" : "FFFFFF";
         hp = $"<color=#{hp}>{state} : {healthPoint}</color>";
