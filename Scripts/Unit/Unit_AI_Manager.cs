@@ -15,9 +15,10 @@ public class Unit_AI_Manager : MonoBehaviour
         return monsters;
     }
 
-    public Dictionary<Transform, Unit_AI> unitDict = new Dictionary<Transform, Unit_AI>();
-
+    Dictionary<Transform, Unit_AI> unitDict = new Dictionary<Transform, Unit_AI>();
+    public Unit_AI selectUnit;
     public float timeScale = 1f;
+
     public static Unit_AI_Manager instance;
 
     private void Awake()
@@ -30,38 +31,38 @@ public class Unit_AI_Manager : MonoBehaviour
         Time.timeScale = timeScale;
         for (int i = 0; i < units.Count; i++)
         {
-            units[i].SetUnit();
+            units[i].deadUnit += DeadUnit;
+            units[i].unitList = UnitList;
+            units[i].monsterList = MonsterList;
+
             unitDict[units[i].transform] = units[i];
+            if (i < 2)
+                units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
+            else
+                units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
         }
+
         for (int i = 0; i < monsters.Count; i++)
         {
-            monsters[i].SetUnit();
+            monsters[i].deadUnit += DeadMonster;
+            monsters[i].unitList = UnitList;
+            monsters[i].monsterList = MonsterList;
+
             unitDict[monsters[i].transform] = monsters[i];
+            if (i < 2)
+                monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
+            else
+                monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
         }
     }
+
 
     private void Update()
     {
         Time.timeScale = timeScale;
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.LogWarning(unitDict.Count);
-            units.Clear();
-            monsters.Clear();
-            foreach (var child in unitDict)
-            {
-                switch (child.Value.groupType)
-                {
-                    case Unit_AI.GroupType.Unit:
-                        units.Add(child.Value);
-                        break;
-
-                    case Unit_AI.GroupType.Monster:
-                        monsters.Add(child.Value);
-                        break;
-                }
-                child.Value.ResetBattle();
-            }
+            StartBattle();
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -73,7 +74,27 @@ public class Unit_AI_Manager : MonoBehaviour
             RayCasting(false);
         }
     }
-    public Unit_AI selectUnit;
+
+    void StartBattle()
+    {
+        units.Clear();
+        monsters.Clear();
+        foreach (var child in unitDict)
+        {
+            switch (child.Value.groupType)
+            {
+                case Unit_AI.GroupType.Unit:
+                    units.Add(child.Value);
+                    break;
+
+                case Unit_AI.GroupType.Monster:
+                    monsters.Add(child.Value);
+                    break;
+            }
+            child.Value.SetUnit();
+        }
+    }
+
     void RayCasting(bool _input)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -102,7 +123,7 @@ public class Unit_AI_Manager : MonoBehaviour
         }
     }
 
-    public void DeadUnit(Unit_AI _unit)
+    void DeadUnit(Unit_AI _unit)
     {
         units.Remove(_unit);
         if (units.Count == 0)
@@ -111,10 +132,11 @@ public class Unit_AI_Manager : MonoBehaviour
             {
                 monsters[i].BattleOver();
             }
+            Debug.LogWarning("½Â¸® : monsters");
         }
     }
 
-    public void DeadMonster(Unit_AI _unit)
+    void DeadMonster(Unit_AI _unit)
     {
         monsters.Remove(_unit);
         if (monsters.Count == 0)
@@ -123,6 +145,7 @@ public class Unit_AI_Manager : MonoBehaviour
             {
                 units[i].BattleOver();
             }
+            Debug.LogWarning("½Â¸® : units");
         }
     }
 }

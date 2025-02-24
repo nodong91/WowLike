@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -122,12 +121,14 @@ public class Data_Manager : Data_Parse
                 icon = FindSprite(elements[4].Trim()),
                 level = IntTryParse(elements[5]),
                 skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[6]),// 기본 데미지의 몇%
-                value = FloatTryParse(elements[7]),
+                ccType = (SkillStruct.CCType)Enum.Parse(typeof(SkillStruct.CCType), elements[7]),// 기본 데미지의 몇%
                 energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[8]),// 기본 에너지의 몇%
                 energyAmount = FloatTryParse(elements[9]),
                 castingTime = FloatTryParse(elements[10]),// 0일 경우 즉시시전
                 coolingTime = FloatTryParse(elements[11]),
-                distance = FloatTryParse(elements[12]),
+                range = new Vector2(FloatTryParse(elements[12]), FloatTryParse(elements[13])),
+                influence = new Vector3(FloatTryParse(elements[14]), FloatTryParse(elements[15]), FloatTryParse(elements[16])),
+                aggro = FloatTryParse(elements[17])
             };
             skillStruct.Add(tempData);
         }
@@ -147,11 +148,14 @@ public class Data_Manager : Data_Parse
                 unitName = elements[1].Trim(),
                 unitDescription = elements[2].Trim(),
                 unitIcon = FindSprite(elements[3].Trim()),
+                unitSize = FloatTryParse(elements[4].Trim()),
+                defaultSkill01 = elements[5].Trim(),
+                defaultSkill02 = elements[6].Trim(),
 
-                strength = FloatTryParse(elements[4]),
-                agility = FloatTryParse(elements[5]),
-                intelligence = FloatTryParse(elements[6]),
-                constitution = FloatTryParse(elements[7]),
+                strength = FloatTryParse(elements[7]),
+                agility = FloatTryParse(elements[8]),
+                intelligence = FloatTryParse(elements[9]),
+                constitution = FloatTryParse(elements[10]),
             };
             unitStruct.Add(tempData);
         }
@@ -241,7 +245,12 @@ public class Data_Manager : Data_Parse
 
         }
         public SkillType skillType;
-        public float value;
+        public enum CCType
+        {
+            Normal,
+            KnockBack,
+        }
+        public CCType ccType;
         public enum EnergyType
         {
             Mana,
@@ -252,7 +261,15 @@ public class Data_Manager : Data_Parse
         public float energyAmount;
         public float castingTime;// 0일 경우 즉시시전
         public float coolingTime;
-        public float distance;
+        public Vector2 range;
+        public Vector3 influence;// 힘,민,지 영향
+        public float aggro;
+
+        public float GetDamage(float _ap, float _sp, float _rp)
+        {
+            float damage = _ap * influence.x + _sp * influence.y + _rp * influence.z;
+            return damage;
+        }
     }
     [Header(" [ Data ]")]
     public List<SkillStruct> skillStruct = new List<SkillStruct>();
@@ -275,12 +292,15 @@ public class Data_Manager : Data_Parse
         public string unitName;
         public string unitDescription;// 설명
         public Sprite unitIcon;
+        public float unitSize;
+        public string defaultSkill01;
+        public string defaultSkill02;
         //General
         public float strength;
         public float agility;
         public float intelligence;
         public float constitution;
-
+        [System.Serializable]
         public struct UnitAttributes
         {
             public float Health;// 체력
@@ -291,12 +311,20 @@ public class Data_Manager : Data_Parse
             public float RangePower;// 원거리 공격력
             public float MoveSpeed;
         }
-        public UnitAttributes attributes;
 
-        public void SetUnitAttributes()
+        public UnitAttributes TryAttributes()
         {
-            attributes.Health = constitution;
-            attributes.Mana = intelligence;
+            UnitAttributes attributes = new UnitAttributes
+            {
+                Health = constitution * 10f,
+                Mana = intelligence,
+                Defense = strength,
+                AttackPower = strength,
+                SpellPower = intelligence,
+                RangePower = agility,
+                MoveSpeed = agility,
+            };
+            return attributes;
         }
     }
     public List<UnitStruct> unitStruct = new List<UnitStruct>();

@@ -1,19 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
-using static UnityEngine.Rendering.DebugUI;
 
 public class Unit_AI : MonoBehaviour
 {
     public NavMeshAgent agent;
     Unit_AI target;
     Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
+    public Data_Manager.UnitStruct unitStruct;
+    public Data_Manager.UnitStruct.UnitAttributes unitAttributes;
 
     public delegate List<Unit_AI> UNITLIST();
     public UNITLIST unitList;
@@ -32,15 +34,9 @@ public class Unit_AI : MonoBehaviour
     }
     public State state = State.None;
     float distance;
-    public Renderer[] renderers;
-    Unit_AI takeTarget;
+    Renderer[] renderers;
     Coroutine stateMachine, takeDamage;
     [Header(" [ Status ]")]
-    public float unitSize;
-    public float healthPoint = 10f;
-    public float damage = 1f;
-    public float moveSpeed;
-    public Vector2 viewRadius;
     public float viewAngle;
 
     public enum JobType
@@ -53,7 +49,7 @@ public class Unit_AI : MonoBehaviour
     Vector3 targetPosition;
     public float randomValue = 45f;
 
-    public float attackCoolTime = 1.5f;
+    public float GetCoolTime { get { return currentSkill.coolingTime; } }
     public bool attackCooling = false;
     float escapeCoolTime = 3f;
     public bool escapeCooling = false;
@@ -68,29 +64,62 @@ public class Unit_AI : MonoBehaviour
     }
     public GroupType groupType;
 
+    public delegate void DeadUnit(Unit_AI _unit);
+    public DeadUnit deadUnit;
 
+    public Data_Manager.SkillStruct currentSkill;
 
+    public class SkillStruct
+    {
+        public Data_Manager.SkillStruct skillStruct;
+        public float coolTime;
+    }
+    public SkillStruct skill_01, skill_02;
 
+    public void SetUnitStruct(Data_Manager.UnitStruct _unitStruct)
+    {
+        unitStruct = _unitStruct;
+        unitAttributes = unitStruct.TryAttributes();
+        skill_01 = new SkillStruct
+        {
+            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01],
+            coolTime = 0
+        }; 
+        skill_02= new SkillStruct
+        {
+            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02],
+            coolTime = 0
+        };
+        agent.speed = unitAttributes.MoveSpeed;
+        healthPoint = unitAttributes.Health;
 
+        currentSkill = skill_01.skillStruct;
+        renderers = GetComponentsInChildren<Renderer>();
+    }
 
-
-
+    public float GetUnitSize { get { return unitStruct.unitSize; } }
+    public float healthPoint = 10f;
+    public float GetDamage
+    {
+        get
+        {
+            float ap = unitAttributes.AttackPower;
+            float sp = unitAttributes.SpellPower;
+            float rp = unitAttributes.RangePower;
+            return currentSkill.GetDamage(ap, sp, rp);
+        }
+    }
+    public Vector2 GetSkillRange { get { return currentSkill.range; } }
     public void SetUnit()
     {
         agent.updateRotation = false;
-        agent.speed = moveSpeed;
+        healthPoint = unitAttributes.Health;
 
-        unitList = Unit_AI_Manager.instance.UnitList;
-        monsterList = Unit_AI_Manager.instance.MonsterList;
-    }
-
-    public void ResetBattle()
-    {
         if (state == State.Dead)
         {
             Rebirth();
         }
-        healthPoint = 10f;
+
         target = null;
         attackCooling = false;
         escapeCooling = false;
@@ -117,7 +146,6 @@ public class Unit_AI : MonoBehaviour
     {
         state = _state;
         agent.avoidancePriority = (int)_state;
-        //StartBattle();
     }
 
     void StartBattle()
@@ -131,7 +159,6 @@ public class Unit_AI : MonoBehaviour
     {
         while (state != State.Dead)
         {
-            Debug.LogWarning(gameObject.name);
             switch (state)
             {
                 case State.None:
@@ -150,10 +177,6 @@ public class Unit_AI : MonoBehaviour
                     {
                         StateMachine(State.Idle);
                     }
-                    //else
-                    //{
-                    //    Debug.LogError("State.Move" + state);
-                    //}
                     break;
 
                 case State.Chase:
@@ -171,10 +194,6 @@ public class Unit_AI : MonoBehaviour
                     {
                         StateMachine(State.Idle);
                     }
-                    //else
-                    //{
-                    //    Debug.LogError("State.Attack" + state);
-                    //}
                     break;
 
                 case State.Damage:
@@ -184,10 +203,6 @@ public class Unit_AI : MonoBehaviour
                     {
                         StateMachine(State.Idle);
                     }
-                    //else
-                    //{
-                    //    Debug.LogError("State.Damage" + state);
-                    //}
                     break;
 
                 case State.Dead:
@@ -224,8 +239,8 @@ public class Unit_AI : MonoBehaviour
         {
             distance = (target.transform.position - transform.position).magnitude;
 
-            float unitAllSize = target.unitSize + unitSize;
-            if (distance + 0.1f < viewRadius.x + unitAllSize && escapeCooling == false)
+            float unitAllSize = target.GetUnitSize + GetUnitSize;
+            if (distance + 0.1f < GetSkillRange.x + unitAllSize && escapeCooling == false)
             {
                 StateMachine(State.Escape);
                 // 가까워 지면 도망
@@ -250,8 +265,8 @@ public class Unit_AI : MonoBehaviour
 
         //float remainingDistance = agent.remainingDistance;
         distance = (target.transform.position - transform.position).magnitude;
-        float unitAllSize = target.unitSize + unitSize;
-        if (distance < viewRadius.y + unitAllSize + 0.1f)
+        float unitAllSize = target.GetUnitSize + GetUnitSize;
+        if (distance < GetSkillRange.y + unitAllSize + 0.1f)
         {
             if (attackCooling == false)
             {
@@ -284,25 +299,26 @@ public class Unit_AI : MonoBehaviour
     void AttackState()
     {
         Destination(transform.position);
-        target.TakeDamage(this, damage);
+        float damage = GetDamage;
+        target.TakeDamage(this, damage, currentSkill);
     }
 
     void DamageState()
     {
-        Vector3 targetPoint = GetBackPoint(takeTarget.transform, 0f, 1f);
-        if (float.IsInfinity(targetPoint.x))
-            targetPoint = transform.position;
 
-        if (takeDamage != null)
-            StopCoroutine(takeDamage);
-        takeDamage = StartCoroutine(TakeDamage(targetPoint));
-        //KnockBack();
+    }
+
+    void DeadState()
+    {
+        deadUnit?.Invoke(this);
+        Destination(transform.position);
+        StartCoroutine(DeadActing());
     }
 
     Vector3 GetFrontPoint(Transform _from, float _random)
     {
         float angle = GetAngle(_from.position, transform.position);
-        float setDistance = target.unitSize + unitSize + viewRadius.y;
+        float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
         Vector3 dirFromAngle = DirFromAngle(_random + angle, true);
         Vector3 targetPosition = target.transform.position + dirFromAngle * setDistance;
 
@@ -315,7 +331,7 @@ public class Unit_AI : MonoBehaviour
     Vector3 GetBackPoint(Transform _from, float _random, float _dist = 0)
     {
         float angle = GetAngle(_from.position, transform.position);
-        float setDistance = _dist > 0 ? _dist : target.unitSize + unitSize + viewRadius.x;
+        float setDistance = _dist > 0 ? _dist : target.GetUnitSize + GetUnitSize + GetSkillRange.x;
         Vector3 dirFromAngle = DirFromAngle(_random + angle, true);
         Vector3 targetPosition = transform.position + dirFromAngle * setDistance;
 
@@ -328,7 +344,7 @@ public class Unit_AI : MonoBehaviour
     IEnumerator AttackCooling()
     {
         attackCooling = true;
-        yield return new WaitForSeconds(attackCoolTime);
+        yield return new WaitForSeconds(GetCoolTime);
         attackCooling = false;
     }
 
@@ -346,8 +362,9 @@ public class Unit_AI : MonoBehaviour
     }
 
 
-    public void TakeDamage(Unit_AI _from, float _damage)
+    public void TakeDamage(Unit_AI _from, float _damage, Data_Manager.SkillStruct _skillStruct)
     {
+        Debug.LogWarning($"{_from.gameObject.name} : {_damage}");
         healthPoint -= _damage;
         if (healthPoint <= 0)
         {
@@ -355,43 +372,71 @@ public class Unit_AI : MonoBehaviour
             return;
         }
 
-        takeTarget = _from;
         StateMachine(State.Damage);
 
-        float aggro = 0f;
-        switch (_from.jobType)
+        target = AddAggro(_from, _damage * _skillStruct.aggro);// 어그로 추가 후 타겟 변경
+
+        switch (_skillStruct.ccType)
         {
-            case JobType.Fighter:
-                aggro = 1.0f;
+            case Data_Manager.SkillStruct.CCType.Normal:
+                if (takeDamage != null)
+                    StopCoroutine(takeDamage);
+                takeDamage = StartCoroutine(TakeDamage());
                 break;
 
-            case JobType.Ranger:
-                aggro = 0.5f;
-                break;
-
-            case JobType.Sorcerer:
-                aggro = 0.3f;
+            case Data_Manager.SkillStruct.CCType.KnockBack:
+                if (takeDamage != null)
+                    StopCoroutine(takeDamage);
+                takeDamage = StartCoroutine(CCDamage(_from.transform));
                 break;
         }
-        target = AddAggro(_from, _damage * aggro);
+
     }
 
-    IEnumerator TakeDamage(Vector3 _knockBack)
+    IEnumerator CCDamage(Transform _from)
+    {
+        Vector3 targetPoint = GetBackPoint(_from, 0f, 1f);
+        if (float.IsInfinity(targetPoint.x))
+            targetPoint = transform.position;
+
+        float normalize = 0f;
+        while (normalize < 1f)
+        {
+            normalize += Time.deltaTime * 3f;
+            SetRanderer_Damage(normalize);
+
+            Vector3 position = Vector3.Lerp(transform.position, targetPoint, normalize);
+            transform.position = position;
+            Destination(position);
+            yield return null;
+        }
+    }
+
+    IEnumerator TakeDamage()
     {
         float normalize = 0f;
         while (normalize < 1f)
         {
             normalize += Time.deltaTime * 3f;
-
-            Vector3 position = Vector3.Lerp(transform.position, _knockBack, normalize);
-            transform.position = position;
-            Destination(position);
-
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                renderers[i].material.SetFloat("_Damage", 1f - normalize);
-            }
+            SetRanderer_Damage(normalize);
             yield return null;
+        }
+    }
+
+    void SetRanderer_Damage(float _normalize)
+    {
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].material.SetFloat("_Damage", 1f - _normalize);
+        }
+    }
+
+    void SetRanderer_Dead(float _targetAmount, float _normalize)
+    {
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            float deadAmount = Mathf.Lerp(1f - _targetAmount, _targetAmount, _normalize);
+            renderers[i].material.SetFloat("_BlackNWhite", deadAmount);
         }
     }
 
@@ -402,22 +447,6 @@ public class Unit_AI : MonoBehaviour
         agent.SetDestination(_point);
     }
 
-    void DeadState()
-    {
-        Destination(transform.position);
-        switch (groupType)
-        {
-            case GroupType.Unit:
-                Unit_AI_Manager.instance.DeadUnit(this);
-                break;
-
-            case GroupType.Monster:
-                Unit_AI_Manager.instance.DeadMonster(this);
-                break;
-        }
-        StartCoroutine(DeadActing());
-    }
-
     IEnumerator DeadActing()
     {
         float targetAmount = state == State.Dead ? 1f : 0f;
@@ -425,11 +454,7 @@ public class Unit_AI : MonoBehaviour
         while (normalize < 1f)
         {
             normalize += Time.deltaTime;
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                float deadAmount = Mathf.Lerp(1f - targetAmount, targetAmount, normalize);
-                renderers[i].material.SetFloat("_BlackNWhite", deadAmount);
-            }
+            SetRanderer_Dead(targetAmount, normalize);
             yield return null;
         }
     }
@@ -471,7 +496,6 @@ public class Unit_AI : MonoBehaviour
     {
         Destination(transform.position);
         StopAllCoroutines();
-        Debug.LogWarning("BattleOver : " + gameObject.name);
     }
 
 
@@ -511,7 +535,7 @@ public class Unit_AI : MonoBehaviour
         foreach (var child in aggroDict)
         {
             Unit_AI unit = child.Key;
-            float value = child.Value ;
+            float value = child.Value;
 
             if (value > 0f)
             {
@@ -549,17 +573,17 @@ public class Unit_AI : MonoBehaviour
 
         if (state != State.Dead)
         {
-            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize);
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize);
 
             Handles.color = (groupType == GroupType.Unit) ? Color.red : Color.blue;
-            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize + viewRadius.x);
-            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, unitSize + viewRadius.y);
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.x);
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.y);
 
             Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
             Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
 
-            Handles.DrawLine(transform.position, transform.position + viewAngleA * (unitSize + viewRadius.y));
-            Handles.DrawLine(transform.position, transform.position + viewAngleB * (unitSize + viewRadius.y));
+            Handles.DrawLine(transform.position, transform.position + viewAngleA * (GetUnitSize + GetSkillRange.y));
+            Handles.DrawLine(transform.position, transform.position + viewAngleB * (GetUnitSize + GetSkillRange.y));
 
             if (target != null)
             {
@@ -568,13 +592,12 @@ public class Unit_AI : MonoBehaviour
                 string visibleTarget = VisibleTarget(target.transform) ? "0000FF" : "FF0000";
                 visibleTarget = $"<color=#{visibleTarget}>{VisibleTarget(target.transform)}</color>";
                 Vector3 textPosition = Vector3.Lerp(transform.position, target.transform.position, 0.5f);
-                Handles.Label(textPosition, $"( {visibleTarget} : {CheckDistance().ToString("N2")} )", fontStyle);
+                Handles.Label(textPosition, $"( {visibleTarget} : {CheckDistance():N2} )", fontStyle);
                 Gizmos.DrawSphere(targetPosition, 0.3f);
             }
         }
-        fontStyle.fontSize = 30;
         string hp = healthPoint > 0 ? "00FF00" : "FFFFFF";
-        hp = $"<color=#{hp}>{state} : {healthPoint}</color>";
+        hp = $"<color=#{hp}>{state}\n{healthPoint:N2}</color>";
         Handles.Label(transform.position, hp, fontStyle);
     }
 #endif

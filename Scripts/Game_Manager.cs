@@ -514,7 +514,7 @@ public class Game_Manager : MonoBehaviour
         explanation = explanation.Replace("{o}", o);
 
         color = "FFFF00";// 효과 거리
-        string d = $"<color=#{color}>효과 거리 : {quickSlot.skillStruct.distance.ToString()}</color>";
+        string d = $"<color=#{color}>효과 거리 : {quickSlot.skillStruct.range.y.ToString()}</color>";
         explanation = explanation.Replace("{d}", d);
 
         color = "FF00FF";// 효과 정도 (데미지 같은...)

@@ -277,7 +277,7 @@ public class UI_Manager : MonoBehaviour
         for (int i = 0; i < quickSlots.Length; i++)
         {
             //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-            quickSlots[i].InDistance(quickSlots[i].skillStruct.distance > _distance);
+            quickSlots[i].InDistance(quickSlots[i].skillStruct.range.y > _distance);
         }
     }
 
