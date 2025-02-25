@@ -634,6 +634,7 @@ Material:
     - _BaseMapStackingLayer9TexUVRotateSpeed: 0
     - _BaseMapStackingLayer9TexUVRotatedAngle: 0
     - _BaseMapUVIndex: 0
+    - _BlackNWhite: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _Boolean: 0

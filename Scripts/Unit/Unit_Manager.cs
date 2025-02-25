@@ -24,7 +24,6 @@ public class Unit_Manager : Unit_Animation
         Dead
     }
     public UnitState state;
-    public Unit_Status status;
     Coroutine inputDirection;
     public float moveSpeed, maxSpeed = 1f;
     public float rotateSpeed = 10f;

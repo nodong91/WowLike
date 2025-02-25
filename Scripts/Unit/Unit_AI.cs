@@ -84,8 +84,8 @@ public class Unit_AI : MonoBehaviour
         {
             skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01],
             coolTime = 0
-        }; 
-        skill_02= new SkillStruct
+        };
+        skill_02 = new SkillStruct
         {
             skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02],
             coolTime = 0
@@ -245,7 +245,7 @@ public class Unit_AI : MonoBehaviour
                 StateMachine(State.Escape);
                 // 가까워 지면 도망
                 float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-                targetPosition = GetBackPoint(target.transform, randomIndex);
+                targetPosition = GetBackPoint(target.transform.position, randomIndex);
                 Destination(targetPosition);
 
                 StartCoroutine(EscapeCooling());// 계속 도망만 치면 한대도 못때림
@@ -260,7 +260,7 @@ public class Unit_AI : MonoBehaviour
     void ChaseState()
     {
         // 멀면 추적
-        targetPosition = GetFrontPoint(target.transform, 0f);
+        targetPosition = GetFrontPoint(target.transform.position, 0f);
         Destination(targetPosition);
 
         //float remainingDistance = agent.remainingDistance;
@@ -283,7 +283,7 @@ public class Unit_AI : MonoBehaviour
     void MoveState()// 배회
     {
         float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-        targetPosition = GetFrontPoint(target.transform, randomIndex);
+        targetPosition = GetFrontPoint(target.transform.position, randomIndex);
         Destination(targetPosition);
     }
 
@@ -300,7 +300,7 @@ public class Unit_AI : MonoBehaviour
     {
         Destination(transform.position);
         float damage = GetDamage;
-        target.TakeDamage(this, damage, currentSkill);
+        target.TakeDamage(this, transform.position, damage, currentSkill);
     }
 
     void DamageState()
@@ -315,11 +315,11 @@ public class Unit_AI : MonoBehaviour
         StartCoroutine(DeadActing());
     }
 
-    Vector3 GetFrontPoint(Transform _from, float _random)
+    Vector3 GetFrontPoint(Vector3 _from, float _random)
     {
-        float angle = GetAngle(_from.position, transform.position);
+        float angle = GetAngle(_from, transform.position);
         float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
-        Vector3 dirFromAngle = DirFromAngle(_random + angle, true);
+        Vector3 dirFromAngle = DirFromAngle(_random + angle, null);
         Vector3 targetPosition = target.transform.position + dirFromAngle * setDistance;
 
         NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, setDistance, -1);
@@ -328,11 +328,11 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    Vector3 GetBackPoint(Transform _from, float _random, float _dist = 0)
+    Vector3 GetBackPoint(Vector3 _from, float _random, float _dist = 0)
     {
-        float angle = GetAngle(_from.position, transform.position);
+        float angle = GetAngle(_from, transform.position);
         float setDistance = _dist > 0 ? _dist : target.GetUnitSize + GetUnitSize + GetSkillRange.x;
-        Vector3 dirFromAngle = DirFromAngle(_random + angle, true);
+        Vector3 dirFromAngle = DirFromAngle(_random + angle, null);
         Vector3 targetPosition = transform.position + dirFromAngle * setDistance;
 
         NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, setDistance, -1);
@@ -361,10 +361,9 @@ public class Unit_AI : MonoBehaviour
         return Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg;
     }
 
-
-    public void TakeDamage(Unit_AI _from, float _damage, Data_Manager.SkillStruct _skillStruct)
+    public void TakeDamage(Unit_AI _from, Vector3 _center, float _damage, Data_Manager.SkillStruct _skillStruct)
     {
-        Debug.LogWarning($"{_from.gameObject.name} : {_damage}");
+        Debug.Log($"{_from.gameObject.name} : {_damage}");
         healthPoint -= _damage;
         if (healthPoint <= 0)
         {
@@ -376,24 +375,21 @@ public class Unit_AI : MonoBehaviour
 
         target = AddAggro(_from, _damage * _skillStruct.aggro);// 어그로 추가 후 타겟 변경
 
+        if (takeDamage != null)
+            StopCoroutine(takeDamage);
         switch (_skillStruct.ccType)
         {
             case Data_Manager.SkillStruct.CCType.Normal:
-                if (takeDamage != null)
-                    StopCoroutine(takeDamage);
                 takeDamage = StartCoroutine(TakeDamage());
                 break;
 
             case Data_Manager.SkillStruct.CCType.KnockBack:
-                if (takeDamage != null)
-                    StopCoroutine(takeDamage);
-                takeDamage = StartCoroutine(CCDamage(_from.transform));
+                takeDamage = StartCoroutine(CCDamage(_center));
                 break;
         }
-
     }
 
-    IEnumerator CCDamage(Transform _from)
+    IEnumerator CCDamage(Vector3 _from)
     {
         Vector3 targetPoint = GetBackPoint(_from, 0f, 1f);
         if (float.IsInfinity(targetPoint.x))
@@ -459,11 +455,12 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    public Vector3 DirFromAngle(float _angleInDegrees, bool _angleIsGlobal)
+    public Vector3 DirFromAngle(float _angleInDegrees, Transform _trans = null)
     {
-        if (_angleIsGlobal == false)
+        if (_trans != null)
         {
-            _angleInDegrees += transform.eulerAngles.y;
+            // 로컬 기준
+            _angleInDegrees += _trans.eulerAngles.y;
         }
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
@@ -579,8 +576,8 @@ public class Unit_AI : MonoBehaviour
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.x);
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.y);
 
-            Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, false);
-            Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, false);
+            Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, transform);
+            Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, transform);
 
             Handles.DrawLine(transform.position, transform.position + viewAngleA * (GetUnitSize + GetSkillRange.y));
             Handles.DrawLine(transform.position, transform.position + viewAngleB * (GetUnitSize + GetSkillRange.y));
