@@ -17,9 +17,9 @@ public class Unit_AI : MonoBehaviour
     public Data_Manager.UnitStruct unitStruct;
     public Data_Manager.UnitStruct.UnitAttributes unitAttributes;
 
-    public delegate List<Unit_AI> UNITLIST();
-    public UNITLIST unitList;
-    public UNITLIST monsterList;
+    public delegate List<Unit_AI> DeleUnitList();
+    public DeleUnitList unitList;
+    public DeleUnitList monsterList;
 
     public enum State
     {
@@ -39,13 +39,13 @@ public class Unit_AI : MonoBehaviour
     [Header(" [ Status ]")]
     public float viewAngle;
 
-    public enum JobType
-    {
-        Fighter,
-        Ranger,
-        Sorcerer
-    }
-    public JobType jobType = JobType.Fighter;
+    //public enum JobType
+    //{
+    //    Fighter,
+    //    Ranger,
+    //    Sorcerer
+    //}
+    //public JobType jobType = JobType.Fighter;
     Vector3 targetPosition;
     public float randomValue = 45f;
 
@@ -295,12 +295,19 @@ public class Unit_AI : MonoBehaviour
             StateMachine(State.Idle);
         }
     }
-
+    public Skill_Slot skillSlot;
+    Dictionary<string, Skill_Slot> dictSkillSlot = new Dictionary<string, Skill_Slot>();
     void AttackState()
     {
-        Destination(transform.position);
-        float damage = GetDamage;
-        target.TakeDamage(this, transform.position, damage, currentSkill);
+        Destination(transform.position);// 제자리에 정지
+        string skillID = currentSkill.ID;
+        if (dictSkillSlot.ContainsKey(skillID) == false)
+        {
+            Skill_Slot slot = Instantiate(skillSlot, transform);
+            slot.fromUnit = this;
+            dictSkillSlot[skillID] = slot;
+        }
+        dictSkillSlot[skillID].SetFromUnit(target);
     }
 
     void DamageState()

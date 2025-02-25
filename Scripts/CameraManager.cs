@@ -39,6 +39,7 @@ public class CameraManager : MonoBehaviour
 
     public void SetCameraManager()
     {
+        brain = Camera.main.gameObject.GetComponent<CinemachineBrain>();
         if (brain == null)
             brain = Camera.main.gameObject.AddComponent<CinemachineBrain>();
 

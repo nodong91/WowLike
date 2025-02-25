@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -14,12 +13,10 @@ public class Skill_Slot : MonoBehaviour
 
     public Data_Manager.SkillStruct skillStruct;
 
-    public float areaRadius;
+    public float splashArea;
     public float viewAngle;
 
-    public LayerMask targetMask, obstacleMask;
-
-    Coroutine projectiling;
+    public LayerMask targetMask;
 
     private void Start()
     {
@@ -34,60 +31,62 @@ public class Skill_Slot : MonoBehaviour
         }
     }
 
-    public void SetFromUnit(Unit_AI _fromUnit)
+    public void SetFromUnit(Unit_AI _toUnit)
     {
-        fromUnit = _fromUnit;
+        toUnit = _toUnit;
+        targetMask = (1 << fromUnit.gameObject.layer);
         skillStruct = fromUnit.currentSkill;
-
-        if (projectiling != null)
-            StopCoroutine(projectiling);
 
         switch (projectileType)
         {
             case ProjectileType.None:
-                projectiling = StartCoroutine(Projectile_Melee());
+                StartCoroutine(Projectile_Melee(toUnit));
                 break;
 
             case ProjectileType.Straight:
-                projectiling = StartCoroutine(Projectile_Straight(toUnit));
+                StartCoroutine(Projectile_Straight(toUnit));
                 break;
 
             case ProjectileType.Parabola:
-                float clamp = Mathf.Clamp(areaRadius, 0f, 1f);
-                Vector3 targetPoint = (fromUnit.transform.position - toUnit.transform.position).normalized * clamp;
-                projectiling = StartCoroutine(Projectile_Parabola(toUnit.transform.position + targetPoint));
+                StartCoroutine(Projectile_Parabola(toUnit));
                 break;
         }
     }
 
-    void SplashArea(Vector3 _center)
+    void TargetHIt(Unit_AI _target, Transform _lastProjcetile)
+    {
+        float damage = fromUnit.GetDamage;
+        _target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);
+    }
+
+    void SplashArea(Transform _lastProjcetile)
     {
         foreach (var child in Unit_AI_Manager.instance.GetUnitDict)
         {
             Unit_AI target = child.Value;
-            if (VisibleTarget(target.transform) == true)
+            if (VisibleTarget(_lastProjcetile, target) == true)
             {
+                Debug.LogWarning($"Hit Unit : {target.name}");
                 float damage = fromUnit.GetDamage;
-                target.TakeDamage(fromUnit, _center, damage, skillStruct);
+                target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);
             }
         }
     }
-
-    bool VisibleTarget(Transform _target)// 보이는지 확인
+    public float skillArea;
+    bool VisibleTarget(Transform _lastProjcetile, Unit_AI _target)// 보이는지 확인
     {
-        Transform from = projectile == null ? transform : projectile.transform;
-        Vector3 offset = (_target.position - from.position);
-        if (offset.magnitude < areaRadius)
+        Vector3 offset = (_target.transform.position - _lastProjcetile.position);
+        float area = (projectileType == ProjectileType.None) ? fromUnit.GetSkillRange.y + fromUnit.GetUnitSize : 0f;
+        skillArea = area + splashArea;
+        if (offset.magnitude < skillArea + _target.GetUnitSize)
         {
-            if (Vector3.Angle(from.forward, offset.normalized) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
+            if (Vector3.Angle(_lastProjcetile.forward, offset.normalized) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
             {
-                float distanceToTarget = offset.magnitude;
-                if (_target.gameObject.layer == targetMask)
+                return ((targetMask & (1 << _target.gameObject.layer)) == 0);// 같은 레이어가 아니면
                 //if (Physics.Raycast(from.position, offset.normalized, distanceToTarget, obstacleMask) == false)
-                {
-                    // 부딪히는게 없으면
-                    return true;
-                }
+                //{
+                //    return true;
+                //}
             }
         }
         return false;
@@ -110,36 +109,61 @@ public class Skill_Slot : MonoBehaviour
 
 
 
+    GameObject InstanceProjectile()
+    {
+        if (Queue_Projectile.Count == 0)
+        {
+            GameObject inst = Instantiate(projectile, transform);
+            inst.gameObject.SetActive(false);
+            Queue_Projectile.Enqueue(inst);
+        }
+        return Queue_Projectile.Dequeue();
+    }
 
-    public Transform projectile;
+    public GameObject projectile, hitEffect;
     public float projectileSpeed;
     public float firingAngle;
-    public GameObject hitEffect;
 
-    IEnumerator Projectile_Melee()
+    public float particleTime;
+    public Queue<GameObject> Queue_Projectile = new Queue<GameObject>();
+    public Queue<GameObject> Queue_HitEffect = new Queue<GameObject>();
+
+    IEnumerator Projectile_Melee(Unit_AI _toUnit)
     {
-        projectile.gameObject.SetActive(true);
-        projectile.transform.position = fromUnit.transform.position;
-        projectile.transform.rotation = fromUnit.transform.rotation;
-        SplashArea(projectile.transform.position);
+        GameObject inst = InstanceProjectile();
+        inst.gameObject.SetActive(true);
+        inst.transform.position = fromUnit.transform.position;
+        inst.transform.rotation = fromUnit.transform.rotation;
+
+        if (splashArea > 0)
+        {
+            SplashArea(inst.transform);
+        }
+        else
+        {
+            TargetHIt(_toUnit, inst.transform);
+        }
+
+        OnHitEffect(inst.transform);
         yield return new WaitForSeconds(1f);
 
-        projectile.gameObject.SetActive(false);
+        inst.gameObject.SetActive(false);
+        Queue_Projectile.Enqueue(inst);
     }
 
     IEnumerator Projectile_Straight(Unit_AI _toUnit)
     {
-        //Skill_Start();
-        projectile.gameObject.SetActive(true);
-        projectile.transform.position = fromUnit.transform.position;
+        GameObject inst = InstanceProjectile();
+        inst.gameObject.SetActive(true);
+        inst.transform.position = fromUnit.transform.position;
 
         bool fire = true;
         while (fire == true)
         {
             Vector3 targetPosition = new Vector3(_toUnit.transform.position.x, transform.position.y, _toUnit.transform.position.z);
-            projectile.transform.position = Vector3.MoveTowards(projectile.transform.position, targetPosition, Time.deltaTime * projectileSpeed * 0.5f);// 발사
-            projectile.transform.LookAt(targetPosition);
-            if ((targetPosition - projectile.transform.position).magnitude < _toUnit.GetUnitSize)
+            inst.transform.position = Vector3.MoveTowards(inst.transform.position, targetPosition, Time.deltaTime * projectileSpeed * 0.5f);// 발사
+            inst.transform.LookAt(targetPosition);
+            if ((inst.transform.position - targetPosition).magnitude < _toUnit.GetUnitSize)
             {
                 fire = false;
             }
@@ -147,19 +171,30 @@ public class Skill_Slot : MonoBehaviour
             Debug.LogWarning("Projectile_Straight");
         }
 
-        SplashArea(projectile.transform.position);
-        projectile.gameObject.SetActive(false);
-        //bullet.transform.position = transform.position;
+        if (splashArea > 0)
+        {
+            SplashArea(inst.transform);
+        }
+        else
+        {
+            TargetHIt(_toUnit, inst.transform);
+        }
 
-        //Skill_Impact(targetPosition);
+        OnHitEffect(inst.transform);
+        inst.gameObject.SetActive(false);
+        Queue_Projectile.Enqueue(inst);
     }
 
-    public IEnumerator Projectile_Parabola(Vector3 _toPoint)
+    public IEnumerator Projectile_Parabola(Unit_AI _toUnit)
     {
-        projectile.gameObject.SetActive(true);
-        projectile.transform.position = fromUnit.transform.position;
+        float clamp = Mathf.Clamp(skillArea, 0f, 0.5f);
+        Vector3 offset = (fromUnit.transform.position - toUnit.transform.position).normalized * clamp;
+        Vector3 targetPoint = _toUnit.transform.position + offset;
+        GameObject inst = InstanceProjectile();
+        inst.gameObject.SetActive(true);
+        inst.transform.position = fromUnit.transform.position;
         // 시작점과 목표점 사이의 거리 계산
-        float target_Distance = (fromUnit.transform.position - _toPoint).magnitude;
+        float target_Distance = (fromUnit.transform.position - targetPoint).magnitude;
 
         // 초기 속도 계산
         float projectile_Velocity = target_Distance / (Mathf.Sin(2 * firingAngle * Mathf.Deg2Rad) / projectileSpeed);
@@ -172,21 +207,30 @@ public class Skill_Slot : MonoBehaviour
         float flightDuration = target_Distance / Vx;
 
         // 발사 방향 설정
-        projectile.transform.rotation = Quaternion.LookRotation(_toPoint - fromUnit.transform.position);
+        inst.transform.rotation = Quaternion.LookRotation(targetPoint - fromUnit.transform.position);
 
         // 비행 시간 동안 이동
         float elapse_time = 0;
         while (elapse_time < flightDuration)
         {
             elapse_time += Time.deltaTime;
-            projectile.transform.Translate(0, (Vy - (projectileSpeed * elapse_time)) * Time.deltaTime, Vx * Time.deltaTime);
+            inst.transform.Translate(0, (Vy - (projectileSpeed * elapse_time)) * Time.deltaTime, Vx * Time.deltaTime);
             yield return null;
             Debug.LogWarning("Projectile_Parabola");
         }
 
-        SplashArea(projectile.transform.position);
-        projectile.gameObject.SetActive(false);
-        OnHit();
+        if (splashArea > 0)
+        {
+            SplashArea(inst.transform);
+        }
+        else
+        {
+            TargetHIt(_toUnit, inst.transform);
+        }
+
+        OnHitEffect(inst.transform);
+        inst.gameObject.SetActive(false);
+        Queue_Projectile.Enqueue(inst);
     }
 
     void SetParticleDelay()
@@ -206,14 +250,10 @@ public class Skill_Slot : MonoBehaviour
         particleTime = tryTime;
     }
 
-    public float particleTime;
-    public Queue<GameObject> Queue_Projectile = new Queue<GameObject>();
-    public Queue<GameObject> Queue_HitEffect = new Queue<GameObject>();
-
-    private void OnHit()
+    private void OnHitEffect(Transform _trans)
     {
-        GameObject hit = InstanceHitEffect();
-        StartCoroutine(OnHitDelay(hit));
+        lastProjectile = _trans;
+        StartCoroutine(OnHitDelay());
     }
 
     GameObject InstanceHitEffect()
@@ -227,29 +267,34 @@ public class Skill_Slot : MonoBehaviour
         return Queue_HitEffect.Dequeue();
     }
 
-    IEnumerator OnHitDelay(GameObject _hit)
+    IEnumerator OnHitDelay()
     {
-        _hit.gameObject.SetActive(true);
-        _hit.transform.position = projectile.transform.position;
-        _hit.transform.rotation = projectile.transform.rotation;
+        GameObject inst = InstanceHitEffect();
+        inst.gameObject.SetActive(true);
+        inst.transform.position = lastProjectile.position;
+        inst.transform.rotation = lastProjectile.rotation;
+
         yield return new WaitForSeconds(particleTime);
 
-        _hit.gameObject.SetActive(false);
-        Queue_HitEffect.Enqueue(_hit);
+        inst.gameObject.SetActive(false);
+        Queue_HitEffect.Enqueue(inst);
     }
 
+    Transform lastProjectile;
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
+        if (lastProjectile == null)
+            return;
+
         Handles.color = Color.green;
-        Transform center = projectile.transform;
-        Handles.DrawWireArc(center.position, Vector3.up, Vector3.forward, 360f, areaRadius);
+        Handles.DrawWireArc(lastProjectile.position, Vector3.up, Vector3.forward, 360f, skillArea);
 
-        Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, center);
-        Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, center);
+        Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, lastProjectile);
+        Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, lastProjectile);
 
-        Handles.DrawLine(center.position, center.position + viewAngleA * areaRadius);
-        Handles.DrawLine(center.position, center.position + viewAngleB * areaRadius);
+        Handles.DrawLine(lastProjectile.position, lastProjectile.position + viewAngleA * skillArea);
+        Handles.DrawLine(lastProjectile.position, lastProjectile.position + viewAngleB * skillArea);
     }
 
     Vector3 DirFromAngle(float _angleInDegrees, Transform _trans = null)
