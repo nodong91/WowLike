@@ -128,7 +128,8 @@ public class Data_Manager : Data_Parse
                 coolingTime = FloatTryParse(elements[11]),
                 range = new Vector2(FloatTryParse(elements[12]), FloatTryParse(elements[13])),
                 influence = new Vector3(FloatTryParse(elements[14]), FloatTryParse(elements[15]), FloatTryParse(elements[16])),
-                aggro = FloatTryParse(elements[17])
+                aggro = FloatTryParse(elements[17]),
+                splashRange = FloatTryParse(elements[18]),
             };
             skillStruct.Add(tempData);
         }
@@ -264,6 +265,7 @@ public class Data_Manager : Data_Parse
         public Vector2 range;
         public Vector3 influence;// Èû,¹Î,Áö ¿µÇâ
         public float aggro;
+        public float splashRange;
 
         public float GetDamage(float _ap, float _sp, float _rp)
         {

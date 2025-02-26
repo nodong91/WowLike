@@ -2,15 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 public class Unit_AI : MonoBehaviour
 {
+    public string unitID = "U10010";
     public NavMeshAgent agent;
     Unit_AI target;
     Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
@@ -25,7 +23,7 @@ public class Unit_AI : MonoBehaviour
     {
         None,
         Dead,
-        Attack,
+        Skill,
         Idle,
         Escape,
         Move,
@@ -49,7 +47,7 @@ public class Unit_AI : MonoBehaviour
     Vector3 targetPosition;
     public float randomValue = 45f;
 
-    public float GetCoolTime { get { return currentSkill.coolingTime; } }
+    public float GetCoolTime { get { return currentSkill.skillStruct.coolingTime; } }
     public bool attackCooling = false;
     float escapeCoolTime = 3f;
     public bool escapeCooling = false;
@@ -67,33 +65,34 @@ public class Unit_AI : MonoBehaviour
     public delegate void DeadUnit(Unit_AI _unit);
     public DeadUnit deadUnit;
 
-    public Data_Manager.SkillStruct currentSkill;
-
+    public SkillStruct currentSkill;
+    [System.Serializable]
     public class SkillStruct
     {
+        [HideInInspector] public string skillID;
         public Data_Manager.SkillStruct skillStruct;
-        public float coolTime;
     }
-    public SkillStruct skill_01, skill_02;
-
-    public void SetUnitStruct(Data_Manager.UnitStruct _unitStruct)
+    public List<SkillStruct> readySkills = new List<SkillStruct>();
+    public void SetUnitStruct()
     {
-        unitStruct = _unitStruct;
+        unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
+        //unitStruct = _unitStruct;
         unitAttributes = unitStruct.TryAttributes();
-        skill_01 = new SkillStruct
+        SkillStruct skill_01 = new SkillStruct
         {
-            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01],
-            coolTime = 0
+            skillID = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01].ID,
+            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01]
         };
-        skill_02 = new SkillStruct
+        readySkills.Add(skill_01);
+        SkillStruct skill_02 = new SkillStruct
         {
-            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02],
-            coolTime = 0
+            skillID = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02].ID,
+            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02]
         };
+        readySkills.Add(skill_02);
         agent.speed = unitAttributes.MoveSpeed;
         healthPoint = unitAttributes.Health;
 
-        currentSkill = skill_01.skillStruct;
         renderers = GetComponentsInChildren<Renderer>();
     }
 
@@ -106,10 +105,10 @@ public class Unit_AI : MonoBehaviour
             float ap = unitAttributes.AttackPower;
             float sp = unitAttributes.SpellPower;
             float rp = unitAttributes.RangePower;
-            return currentSkill.GetDamage(ap, sp, rp);
+            return currentSkill.skillStruct.GetDamage(ap, sp, rp);
         }
     }
-    public Vector2 GetSkillRange { get { return currentSkill.range; } }
+    public Vector2 GetSkillRange { get { return currentSkill.skillStruct.range; } }
     public void SetUnit()
     {
         agent.updateRotation = false;
@@ -187,10 +186,10 @@ public class Unit_AI : MonoBehaviour
                     EscapeState();
                     break;
 
-                case State.Attack:
-                    AttackState();
+                case State.Skill:
+                    SkillState();
                     yield return new WaitForSeconds(1f);// 글로벌 쿨타임? 애니메이션 길이?
-                    if (state == State.Attack)
+                    if (state == State.Skill)
                     {
                         StateMachine(State.Idle);
                     }
@@ -235,8 +234,10 @@ public class Unit_AI : MonoBehaviour
                 }
             }
         }
-        else
+        else if (readySkills?.Count > 0)
         {
+            currentSkill = SelectSkill();// 스킬 선택
+
             distance = (target.transform.position - transform.position).magnitude;
 
             float unitAllSize = target.GetUnitSize + GetUnitSize;
@@ -252,9 +253,26 @@ public class Unit_AI : MonoBehaviour
             }
             else
             {
+                // 추적
                 StateMachine(State.Chase);
             }
         }
+        else
+        {
+            StateMachine(State.Escape);
+            // 스킬이 없어서 도망
+            float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
+            targetPosition = GetBackPoint(target.transform.position, randomIndex);
+            Destination(targetPosition);
+
+
+            //StateMachine(State.Move);// 혹은 배회 성향에 따라??
+        }
+    }
+
+    SkillStruct SelectSkill()
+    {
+        return readySkills[Random.Range(0, readySkills.Count)];
     }
 
     void ChaseState()
@@ -270,7 +288,7 @@ public class Unit_AI : MonoBehaviour
         {
             if (attackCooling == false)
             {
-                StateMachine(State.Attack);
+                StateMachine(State.Skill);
                 StartCoroutine(AttackCooling());
             }
             else
@@ -295,24 +313,71 @@ public class Unit_AI : MonoBehaviour
             StateMachine(State.Idle);
         }
     }
+
     public Skill_Slot skillSlot;
     Dictionary<string, Skill_Slot> dictSkillSlot = new Dictionary<string, Skill_Slot>();
-    void AttackState()
+    Coroutine skillCastring;
+    IEnumerator SkillCasting()
+    {
+        // 캐스팅 하는 동안 맞으면?? 밀려나면?? 스킬 풀리게
+        // 캐스팅 하는 동안 타겟이 멀리 이동 하게 되면???
+        float castingTime = 3f;
+        float casting = 0f;
+        if (casting < 1f)
+        {
+            casting += Time.deltaTime / castingTime;
+            yield return null;
+        }
+        if(cnlth == true)
+        {
+            cnlth = false;
+            Debug.LogWarning("취소가 됐는데 들어갔어요!!!");
+        }
+        ActionSkill();
+    }
+
+    void SkillState()
+    {
+        if (currentSkill.skillStruct.castingTime > 0)
+        {
+            skillCastring = StartCoroutine(SkillCasting());
+        }
+        else
+        {
+            // 즉시 사용
+            ActionSkill();
+        }
+    }
+
+    void ActionSkill()
     {
         Destination(transform.position);// 제자리에 정지
-        string skillID = currentSkill.ID;
+        StartCoroutine(SkillCooling(currentSkill));// 스킬 쿨타임 시작
+
+        string skillID = currentSkill.skillStruct.ID;
         if (dictSkillSlot.ContainsKey(skillID) == false)
         {
             Skill_Slot slot = Instantiate(skillSlot, transform);
+            slot.gameObject.name = skillID;
             slot.fromUnit = this;
             dictSkillSlot[skillID] = slot;
         }
         dictSkillSlot[skillID].SetFromUnit(target);
     }
 
+    IEnumerator SkillCooling(SkillStruct _skillStruct)
+    {
+        readySkills.Remove(_skillStruct);
+        float coolTime = _skillStruct.skillStruct.coolingTime;
+        //Debug.LogWarning($"{_skillStruct.skillStruct.ID} : {coolTime}");
+        yield return new WaitForSeconds(coolTime);
+
+        readySkills.Add(_skillStruct);
+    }
+
     void DamageState()
     {
-
+    
     }
 
     void DeadState()
@@ -379,8 +444,8 @@ public class Unit_AI : MonoBehaviour
         }
 
         StateMachine(State.Damage);
-
-        target = AddAggro(_from, _damage * _skillStruct.aggro);// 어그로 추가 후 타겟 변경
+        float aggro = _damage * _skillStruct.aggro;
+        target = AddAggro(_from, aggro);// 어그로 추가 후 타겟 변경
 
         if (takeDamage != null)
             StopCoroutine(takeDamage);
@@ -392,10 +457,16 @@ public class Unit_AI : MonoBehaviour
 
             case Data_Manager.SkillStruct.CCType.KnockBack:
                 takeDamage = StartCoroutine(CCDamage(_center));
+
+                if (skillCastring != null)// 캐스팅 중이라면 취소
+                {
+                    cnlth = true;
+                    StopCoroutine(skillCastring);
+                }
                 break;
         }
     }
-
+    bool cnlth;
     IEnumerator CCDamage(Vector3 _from)
     {
         Vector3 targetPoint = GetBackPoint(_from, 0f, 1f);
@@ -527,41 +598,83 @@ public class Unit_AI : MonoBehaviour
         {
             aggroDict[_unit] = _aggro;
         }
-        //if (aggroCoroutine == null)
-        //    aggroCoroutine = StartCoroutine(DecreaseAggro());
-        return _unit;
-    }
 
-    void SetAggro()
-    {
-        testAggro.Clear();
-        tempDict.Clear();
+        Unit_AI tempUnit = _unit;
         foreach (var child in aggroDict)
         {
             Unit_AI unit = child.Key;
             float value = child.Value;
 
+            if (value > aggroDict[tempUnit])
+            {
+                tempUnit = unit;
+            }
+        }
+
+        if (aggroCoroutine != null)
+            StopCoroutine(aggroCoroutine);
+        aggroCoroutine = StartCoroutine(DecreaseAggro());
+        return tempUnit;
+    }
+
+    void SetAggro()
+    {
+        //testAggro.Clear();// 보는 용도 나중에 삭제
+        Dictionary<Unit_AI, float> tempDict = new Dictionary<Unit_AI, float>();
+        foreach (var child in aggroDict)
+        {
+            Unit_AI unit = child.Key;
+            float value = child.Value - 1f;
             if (value > 0f)
             {
                 tempDict[unit] = value;
-                testAggro.Add(value);
+                //TestAggro test = new TestAggro
+                //{
+                //    name = unit.gameObject.name,
+                //    Unit = unit,
+                //    Value = value,
+                //};
+                //testAggro.Add(test);
             }
         }
         aggroDict = tempDict;
     }
-    Dictionary<Unit_AI, float> tempDict = new Dictionary<Unit_AI, float>();
-    public List<float> testAggro = new List<float>();
+    public List<TestAggro> testAggro = new List<TestAggro>();
+    [System.Serializable]
+    public class TestAggro
+    {
+        public string name;
+        public Unit_AI Unit;
+        public float Value;
+    }
 
     IEnumerator DecreaseAggro()
     {
-        float value = 1f;
-        while (state != State.Dead)
+        float dalay = 0.5f;
+        while (aggroDict.Count > 0 && state != State.Dead)
         {
-            SetAggro();
-            yield return new WaitForSeconds(value);
+            Dictionary<Unit_AI, float> tempDict = new Dictionary<Unit_AI, float>();
+            testAggro.Clear();
+            foreach (var child in aggroDict)
+            {
+                Unit_AI unit = child.Key;
+                float value = child.Value - dalay;
+                if (value > 0f)
+                {
+                    tempDict[unit] = value;
+                    TestAggro test = new TestAggro
+                    {
+                        name = unit.gameObject.name,
+                        Unit = unit,
+                        Value = value,
+                    };
+                    testAggro.Add(test);
+                }
+            }
+            aggroDict = tempDict;
+            yield return new WaitForSeconds(dalay);
         }
     }
-
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
@@ -596,7 +709,7 @@ public class Unit_AI : MonoBehaviour
                 string visibleTarget = VisibleTarget(target.transform) ? "0000FF" : "FF0000";
                 visibleTarget = $"<color=#{visibleTarget}>{VisibleTarget(target.transform)}</color>";
                 Vector3 textPosition = Vector3.Lerp(transform.position, target.transform.position, 0.5f);
-                Handles.Label(textPosition, $"( {visibleTarget} : {CheckDistance():N2} )", fontStyle);
+                Handles.Label(textPosition, $"{visibleTarget} : {CheckDistance():N2}", fontStyle);
                 Gizmos.DrawSphere(targetPosition, 0.3f);
             }
         }

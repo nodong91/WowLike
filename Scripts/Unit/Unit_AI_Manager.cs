@@ -37,10 +37,11 @@ public class Unit_AI_Manager : MonoBehaviour
             units[i].monsterList = MonsterList;
 
             unitDict[units[i].transform] = units[i];
-            if (i < 2)
-                units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
-            else
-                units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
+            //if (i < 2)
+            //    units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
+            //else
+            //    units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
+            units[i].SetUnitStruct();
         }
 
         for (int i = 0; i < monsters.Count; i++)
@@ -50,10 +51,11 @@ public class Unit_AI_Manager : MonoBehaviour
             monsters[i].monsterList = MonsterList;
 
             unitDict[monsters[i].transform] = monsters[i];
-            if (i < 2)
-                monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
-            else
-                monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
+            //if (i < 2)
+            //    monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
+            //else
+            //    monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
+            monsters[i].SetUnitStruct();
         }
     }
 
@@ -133,7 +135,7 @@ public class Unit_AI_Manager : MonoBehaviour
             {
                 monsters[i].BattleOver();
             }
-            Debug.LogWarning("铰府 : monsters");
+            Debug.LogWarning($"铰府 : monsters {monsters.Count:D2}");
         }
     }
 
@@ -146,7 +148,7 @@ public class Unit_AI_Manager : MonoBehaviour
             {
                 units[i].BattleOver();
             }
-            Debug.LogWarning("铰府 : units");
+            Debug.LogWarning($"铰府 : units {units.Count:D2}");
         }
     }
 }
