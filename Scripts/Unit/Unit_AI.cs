@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -35,7 +37,8 @@ public class Unit_AI : MonoBehaviour
     Renderer[] renderers;
     Coroutine stateMachine, takeDamage;
     [Header(" [ Status ]")]
-    public float viewAngle;
+    Vector3 targetPosition;
+    const float randomValue = 90f;
 
     //public enum JobType
     //{
@@ -44,11 +47,9 @@ public class Unit_AI : MonoBehaviour
     //    Sorcerer
     //}
     //public JobType jobType = JobType.Fighter;
-    Vector3 targetPosition;
-    public float randomValue = 45f;
 
     public float GetCoolTime { get { return currentSkill.skillStruct.coolingTime; } }
-    public bool attackCooling = false;
+    public bool globalCooling = false;
     float escapeCoolTime = 3f;
     public bool escapeCooling = false;
 
@@ -57,6 +58,7 @@ public class Unit_AI : MonoBehaviour
 
     public enum GroupType
     {
+        None,
         Unit,
         Monster,
     }
@@ -73,11 +75,43 @@ public class Unit_AI : MonoBehaviour
         public Data_Manager.SkillStruct skillStruct;
     }
     public List<SkillStruct> readySkills = new List<SkillStruct>();
-    public void SetUnitStruct()
+    const float globalTime = 1f;
+    public float GetUnitSize { get { return unitStruct.unitSize; } }
+    public float healthPoint = 10f;
+    public float GetDamage
     {
+        get
+        {
+            float ap = unitAttributes.AttackPower;
+            float sp = unitAttributes.SpellPower;
+            float rp = unitAttributes.RangePower;
+            return currentSkill.skillStruct.GetDamage(ap, sp, rp);
+        }
+    }
+    public Vector2 GetSkillRange { get { return currentSkill.skillStruct.range; } }
+
+    public void SetUnitStruct(GroupType _groupType)
+    {
+        agent = GetComponent<NavMeshAgent>();
+        groupType = _groupType;
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
-        //unitStruct = _unitStruct;
         unitAttributes = unitStruct.TryAttributes();
+
+        switch (groupType)
+        {
+            default:
+                gameObject.layer = 1 << 0;
+                break;
+
+            case GroupType.Unit:
+                gameObject.layer = 1 << 0;
+                break;
+
+            case GroupType.Monster:
+                gameObject.layer = 1 << 1;
+                break;
+        }
+
         SkillStruct skill_01 = new SkillStruct
         {
             skillID = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01].ID,
@@ -95,20 +129,6 @@ public class Unit_AI : MonoBehaviour
 
         renderers = GetComponentsInChildren<Renderer>();
     }
-
-    public float GetUnitSize { get { return unitStruct.unitSize; } }
-    public float healthPoint = 10f;
-    public float GetDamage
-    {
-        get
-        {
-            float ap = unitAttributes.AttackPower;
-            float sp = unitAttributes.SpellPower;
-            float rp = unitAttributes.RangePower;
-            return currentSkill.skillStruct.GetDamage(ap, sp, rp);
-        }
-    }
-    public Vector2 GetSkillRange { get { return currentSkill.skillStruct.range; } }
     public void SetUnit()
     {
         agent.updateRotation = false;
@@ -120,7 +140,7 @@ public class Unit_AI : MonoBehaviour
         }
 
         target = null;
-        attackCooling = false;
+        globalCooling = false;
         escapeCooling = false;
         aggroDict.Clear();
 
@@ -188,7 +208,10 @@ public class Unit_AI : MonoBehaviour
 
                 case State.Skill:
                     SkillState();
-                    yield return new WaitForSeconds(1f);// 글로벌 쿨타임? 애니메이션 길이?
+                    float castingTime = currentSkill.skillStruct.castingTime;
+                    yield return StartCoroutine(SkillCasting(castingTime));
+                    // 글로벌 쿨링 시작
+                    StartCoroutine(GlobalCooling());// 글로벌 쿨타임? 
                     if (state == State.Skill)
                     {
                         StateMachine(State.Idle);
@@ -234,7 +257,7 @@ public class Unit_AI : MonoBehaviour
                 }
             }
         }
-        else if (readySkills?.Count > 0)
+        else if (readySkills?.Count > 0)// 준비된 스킬이 있다면
         {
             currentSkill = SelectSkill();// 스킬 선택
 
@@ -257,16 +280,14 @@ public class Unit_AI : MonoBehaviour
                 StateMachine(State.Chase);
             }
         }
-        else
+        else// 준비된 스킬이 없음
         {
-            StateMachine(State.Escape);
+            StateMachine(State.Move);// 혹은 배회 성향에 따라??
+            //StateMachine(State.Escape);
             // 스킬이 없어서 도망
             float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
             targetPosition = GetBackPoint(target.transform.position, randomIndex);
             Destination(targetPosition);
-
-
-            //StateMachine(State.Move);// 혹은 배회 성향에 따라??
         }
     }
 
@@ -286,10 +307,9 @@ public class Unit_AI : MonoBehaviour
         float unitAllSize = target.GetUnitSize + GetUnitSize;
         if (distance < GetSkillRange.y + unitAllSize + 0.1f)
         {
-            if (attackCooling == false)
+            if (globalCooling == false)
             {
                 StateMachine(State.Skill);
-                StartCoroutine(AttackCooling());
             }
             else
             {
@@ -316,42 +336,43 @@ public class Unit_AI : MonoBehaviour
 
     public Skill_Slot skillSlot;
     Dictionary<string, Skill_Slot> dictSkillSlot = new Dictionary<string, Skill_Slot>();
-    Coroutine skillCastring;
-    IEnumerator SkillCasting()
+    bool skillCastring;
+    public Image image;
+    IEnumerator SkillCasting(float _castingTime)
     {
+        Destination(transform.position);// 제자리에 정지
+        //if (_castingTime > 0)
+        //{
+        //}
+        //else
+        //{
+        //    // 즉시 사용
+        //    ActionSkill();
+        //}
         // 캐스팅 하는 동안 맞으면?? 밀려나면?? 스킬 풀리게
         // 캐스팅 하는 동안 타겟이 멀리 이동 하게 되면???
-        float castingTime = 3f;
+        skillCastring = true;
         float casting = 0f;
-        if (casting < 1f)
+        while (skillCastring == true)
         {
-            casting += Time.deltaTime / castingTime;
+            casting += Time.deltaTime;
+            image.fillAmount = casting / _castingTime;
+            if (casting > _castingTime)
+            {
+                skillCastring = false;
+                ActionSkill();
+            }
             yield return null;
         }
-        if(cnlth == true)
-        {
-            cnlth = false;
-            Debug.LogWarning("취소가 됐는데 들어갔어요!!!");
-        }
-        ActionSkill();
     }
 
     void SkillState()
     {
-        if (currentSkill.skillStruct.castingTime > 0)
-        {
-            skillCastring = StartCoroutine(SkillCasting());
-        }
-        else
-        {
-            // 즉시 사용
-            ActionSkill();
-        }
+        //StartCoroutine(SkillCasting(currentSkill.skillStruct.castingTime));
     }
 
     void ActionSkill()
     {
-        Destination(transform.position);// 제자리에 정지
         StartCoroutine(SkillCooling(currentSkill));// 스킬 쿨타임 시작
 
         string skillID = currentSkill.skillStruct.ID;
@@ -359,10 +380,10 @@ public class Unit_AI : MonoBehaviour
         {
             Skill_Slot slot = Instantiate(skillSlot, transform);
             slot.gameObject.name = skillID;
-            slot.fromUnit = this;
+            slot.SetSkillSlot(this);
             dictSkillSlot[skillID] = slot;
         }
-        dictSkillSlot[skillID].SetFromUnit(target);
+        dictSkillSlot[skillID].SetAction(target);
     }
 
     IEnumerator SkillCooling(SkillStruct _skillStruct)
@@ -377,7 +398,7 @@ public class Unit_AI : MonoBehaviour
 
     void DamageState()
     {
-    
+
     }
 
     void DeadState()
@@ -413,11 +434,11 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    IEnumerator AttackCooling()
+    IEnumerator GlobalCooling()
     {
-        attackCooling = true;
-        yield return new WaitForSeconds(GetCoolTime);
-        attackCooling = false;
+        globalCooling = true;
+        yield return new WaitForSeconds(globalTime);
+        globalCooling = false;
     }
 
     IEnumerator EscapeCooling()
@@ -457,16 +478,15 @@ public class Unit_AI : MonoBehaviour
 
             case Data_Manager.SkillStruct.CCType.KnockBack:
                 takeDamage = StartCoroutine(CCDamage(_center));
-
-                if (skillCastring != null)// 캐스팅 중이라면 취소
-                {
-                    cnlth = true;
-                    StopCoroutine(skillCastring);
-                }
                 break;
         }
+
+        if (skillCastring == true)// 캐스팅 중이라면 취소
+        {
+            skillCastring = false;
+        }
     }
-    bool cnlth;
+
     IEnumerator CCDamage(Vector3 _from)
     {
         Vector3 targetPoint = GetBackPoint(_from, 0f, 1f);
@@ -543,19 +563,19 @@ public class Unit_AI : MonoBehaviour
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
 
-    bool VisibleTarget(Transform _target)// 보이는지 확인
-    {
-        Vector3 dirToTarget = (_target.position - transform.position).normalized;
-        if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
-        {
-            float dstToTarget = (transform.position - _target.position).magnitude;
-            if (Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    //bool VisibleTarget(Transform _target)// 보이는지 확인
+    //{
+    //    Vector3 dirToTarget = (_target.position - transform.position).normalized;
+    //    if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
+    //    {
+    //        float dstToTarget = (transform.position - _target.position).magnitude;
+    //        if (Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
+    //        {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
 
     public float CheckDistance()
     {
@@ -677,6 +697,7 @@ public class Unit_AI : MonoBehaviour
     }
 
 #if UNITY_EDITOR
+    //public float viewAngle;
     private void OnDrawGizmos()
     {
         Color color = Color.green;
@@ -696,20 +717,20 @@ public class Unit_AI : MonoBehaviour
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.x);
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.y);
 
-            Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, transform);
-            Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, transform);
+            //Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, transform);
+            //Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, transform);
 
-            Handles.DrawLine(transform.position, transform.position + viewAngleA * (GetUnitSize + GetSkillRange.y));
-            Handles.DrawLine(transform.position, transform.position + viewAngleB * (GetUnitSize + GetSkillRange.y));
+            //Handles.DrawLine(transform.position, transform.position + viewAngleA * (GetUnitSize + GetSkillRange.y));
+            //Handles.DrawLine(transform.position, transform.position + viewAngleB * (GetUnitSize + GetSkillRange.y));
 
             if (target != null)
             {
                 Handles.color = Gizmos.color = color;
                 Handles.DrawLine(transform.position, target.transform.position);
-                string visibleTarget = VisibleTarget(target.transform) ? "0000FF" : "FF0000";
-                visibleTarget = $"<color=#{visibleTarget}>{VisibleTarget(target.transform)}</color>";
-                Vector3 textPosition = Vector3.Lerp(transform.position, target.transform.position, 0.5f);
-                Handles.Label(textPosition, $"{visibleTarget} : {CheckDistance():N2}", fontStyle);
+                //string visibleTarget = VisibleTarget(target.transform) ? "0000FF" : "FF0000";
+                //visibleTarget = $"<color=#{visibleTarget}>{VisibleTarget(target.transform)}</color>";
+                //Vector3 textPosition = Vector3.Lerp(transform.position, target.transform.position, 0.5f);
+                //Handles.Label(textPosition, $"{visibleTarget} : {CheckDistance():N2}", fontStyle);
                 Gizmos.DrawSphere(targetPosition, 0.3f);
             }
         }

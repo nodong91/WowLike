@@ -35,13 +35,9 @@ public class Unit_AI_Manager : MonoBehaviour
             units[i].deadUnit += DeadUnit;
             units[i].unitList = UnitList;
             units[i].monsterList = MonsterList;
+            units[i].SetUnitStruct(Unit_AI.GroupType.Unit);
 
             unitDict[units[i].transform] = units[i];
-            //if (i < 2)
-            //    units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
-            //else
-            //    units[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
-            units[i].SetUnitStruct();
         }
 
         for (int i = 0; i < monsters.Count; i++)
@@ -49,13 +45,9 @@ public class Unit_AI_Manager : MonoBehaviour
             monsters[i].deadUnit += DeadMonster;
             monsters[i].unitList = UnitList;
             monsters[i].monsterList = MonsterList;
+            monsters[i].SetUnitStruct(Unit_AI.GroupType.Monster);
 
             unitDict[monsters[i].transform] = monsters[i];
-            //if (i < 2)
-            //    monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10011"]);
-            //else
-            //    monsters[i].SetUnitStruct(Singleton_Data.INSTANCE.Dict_Unit["U10010"]);
-            monsters[i].SetUnitStruct();
         }
     }
 

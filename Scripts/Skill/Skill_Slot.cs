@@ -8,35 +8,62 @@ using UnityEditor;
 
 public class Skill_Slot : MonoBehaviour
 {
-    public Unit_AI fromUnit;
-    public Unit_AI toUnit;
+    Unit_AI fromUnit, toUnit;
 
-    public Data_Manager.SkillStruct skillStruct;
-
-    public float  skillArea;
-    public float viewAngle;
-
+    Data_Manager.SkillStruct skillStruct;
     public LayerMask targetMask;
 
-    private void Start()
+    public enum ProjectileType
     {
-        SetParticleDelay();
+        None,
+        Straight,
+        Parabola
     }
+    public ProjectileType projectileType = ProjectileType.None;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            SetFromUnit(fromUnit);
-        }
-    }
+    public ParticleSystem projectile;
+    public ParticleSystem hitEffect;
 
-    public void SetFromUnit(Unit_AI _toUnit)
+    float particleLife;
+    float skillArea;// 타격 했을 때 거리
+    public float viewAngle;// 타격 했을 때 각도
+    public float projectileSpeed;// 탄이 있을 때 탄 속도
+    const float firingAngle = 50f;// 포물선일때 날아가는 각도
+
+    public Queue<ParticleSystem> Queue_Projectile = new Queue<ParticleSystem>();
+    public Queue<ParticleSystem> Queue_HitEffect = new Queue<ParticleSystem>();
+    Transform lastProjectile;
+
+    public void SetSkillSlot(Unit_AI _fromUnit)
     {
-        toUnit = _toUnit;
+        fromUnit = _fromUnit;
         targetMask = (1 << fromUnit.gameObject.layer);
         skillStruct = fromUnit.currentSkill.skillStruct;
+        SetParticleDelay();
+    }
+    void SetParticleDelay()
+    {
+        if (hitEffect == null)
+            return;
 
+        float tryTime = 0;
+        ParticleSystem[] setEffect = hitEffect.GetComponentsInChildren<ParticleSystem>();
+        for (int i = 0; i < setEffect.Length; i++)
+        {
+            float lifeTime = setEffect[i].main.startLifetimeMultiplier;
+            float delay = setEffect[i].main.startDelayMultiplier;
+            float totalTime = lifeTime + delay;
+            if (tryTime < totalTime)
+            {
+                tryTime = totalTime;
+            }
+        }
+        particleLife = tryTime;
+    }
+
+    public void SetAction(Unit_AI _toUnit)
+    {
+        toUnit = _toUnit;
         if (projectile == null)
             return;
 
@@ -69,13 +96,13 @@ public class Skill_Slot : MonoBehaviour
             Unit_AI target = child.Value;
             if (VisibleTarget(_lastProjcetile, target) == true)
             {
-                //Debug.LogWarning($"Hit Unit : {target.name}");
+                Debug.LogWarning($"Hit Unit : {target.name}");
                 float damage = fromUnit.GetDamage;
                 target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);
             }
         }
     }
- 
+
     bool VisibleTarget(Transform _lastProjcetile, Unit_AI _target)// 보이는지 확인
     {
         Vector3 offset = (_target.transform.position - _lastProjcetile.position);
@@ -95,14 +122,6 @@ public class Skill_Slot : MonoBehaviour
         return false;
     }
 
-    public enum ProjectileType
-    {
-        None,
-        Straight,
-        Parabola
-    }
-    public ProjectileType projectileType = ProjectileType.None;
-
 
 
 
@@ -121,14 +140,6 @@ public class Skill_Slot : MonoBehaviour
         }
         return Queue_Projectile.Dequeue();
     }
-    public ParticleSystem projectile;
-    public ParticleSystem hitEffect;
-    public float projectileSpeed;
-    public float firingAngle;
-
-    public float particleTime;
-    public Queue<ParticleSystem> Queue_Projectile = new Queue<ParticleSystem>();
-    public Queue<ParticleSystem> Queue_HitEffect = new Queue<ParticleSystem>();
 
     IEnumerator Projectile_Melee(Unit_AI _toUnit)
     {
@@ -140,20 +151,24 @@ public class Skill_Slot : MonoBehaviour
         inst.gameObject.SetActive(true);
         inst.Play();
 
-        if (skillStruct.splashRange > 0)
-        {
-            SplashArea(inst.transform);
-        }
-        else
-        {
-            TargetHIt(_toUnit, inst.transform);
-        }
-
+        SetHit(_toUnit, inst.transform);
         OnHitEffect(inst.transform);
         yield return new WaitForSeconds(1f);
 
         inst.gameObject.SetActive(false);
         Queue_Projectile.Enqueue(inst);
+    }
+
+    private void SetHit(Unit_AI _unit, Transform _projectile)
+    {
+        if (skillStruct.splashRange > 0)
+        {
+            SplashArea(_projectile);
+        }
+        else
+        {
+            TargetHIt(_unit, _projectile);
+        }
     }
 
     IEnumerator Projectile_Straight(Unit_AI _toUnit)
@@ -246,26 +261,6 @@ public class Skill_Slot : MonoBehaviour
         Queue_Projectile.Enqueue(inst);
     }
 
-    void SetParticleDelay()
-    {
-        if (hitEffect == null)
-            return;
-
-        float tryTime = 0;
-        ParticleSystem[] setEffect = hitEffect.GetComponentsInChildren<ParticleSystem>();
-        for (int i = 0; i < setEffect.Length; i++)
-        {
-            float lifeTime = setEffect[i].main.startLifetimeMultiplier;
-            float delay = setEffect[i].main.startDelayMultiplier;
-            float totalTime = lifeTime + delay;
-            if (tryTime < totalTime)
-            {
-                tryTime = totalTime;
-            }
-        }
-        particleTime = tryTime;
-    }
-
     private void OnHitEffect(Transform _trans)
     {
         if (hitEffect == null)
@@ -295,13 +290,12 @@ public class Skill_Slot : MonoBehaviour
         inst.gameObject.SetActive(true);
         inst.Play();
 
-        yield return new WaitForSeconds(particleTime);
+        yield return new WaitForSeconds(particleLife);
 
         inst.gameObject.SetActive(false);
         Queue_HitEffect.Enqueue(inst);
     }
 
-    Transform lastProjectile;
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
