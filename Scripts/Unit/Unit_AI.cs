@@ -97,6 +97,8 @@ public class Unit_AI : MonoBehaviour
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
         unitAttributes = unitStruct.TryAttributes();
 
+        image.material = Instantiate(image.material);
+
         switch (groupType)
         {
             default:
@@ -352,18 +354,27 @@ public class Unit_AI : MonoBehaviour
         // 캐스팅 하는 동안 맞으면?? 밀려나면?? 스킬 풀리게
         // 캐스팅 하는 동안 타겟이 멀리 이동 하게 되면???
         skillCastring = true;
+        image.CrossFadeAlpha(1f, 0.5f, false);
         float casting = 0f;
         while (skillCastring == true)
         {
             casting += Time.deltaTime;
-            image.fillAmount = casting / _castingTime;
+            image.material.SetFloat("_FillAmount", casting / _castingTime);// UI_Filled 쉐이더
             if (casting > _castingTime)
             {
                 skillCastring = false;
-                ActionSkill();
+
+                distance = (target.transform.position - transform.position).magnitude;
+                float unitAllSize = target.GetUnitSize + GetUnitSize;
+                // 거리체크 (약간 1f 멀어져도 OK)
+                if (distance < GetSkillRange.y + unitAllSize + 1f && state != State.Dead)
+                {
+                    ActionSkill();
+                }
             }
             yield return null;
         }
+        image.CrossFadeAlpha(0f, 0.5f, false);
     }
 
     void SkillState()

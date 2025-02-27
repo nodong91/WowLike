@@ -1,5 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
+using static P01.Resource_Texture;
+using Codice.Client.BaseCommands;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -13,6 +17,7 @@ namespace P01
             public string path;
             public TextureImporter importer;
             public Texture data;
+            public int textureSize;
         }
         public List<TextureList> textures = new List<TextureList>();
         Vector2 scrollTexture;
@@ -79,6 +84,11 @@ namespace P01
                     {
                         SortTexture("iOS");
                     }
+
+                    //if (SetButton("MaxSize", setHight))
+                    //{
+                    //    //SortTexture("iOS");
+                    //}
                 }
                 EditorGUILayout.EndHorizontal();
 
@@ -111,22 +121,38 @@ namespace P01
                         var androidOverrides = textures[i].importer.GetPlatformTextureSettings("Android");
                         buttonText.normal.textColor = androidOverrides.overridden ? Color.green : Color.red;
                         string format = androidOverrides.overridden ? androidOverrides.format.ToString() : "None";
-                        if (GUILayout.Button(format, buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
+                        string size = $"({androidOverrides.maxTextureSize})";
+                        if (GUILayout.Button($"{format} {size}", buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight)))
                         {
                             androidOverrides.overridden = !androidOverrides.overridden;
                             androidOverrides.format = TextureImporterFormat.ETC2_RGB4;
                             textures[i].importer.SetPlatformTextureSettings(androidOverrides);
                         }
+                        //buttonText.normal.textColor = fbxs[i].importer.animationType == ModelImporterAnimationType.None ? Color.red : Color.green;
+                        //fbxs[i].importer.animationType = (ModelImporterAnimationType)EditorGUILayout.EnumPopup
+                        //    ("", fbxs[i].importer.animationType, buttonText, GUILayout.Width(setWidth), GUILayout.Height(setHight));
+
 
                         var iOSOverrides = textures[i].importer.GetPlatformTextureSettings("iOS");
                         buttonText.normal.textColor = iOSOverrides.overridden ? Color.green : Color.red;
                         format = iOSOverrides.overridden ? iOSOverrides.format.ToString() : "None";
-                        if (GUILayout.Button(format, buttonText,  GUILayout.Height(setHight)))
+                        size = $"({iOSOverrides.maxTextureSize})";
+                        if (GUILayout.Button($"{format} {size}", buttonText, GUILayout.Height(setHight)))
                         {
                             iOSOverrides.overridden = !iOSOverrides.overridden;
-                            //iOSOverrides.format = TextureImporterFormat.ETC2_RGB4;
+                            iOSOverrides.format = TextureImporterFormat.ASTC_6x6;
                             textures[i].importer.SetPlatformTextureSettings(iOSOverrides);
                         }
+
+                        //TextureImporterPlatformSettings setting = isAndroid == true ? androidOverrides : iOSOverrides;
+                        //buttonText.normal.textColor = Color.white;
+                        //string buttonName = isAndroid == true ? "Android" : "IOS";
+                        //buttonName = $"{setting.maxTextureSize} ({buttonName})";
+                        //if (GUILayout.Button(buttonName, buttonText, GUILayout.Height(setHight)))
+                        //{
+                        //    isAndroid = !isAndroid;
+                        //    setting.maxTextureSize = (int)textureSize;
+                        //}
                     }
                     EditorGUILayout.EndHorizontal();
                 }
@@ -145,7 +171,19 @@ namespace P01
             //    }
             //}
         }
-
+        bool isAndroid;
+        public enum TextureSize
+        {
+            _32 = 32,
+            _64 = 64,
+            _128 = 128,
+            _256 = 256,
+            _512 = 512,
+            _1024 = 1024,
+            _2048 = 2048,
+            _4096 = 4096
+        }
+        public TextureSize textureSize;
         public void FindTexture(string[] _paths)
         {
             textures.Clear();
@@ -162,7 +200,8 @@ namespace P01
                     {
                         path = assetPath,
                         data = texture,
-                        importer = textureImporter
+                        importer = textureImporter,
+                        textureSize = textureImporter.GetPlatformTextureSettings("Android").maxTextureSize
                     };
                     textures.Add(list);
                 }

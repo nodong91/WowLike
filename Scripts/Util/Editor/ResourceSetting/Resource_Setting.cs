@@ -23,7 +23,7 @@ namespace P01.Editor
         //}
         //public List<PropList> props = new List<PropList>();
         //public List<Material> materials = new List<Material>();
-        Vector2 scrollPosition;
+        //Vector2 scrollPosition;
 
         public enum FindType
         {

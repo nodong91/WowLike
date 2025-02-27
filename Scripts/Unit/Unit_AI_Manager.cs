@@ -18,6 +18,11 @@ public class Unit_AI_Manager : MonoBehaviour
     Dictionary<Transform, Unit_AI> unitDict = new Dictionary<Transform, Unit_AI>();
     public Dictionary<Transform, Unit_AI> GetUnitDict { get { return unitDict; } }
     public Unit_AI selectUnit;
+    public void SetTimeScale(float _timeScale)
+    {
+        timeScale = _timeScale;
+        Time.timeScale = timeScale;
+    }
     public float timeScale = 1f;
 
     public static Unit_AI_Manager instance;
@@ -54,7 +59,6 @@ public class Unit_AI_Manager : MonoBehaviour
 
     private void Update()
     {
-        Time.timeScale = timeScale;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             StartBattle();

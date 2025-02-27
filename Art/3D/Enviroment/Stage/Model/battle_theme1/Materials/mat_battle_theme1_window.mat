@@ -152,7 +152,7 @@ Material:
     - _EMISSION_WEIGHT: 1
     - _EmissionStrength: 0
     - _EnvironmentReflections: 1
-    - _Float: 0.819
+    - _Float: 1
     - _FogDensity: 0
     - _Fog_Hight: 1
     - _Fog_On: 0
@@ -161,7 +161,7 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _METALNESS: 0
-    - _Metallic: 0.608
+    - _Metallic: 0
     - _Mode: 0
     - _Normal: 0
     - _NormalStrength: 0.5
@@ -178,8 +178,9 @@ Material:
     - _Rain_Level: 2
     - _ReceiveShadows: 1
     - _RoughLightmapMask: 1
-    - _Rough_Lightmap_Mask: 0.515
-    - _Roughness: 0
+    - _Rough_Lightmap_Mask: 1
+    - _Roughness: 1
+    - _Roughness_In_Lightmap: 1
     - _Smoothness: 0.937
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
