@@ -129,7 +129,10 @@ public class Data_Manager : Data_Parse
                 range = new Vector2(FloatTryParse(elements[12]), FloatTryParse(elements[13])),
                 influence = new Vector3(FloatTryParse(elements[14]), FloatTryParse(elements[15]), FloatTryParse(elements[16])),
                 aggro = FloatTryParse(elements[17]),
-                splashRange = FloatTryParse(elements[18]),
+                skillSet = elements[18].Trim(),
+                splashRange = FloatTryParse(elements[19]),
+                splashAngle = FloatTryParse(elements[20]),
+                projectileSpeed = FloatTryParse(elements[21]),
             };
             skillStruct.Add(tempData);
         }
@@ -149,6 +152,7 @@ public class Data_Manager : Data_Parse
                 unitName = elements[1].Trim(),
                 unitDescription = elements[2].Trim(),
                 unitIcon = FindSprite(elements[3].Trim()),
+                unitProp = FindUnit(elements[0].Trim()),
                 unitSize = FloatTryParse(elements[4].Trim()),
                 defaultSkill01 = elements[5].Trim(),
                 defaultSkill02 = elements[6].Trim(),
@@ -265,7 +269,10 @@ public class Data_Manager : Data_Parse
         public Vector2 range;
         public Vector3 influence;// 힘,민,지 영향
         public float aggro;
+        public string skillSet;
         public float splashRange;
+        public float splashAngle;// 타격 했을 때 각도
+        public float projectileSpeed;// 탄이 있을 때 탄 속도
 
         public float GetDamage(float _ap, float _sp, float _rp)
         {
@@ -294,6 +301,7 @@ public class Data_Manager : Data_Parse
         public string unitName;
         public string unitDescription;// 설명
         public Sprite unitIcon;
+        public Unit_AI unitProp;
         public float unitSize;
         public string defaultSkill01;
         public string defaultSkill02;
@@ -342,5 +350,6 @@ public class Data_Manager : Data_Parse
         Singleton_Data.INSTANCE.SetDictionary_TranslationString(translateString);
 
         Singleton_Data.INSTANCE.SetDictionary_Audio(audioClip);
+        Singleton_Data.INSTANCE.SetSkillSet(skillSet);
     }
 }

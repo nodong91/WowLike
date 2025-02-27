@@ -12,7 +12,8 @@ public class Data_Parse : MonoBehaviour
 
     public virtual void DataSetting()
     {
-        //prop = new List<GameObject>();
+        units = new List<Unit_AI>();
+        skillSet = new List<Skill_Set>();
         sprites = new List<Sprite>();
         audioClip.Clear();
         CSV_Data.Clear();
@@ -34,11 +35,41 @@ public class Data_Parse : MonoBehaviour
         // 데이터 추가
         for (int i = 0; i < assets.Length; i++)
         {
-            var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(GameObject));
-            GameObject addData = data as GameObject;
-            //prop.Add(addData);
-            EditorUtility.SetDirty(data);
+            var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(Unit_AI));
+            if (data as Unit_AI)
+            {
+                Unit_AI addData = data as Unit_AI;
+                units.Add(addData);
+                EditorUtility.SetDirty(data);
+            }
+            data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(Skill_Set));
+            if (data as Skill_Set)
+            {
+                Skill_Set addData = data as Skill_Set;
+                skillSet.Add(addData);
+                EditorUtility.SetDirty(data);
+            }
         }
+
+        //assets = AssetDatabase.FindAssets("t: Prefab", paths);
+        // 데이터 추가
+        //for (int i = 0; i < assets.Length; i++)
+        //{
+        //    var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(Skill_Set));
+        //    //if (data as Unit_AI)
+        //    //{
+        //    //    Unit_AI addData = data as Unit_AI;
+        //    //    units.Add(addData);
+        //    //    EditorUtility.SetDirty(data);
+        //    //}
+        //    //else 
+        //    if (data as Skill_Set)
+        //    {
+        //        Skill_Set addData = data as Skill_Set;
+        //        skillSet.Add(addData);
+        //        EditorUtility.SetDirty(data);
+        //    }
+        //}
 
         assets = AssetDatabase.FindAssets("t: Sprite", paths);
         // 데이터 추가
@@ -127,15 +158,15 @@ public class Data_Parse : MonoBehaviour
         return color;
     }
 
-    //public GameObject FindProp(string _str)
-    //{
-    //    for (int i = 0; i < prop.Count; i++)
-    //    {
-    //        if (_str.Equals(prop[i].name))
-    //            return prop[i];
-    //    }
-    //    return null;
-    //}
+    public Unit_AI FindUnit(string _str)
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            if (_str.Equals(units[i].name))
+                return units[i];
+        }
+        return null;
+    }
 
     public Sprite FindSprite(string _str)
     {
@@ -164,4 +195,6 @@ public class Data_Parse : MonoBehaviour
     public List<TextAsset> GetCSV_Data { get { return CSV_Data; } }
     public List<AudioClip> audioClip = new List<AudioClip>();
     public List<Sprite> sprites = new List<Sprite>();
+    public List<Skill_Set> skillSet = new List<Skill_Set>();
+    public List<Unit_AI> units = new List<Unit_AI>();
 }

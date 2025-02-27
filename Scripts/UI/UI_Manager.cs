@@ -27,7 +27,7 @@ public class UI_Manager : MonoBehaviour
     Coroutine followUI;
     public UI_HP uiHP;
 
-    public Skill_Slot slot;
+    public Skill_Set slot;
     public Transform slotParent;
     //public Skill_Slot[] slotArray;
     public delegate void DelegateAction(int index);

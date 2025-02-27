@@ -11,11 +11,11 @@ using UnityEditor;
 public class Unit_AI : MonoBehaviour
 {
     public string unitID = "U10010";
-    public NavMeshAgent agent;
+    NavMeshAgent agent;
     Unit_AI target;
     Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
-    public Data_Manager.UnitStruct unitStruct;
-    public Data_Manager.UnitStruct.UnitAttributes unitAttributes;
+    Data_Manager.UnitStruct unitStruct;
+    Data_Manager.UnitStruct.UnitAttributes unitAttributes;
 
     public delegate List<Unit_AI> DeleUnitList();
     public DeleUnitList unitList;
@@ -67,14 +67,15 @@ public class Unit_AI : MonoBehaviour
     public delegate void DeadUnit(Unit_AI _unit);
     public DeadUnit deadUnit;
 
-    public SkillStruct currentSkill;
+    SkillStruct currentSkill;
+
     [System.Serializable]
     public class SkillStruct
     {
         [HideInInspector] public string skillID;
         public Data_Manager.SkillStruct skillStruct;
     }
-    public List<SkillStruct> readySkills = new List<SkillStruct>();
+    List<SkillStruct> readySkills = new List<SkillStruct>();
     const float globalTime = 1f;
     public float GetUnitSize { get { return unitStruct.unitSize; } }
     public float healthPoint = 10f;
@@ -90,8 +91,9 @@ public class Unit_AI : MonoBehaviour
     }
     public Vector2 GetSkillRange { get { return currentSkill.skillStruct.range; } }
 
-    public void SetUnitStruct(GroupType _groupType)
+    public void SetUnitStruct(string _unitID, GroupType _groupType)
     {
+        //unitID = _unitID;
         agent = GetComponent<NavMeshAgent>();
         groupType = _groupType;
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
@@ -125,12 +127,14 @@ public class Unit_AI : MonoBehaviour
             skillID = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02].ID,
             skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02]
         };
+
         readySkills.Add(skill_02);
         agent.speed = unitAttributes.MoveSpeed;
         healthPoint = unitAttributes.Health;
 
         renderers = GetComponentsInChildren<Renderer>();
     }
+
     public void SetUnit()
     {
         agent.updateRotation = false;
@@ -336,8 +340,8 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    public Skill_Slot skillSlot;
-    Dictionary<string, Skill_Slot> dictSkillSlot = new Dictionary<string, Skill_Slot>();
+    //public Skill_Set skillSet;
+    Dictionary<string, Skill_Set> dictSkillSlot = new Dictionary<string, Skill_Set>();
     bool skillCastring;
     public Image image;
     IEnumerator SkillCasting(float _castingTime)
@@ -389,10 +393,13 @@ public class Unit_AI : MonoBehaviour
         string skillID = currentSkill.skillStruct.ID;
         if (dictSkillSlot.ContainsKey(skillID) == false)
         {
-            Skill_Slot slot = Instantiate(skillSlot, transform);
-            slot.gameObject.name = skillID;
-            slot.SetSkillSlot(this);
-            dictSkillSlot[skillID] = slot;
+            Data_Manager.SkillStruct skill = Singleton_Data.INSTANCE.Dict_Skill[skillID];
+            Debug.LogWarningFormat(skill.skillSet);
+            Skill_Set slot = Singleton_Data.INSTANCE.Dict_SkillSet[skill.skillSet];
+            Skill_Set inst = Instantiate(slot, transform);
+            inst.gameObject.name = skillID;
+            inst.SetSkillSlot(this, currentSkill.skillStruct);
+            dictSkillSlot[skillID] = inst;
         }
         dictSkillSlot[skillID].SetAction(target);
     }
@@ -711,6 +718,9 @@ public class Unit_AI : MonoBehaviour
     //public float viewAngle;
     private void OnDrawGizmos()
     {
+        if (currentSkill == null)
+            return;
+
         Color color = Color.green;
         GUIStyle fontStyle = new()
         {

@@ -6,41 +6,46 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 
-public class Skill_Slot : MonoBehaviour
+public class Skill_Set : MonoBehaviour
 {
     Unit_AI fromUnit, toUnit;
 
     Data_Manager.SkillStruct skillStruct;
-    public LayerMask targetMask;
+    LayerMask targetMask;
 
+    //public Data_Skill.ProjectileType projectileType = Data_Skill.ProjectileType.None;
+
+    //public ParticleSystem projectile;
+    //public ParticleSystem hitEffect;
     public enum ProjectileType
     {
-        None,
+        Melee,
         Straight,
         Parabola
     }
-    public ProjectileType projectileType = ProjectileType.None;
-
+    public ProjectileType projectileType = ProjectileType.Melee;
     public ParticleSystem projectile;
     public ParticleSystem hitEffect;
 
     float particleLife;
     float skillArea;// 타격 했을 때 거리
-    public float viewAngle;// 타격 했을 때 각도
-    public float projectileSpeed;// 탄이 있을 때 탄 속도
+    //public float viewAngle;// 타격 했을 때 각도
+    //public float projectileSpeed;// 탄이 있을 때 탄 속도
     const float firingAngle = 50f;// 포물선일때 날아가는 각도
 
     public Queue<ParticleSystem> Queue_Projectile = new Queue<ParticleSystem>();
     public Queue<ParticleSystem> Queue_HitEffect = new Queue<ParticleSystem>();
     Transform lastProjectile;
 
-    public void SetSkillSlot(Unit_AI _fromUnit)
+    public void SetSkillSlot(Unit_AI _fromUnit, Data_Manager.SkillStruct _skillStruct)
     {
         fromUnit = _fromUnit;
+        //skillData = _skillData;
         targetMask = (1 << fromUnit.gameObject.layer);
-        skillStruct = fromUnit.currentSkill.skillStruct;
+        skillStruct = _skillStruct;
         SetParticleDelay();
     }
+
     void SetParticleDelay()
     {
         if (hitEffect == null)
@@ -69,7 +74,7 @@ public class Skill_Slot : MonoBehaviour
 
         switch (projectileType)
         {
-            case ProjectileType.None:
+            case ProjectileType.Melee:
                 StartCoroutine(Projectile_Melee(toUnit));
                 break;
 
@@ -106,11 +111,11 @@ public class Skill_Slot : MonoBehaviour
     bool VisibleTarget(Transform _lastProjcetile, Unit_AI _target)// 보이는지 확인
     {
         Vector3 offset = (_target.transform.position - _lastProjcetile.position);
-        float area = (projectileType == ProjectileType.None) ? fromUnit.GetSkillRange.y + fromUnit.GetUnitSize : 0f;
+        float area = (projectileType == ProjectileType.Melee) ? fromUnit.GetSkillRange.y + fromUnit.GetUnitSize : 0f;
         skillArea = area + skillStruct.splashRange;
         if (offset.magnitude < skillArea + _target.GetUnitSize)
         {
-            if (Vector3.Angle(_lastProjcetile.forward, offset.normalized) < viewAngle * 0.5f)// 앵글 안에 포함 되는지
+            if (Vector3.Angle(_lastProjcetile.forward, offset.normalized) < skillStruct.splashAngle * 0.5f)// 앵글 안에 포함 되는지
             {
                 return ((targetMask & (1 << _target.gameObject.layer)) == 0);// 같은 레이어가 아니면
                 //if (Physics.Raycast(from.position, offset.normalized, distanceToTarget, obstacleMask) == false)
@@ -131,14 +136,17 @@ public class Skill_Slot : MonoBehaviour
 
 
 
-    ParticleSystem InstanceProjectile()
+
+    private void ActionHit(Unit_AI _unit, Transform _projectile)
     {
-        if (Queue_Projectile.Count == 0)
+        if (skillStruct.splashRange > 0)
         {
-            ParticleSystem inst = Instantiate(projectile, transform);
-            Queue_Projectile.Enqueue(inst);
+            SplashArea(_projectile);// 스플레쉬 데미지
         }
-        return Queue_Projectile.Dequeue();
+        else
+        {
+            TargetHIt(_unit, _projectile);// 타겟 데미지
+        }
     }
 
     IEnumerator Projectile_Melee(Unit_AI _toUnit)
@@ -151,24 +159,12 @@ public class Skill_Slot : MonoBehaviour
         inst.gameObject.SetActive(true);
         inst.Play();
 
-        SetHit(_toUnit, inst.transform);
+        ActionHit(_toUnit, inst.transform);
         OnHitEffect(inst.transform);
         yield return new WaitForSeconds(1f);
 
         inst.gameObject.SetActive(false);
         Queue_Projectile.Enqueue(inst);
-    }
-
-    private void SetHit(Unit_AI _unit, Transform _projectile)
-    {
-        if (skillStruct.splashRange > 0)
-        {
-            SplashArea(_projectile);
-        }
-        else
-        {
-            TargetHIt(_unit, _projectile);
-        }
     }
 
     IEnumerator Projectile_Straight(Unit_AI _toUnit)
@@ -185,7 +181,7 @@ public class Skill_Slot : MonoBehaviour
         while (fire == true)
         {
             Vector3 targetPosition = new Vector3(_toUnit.transform.position.x, transform.position.y, _toUnit.transform.position.z);
-            inst.transform.position = Vector3.MoveTowards(inst.transform.position, targetPosition, Time.deltaTime * projectileSpeed * 0.5f);// 발사
+            inst.transform.position = Vector3.MoveTowards(inst.transform.position, targetPosition, Time.deltaTime * skillStruct.projectileSpeed * 0.5f);// 발사
             inst.transform.LookAt(targetPosition);
             if ((inst.transform.position - targetPosition).magnitude < _toUnit.GetUnitSize)
             {
@@ -193,15 +189,7 @@ public class Skill_Slot : MonoBehaviour
             }
             yield return null;
         }
-
-        if (skillStruct.splashRange > 0)
-        {
-            SplashArea(inst.transform);
-        }
-        else
-        {
-            TargetHIt(_toUnit, inst.transform);
-        }
+        ActionHit(_toUnit, inst.transform);
 
         OnHitEffect(inst.transform);
         inst.gameObject.SetActive(false);
@@ -226,7 +214,7 @@ public class Skill_Slot : MonoBehaviour
         float target_Distance = (fromUnit.transform.position - targetPoint).magnitude;
 
         // 초기 속도 계산
-        float projectile_Velocity = target_Distance / (Mathf.Sin(2 * firingAngle * Mathf.Deg2Rad) / projectileSpeed);
+        float projectile_Velocity = target_Distance / (Mathf.Sin(2 * firingAngle * Mathf.Deg2Rad) / skillStruct.projectileSpeed);
 
         // XZ 평면에서의 속도 계산
         float Vx = Mathf.Sqrt(projectile_Velocity) * Mathf.Cos(firingAngle * Mathf.Deg2Rad);
@@ -243,18 +231,10 @@ public class Skill_Slot : MonoBehaviour
         while (elapse_time < flightDuration)
         {
             elapse_time += Time.deltaTime;
-            inst.transform.Translate(0, (Vy - (projectileSpeed * elapse_time)) * Time.deltaTime, Vx * Time.deltaTime);
+            inst.transform.Translate(0, (Vy - (skillStruct.projectileSpeed * elapse_time)) * Time.deltaTime, Vx * Time.deltaTime);
             yield return null;
         }
-
-        if (skillStruct.splashRange > 0)
-        {
-            SplashArea(inst.transform);
-        }
-        else
-        {
-            TargetHIt(_toUnit, inst.transform);
-        }
+        ActionHit(_toUnit, inst.transform);
 
         OnHitEffect(inst.transform);
         inst.gameObject.SetActive(false);
@@ -268,6 +248,16 @@ public class Skill_Slot : MonoBehaviour
 
         lastProjectile = _trans;
         StartCoroutine(OnHitDelay());
+    }
+
+    ParticleSystem InstanceProjectile()
+    {
+        if (Queue_Projectile.Count == 0)
+        {
+            ParticleSystem inst = Instantiate(projectile, transform);
+            Queue_Projectile.Enqueue(inst);
+        }
+        return Queue_Projectile.Dequeue();
     }
 
     ParticleSystem InstanceHitEffect()
@@ -305,8 +295,8 @@ public class Skill_Slot : MonoBehaviour
         Handles.color = Color.green;
         Handles.DrawWireArc(lastProjectile.position, Vector3.up, Vector3.forward, 360f, skillArea);
 
-        Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, lastProjectile);
-        Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, lastProjectile);
+        Vector3 viewAngleA = DirFromAngle(skillStruct.splashAngle * 0.5f, lastProjectile);
+        Vector3 viewAngleB = DirFromAngle(-skillStruct.splashAngle * 0.5f, lastProjectile);
 
         Handles.DrawLine(lastProjectile.position, lastProjectile.position + viewAngleA * skillArea);
         Handles.DrawLine(lastProjectile.position, lastProjectile.position + viewAngleB * skillArea);
