@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf4c6b9b376dbb499e5f840d61c5c0e, type: 3}
+  m_Name: Data_Spawn
+  m_EditorClassIdentifier: 
+  groupType: 2
+  spawnUnitPoint:
+  - unitID: U10011
+    spawnPosition: {x: -7.65, y: 0, z: -3.44}
+    spawnRotation: {x: -0, y: 0, z: 0}
+  - unitID: U10011
+    spawnPosition: {x: -7.88, y: 0, z: 3.1499996}
+    spawnRotation: {x: -0, y: 0, z: 0}
+  - unitID: U10010
+    spawnPosition: {x: -3.5, y: 0, z: -2.35}
+    spawnRotation: {x: -0, y: 0, z: 0}
+  - unitID: U10010
+    spawnPosition: {x: -3.73, y: 0, z: 4.24}
+    spawnRotation: {x: -0, y: 0, z: 0}
+  spawnMonsterPoint:
+  - unitID: U10012
+    spawnPosition: {x: 6.81, y: 0, z: -4.17}
+    spawnRotation: {x: -0, y: 0, z: 0}
+  - unitID: U10012
+    spawnPosition: {x: 7.06, y: 0, z: 5.39}
+    spawnRotation: {x: -0, y: 0, z: 0}
+  - unitID: U10013
+    spawnPosition: {x: 4.31, y: 0, z: -0.83}
+    spawnRotation: {x: -0, y: 0, z: 0}
+  - unitID: U10013
+    spawnPosition: {x: 1.46, y: 0, z: -6.84}
+    spawnRotation: {x: -0, y: 0, z: 0}

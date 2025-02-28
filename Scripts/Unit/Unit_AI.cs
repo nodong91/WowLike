@@ -93,7 +93,8 @@ public class Unit_AI : MonoBehaviour
 
     public void SetUnitStruct(string _unitID, GroupType _groupType)
     {
-        //unitID = _unitID;
+        unitID = _unitID;
+        Debug.LogWarning(unitID);
         agent = GetComponent<NavMeshAgent>();
         groupType = _groupType;
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
@@ -491,23 +492,25 @@ public class Unit_AI : MonoBehaviour
         switch (_skillStruct.ccType)
         {
             case Data_Manager.SkillStruct.CCType.Normal:
-                takeDamage = StartCoroutine(TakeDamage());
+                takeDamage = StartCoroutine(CCDamage(_center, 3f));
                 break;
 
             case Data_Manager.SkillStruct.CCType.KnockBack:
-                takeDamage = StartCoroutine(CCDamage(_center));
+                takeDamage = StartCoroutine(CCDamage(_center, 1f));
                 break;
         }
 
-        if (skillCastring == true)// 캐스팅 중이라면 취소
+
+    }
+
+    IEnumerator CCDamage(Vector3 _from, float _knockBack)
+    {
+        if (_knockBack > 0 && skillCastring == true)// 캐스팅 중이고 밀리면 취소
         {
             skillCastring = false;
         }
-    }
 
-    IEnumerator CCDamage(Vector3 _from)
-    {
-        Vector3 targetPoint = GetBackPoint(_from, 0f, 1f);
+        Vector3 targetPoint = GetBackPoint(_from, 0f, _knockBack);
         if (float.IsInfinity(targetPoint.x))
             targetPoint = transform.position;
 
