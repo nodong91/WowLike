@@ -18,7 +18,7 @@ public class Unit_AI : MonoBehaviour
     Data_Manager.UnitStruct.UnitAttributes unitAttributes;
 
     public delegate List<Unit_AI> DeleUnitList();
-    public DeleUnitList unitList;
+    public DeleUnitList playerList;
     public DeleUnitList monsterList;
 
     public enum State
@@ -56,14 +56,6 @@ public class Unit_AI : MonoBehaviour
     Coroutine aggroCoroutine;
     public LayerMask targetMask, obstacleMask;
 
-    public enum GroupType
-    {
-        None,
-        Unit,
-        Monster,
-    }
-    public GroupType groupType;
-
     public delegate void DeadUnit(Unit_AI _unit);
     public DeadUnit deadUnit;
 
@@ -91,31 +83,31 @@ public class Unit_AI : MonoBehaviour
     }
     public Vector2 GetSkillRange { get { return currentSkill.skillStruct.range; } }
 
-    public void SetUnitStruct(string _unitID, GroupType _groupType)
+    public void SetUnitStruct(string _unitID, LayerMask _layerMask)
     {
         unitID = _unitID;
         Debug.LogWarning(unitID);
         agent = GetComponent<NavMeshAgent>();
-        groupType = _groupType;
+        //groupType = _groupType;
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
         unitAttributes = unitStruct.TryAttributes();
 
         image.material = Instantiate(image.material);
+        gameObject.layer = _layerMask;
+        //switch (groupType)
+        //{
+        //    default:
+        //        gameObject.layer = 1 << 0;
+        //        break;
 
-        switch (groupType)
-        {
-            default:
-                gameObject.layer = 1 << 0;
-                break;
+        //    case GroupType.Unit:
+        //        gameObject.layer = LayerMask.NameToLayer("Player");
+        //        break;
 
-            case GroupType.Unit:
-                gameObject.layer = 1 << 0;
-                break;
-
-            case GroupType.Monster:
-                gameObject.layer = 1 << 1;
-                break;
-        }
+        //    case GroupType.Monster:
+        //        gameObject.layer = LayerMask.NameToLayer("Monster");
+        //        break;
+        //}
 
         SkillStruct skill_01 = new SkillStruct
         {
@@ -252,7 +244,7 @@ public class Unit_AI : MonoBehaviour
         if (target == null || target.state == State.Dead) // 타겟이 없는 경우
         {
             float dist = float.MaxValue;
-            List<Unit_AI> units = groupType == GroupType.Unit ? monsterList() : unitList();
+            List<Unit_AI> units = gameObject.layer == LayerMask.NameToLayer("Player") ? monsterList() : playerList();
             for (int i = 0; i < units.Count; i++)
             {
                 Unit_AI unit = units[i];
@@ -737,7 +729,7 @@ public class Unit_AI : MonoBehaviour
         {
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize);
 
-            Handles.color = (groupType == GroupType.Unit) ? Color.red : Color.blue;
+            Handles.color = gameObject.layer == LayerMask.NameToLayer("Player") ? Color.red : Color.blue;
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.x);
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.y);
 
