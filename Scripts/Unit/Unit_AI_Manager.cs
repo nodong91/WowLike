@@ -1,16 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static Unit_AI_Manager;
 
 public class Unit_AI_Manager : MonoBehaviour
 {
-    public enum PlayMode
-    {
-        Editor,
-        Game
-    }
-    public PlayMode playMode;
     public Map_Node map;
+    public float timeScale = 1f;
 
     [SerializeField] private List<Unit_AI> players = new List<Unit_AI>();
     [SerializeField] private List<Unit_AI> monsters = new List<Unit_AI>();
@@ -24,29 +18,22 @@ public class Unit_AI_Manager : MonoBehaviour
         return monsters;
     }
 
-    Dictionary<GameObject, Unit_AI> unitDict = new Dictionary<GameObject, Unit_AI>();
+    private Dictionary<GameObject, Unit_AI> unitDict = new Dictionary<GameObject, Unit_AI>();
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return unitDict; } }
     public Unit_AI selectUnit;
-    public void SetTimeScale(float _timeScale)
-    {
-        timeScale = _timeScale;
-        Time.timeScale = timeScale;
-    }
-    public float timeScale = 1f;
+    public List<Node> randomNodes;
+
     public static Unit_AI_Manager instance;
 
     private void Awake()
     {
         instance = this;
     }
-    public List<Node> randomNodes;
+
     private void Start()
     {
         Time.timeScale = timeScale;
         map.SetMapGrid();
-
-        if (playMode == PlayMode.Editor)
-            return;
 
         NormalSpawn();
         //AmbushSpawn();
@@ -83,6 +70,12 @@ public class Unit_AI_Manager : MonoBehaviour
         {
             RayCasting(false, false);
         }
+    }
+
+    public void SetTimeScale(float _timeScale)
+    {
+        timeScale = _timeScale;
+        Time.timeScale = timeScale;
     }
 
     void NormalSpawn()
@@ -183,31 +176,22 @@ public class Unit_AI_Manager : MonoBehaviour
         int layerMask = 1 << 0;
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
-            switch (playMode)
+            map.GetNodeFromPosition(hit.point);
+            if (_input == true)
             {
-                case PlayMode.Editor:
-                    //map.EditorMapSetting(hit.point, _input, _left);
-                    break;
-
-                case PlayMode.Game:
-                    map.GetNodeFromPosition(hit.point);
-                    if (_input == true)
-                    {
-                        if (unitDict.ContainsKey(hit.transform.gameObject))
-                        {
-                            selectUnit = unitDict[hit.transform.gameObject];
-                        }
-                        else
-                        {
-                            selectUnit = null;
-                        }
-                    }
-                    else if (selectUnit != null)
-                    {
-                        Vector3 targetPosition = hit.point;
-                        selectUnit.CommendMoveing(targetPosition);
-                    }
-                    break;
+                if (unitDict.ContainsKey(hit.transform.gameObject))
+                {
+                    selectUnit = unitDict[hit.transform.gameObject];
+                }
+                else
+                {
+                    selectUnit = null;
+                }
+            }
+            else if (selectUnit != null)
+            {
+                Vector3 targetPosition = hit.point;
+                selectUnit.CommendMoveing(targetPosition);
             }
 
             Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);

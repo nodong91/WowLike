@@ -31,6 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6489386391250537009}
+  - {fileID: 7269822199590858574}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6120092852697154475
@@ -45,19 +46,973 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7f8b55b444291419cba3306753704d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  units:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  monsters:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  map: {fileID: 5997317173356888947}
+  players: []
+  monsters: []
   selectUnit: {fileID: 0}
   timeScale: 1
-  spawnData: {fileID: 0}
+  randomNodes: []
+--- !u!1 &1619016694739303143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7269822199590858574}
+  - component: {fileID: 5997317173356888947}
+  m_Layer: 0
+  m_Name: Map_Generator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7269822199590858574
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619016694739303143}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4556252470235816197}
+  m_Father: {fileID: 3980104629374275719}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5997317173356888947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619016694739303143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9907bd75331e324fb460755035c96e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldSize: {x: 20, y: 20}
+  nodeSize: 1
+  diagonal: 0
+  gridX: 10
+  gridY: 10
+  spawnData: {fileID: 11400000, guid: bc043a5dc0a828242882966609ff573c, type: 2}
+  allNodes:
+  - nodeName: 'None : (0, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (0, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -9, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 0, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (1, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -7, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 1, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (2, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -5, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 2, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (3, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -3, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 3, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (4, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: -1, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 4, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (5, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 1, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 5, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (6, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 3, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 6, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (7, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 5, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 7, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'Monster : (8, 4), (0, 0)'
+    nodeType: 2
+    close: 0
+    worldPosition: {x: 7, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (8, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 7, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 8, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 0), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: -9}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 0}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 1), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: -7}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 1}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 2), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: -5}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 2}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 3), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: -3}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 3}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 4), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: -1}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 4}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 5), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: 1}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 5}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 6), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: 3}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 6}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 7), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: 5}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 7}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 8), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: 7}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 8}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  - nodeName: 'None : (9, 9), (0, 0)'
+    nodeType: 0
+    close: 0
+    worldPosition: {x: 9, y: 0, z: 9}
+    onObject: {fileID: 0}
+    grid: {x: 9, y: 9}
+    cost: {x: 0, y: 0}
+    parentNode: {x: 0, y: 0}
+  adsfafd: {fileID: 6462898841376707647}
+--- !u!1 &6462898841376707647
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4556252470235816197}
+  - component: {fileID: 1453298135669220194}
+  - component: {fileID: 4533646977031213046}
+  - component: {fileID: 1128589156588452223}
+  m_Layer: 2
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4556252470235816197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462898841376707647}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 16, y: 0.38, z: -0.86}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7269822199590858574}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &1453298135669220194
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462898841376707647}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &4533646977031213046
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462898841376707647}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1128589156588452223
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462898841376707647}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6842270347089261664
 GameObject:
   m_ObjectHideFlags: 0

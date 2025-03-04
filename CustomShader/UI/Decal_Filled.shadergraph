@@ -1440,10 +1440,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -595.0001220703125,
-            "y": 159.00001525878907,
+            "x": -622.0000610351563,
+            "y": 151.99998474121095,
             "width": 183.00006103515626,
-            "height": 250.99998474121095
+            "height": 251.00001525878907
         }
     },
     "m_Slots": [
@@ -2154,11 +2154,11 @@
     },
     "m_Name": "Split",
     "m_DrawState": {
-        "m_Expanded": true,
+        "m_Expanded": false,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -398.15447998046877,
-            "y": -68.1544418334961,
+            "x": -383.0,
+            "y": -126.0,
             "width": 120.0,
             "height": 149.0
         }
