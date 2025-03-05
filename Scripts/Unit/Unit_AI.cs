@@ -83,31 +83,19 @@ public class Unit_AI : MonoBehaviour
     }
     public Vector2 GetSkillRange { get { return currentSkill.skillStruct.range; } }
 
-    public void SetUnitStruct(string _unitID, LayerMask _layerMask)
+    public void SetUnit(string _unitID, LayerMask _layerMask)// 첫세팅
     {
         unitID = _unitID;
         Debug.LogWarning(unitID);
         agent = GetComponent<NavMeshAgent>();
-        //groupType = _groupType;
+        agent.updateRotation = false;
+
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
         unitAttributes = unitStruct.TryAttributes();
+        ResetUnit();
 
         image.material = Instantiate(image.material);
         gameObject.layer = _layerMask;
-        //switch (groupType)
-        //{
-        //    default:
-        //        gameObject.layer = 1 << 0;
-        //        break;
-
-        //    case GroupType.Unit:
-        //        gameObject.layer = LayerMask.NameToLayer("Player");
-        //        break;
-
-        //    case GroupType.Monster:
-        //        gameObject.layer = LayerMask.NameToLayer("Monster");
-        //        break;
-        //}
 
         SkillStruct skill_01 = new SkillStruct
         {
@@ -128,9 +116,8 @@ public class Unit_AI : MonoBehaviour
         renderers = GetComponentsInChildren<Renderer>();
     }
 
-    public void SetUnit()
+    public void ResetUnit()// 첫소환 또는 부활 때 사용
     {
-        agent.updateRotation = false;
         healthPoint = unitAttributes.Health;
 
         if (state == State.Dead)
@@ -144,7 +131,6 @@ public class Unit_AI : MonoBehaviour
         aggroDict.Clear();
 
         StateMachine(State.Idle);
-        StartBattle();
     }
 
     void Rebirth()
@@ -166,7 +152,7 @@ public class Unit_AI : MonoBehaviour
         agent.avoidancePriority = (int)_state;
     }
 
-    void StartBattle()
+    public void StartBattle()
     {
         if (stateMachine != null)
             StopCoroutine(stateMachine);

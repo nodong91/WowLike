@@ -2,6 +2,25 @@ using System.Collections.Generic;
 using UnityEngine;
 # if UNITY_EDITOR
 using UnityEditor;
+[CustomEditor(typeof(Map_Node))]
+public class Map_Node_Editor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        GUIStyle fontStyle = new GUIStyle(GUI.skin.button);
+        fontStyle.fontSize = 15;
+        fontStyle.normal.textColor = Color.yellow;
+
+        Map_Node Inspector = target as Map_Node;
+        if (GUILayout.Button("Update Data", fontStyle, GUILayout.Height(30f)))
+        {
+            Inspector.UpdateData();
+            EditorUtility.SetDirty(Inspector);
+        }
+        GUILayout.Space(10f);
+        base.OnInspectorGUI();
+    }
+}
 #endif
 [ExecuteInEditMode]
 public class Map_Node : MonoBehaviour
@@ -20,10 +39,9 @@ public class Map_Node : MonoBehaviour
     public Data_Spawn spawnData;
     public Data_Spawn GetSpawnData { get { return spawnData; } }
     public List<Node> allNodes;
-    public GameObject adsfafd;
 
 #if UNITY_EDITOR
-    private void Update()
+    public void UpdateData()
     {
         SetMapGrid();
     }
@@ -128,7 +146,7 @@ public class Map_Node : MonoBehaviour
             {
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeSize) + Vector3.forward * (y * nodeDiameter + nodeSize);
                 Vector2Int grid = new Vector2Int(x, y);
-                nodeMap[x, y] = new Node(false, worldPoint, grid);
+                nodeMap[x, y] = new Node(worldPoint, grid);
                 allNodes.Add(nodeMap[x, y]);
             }
         }
@@ -197,8 +215,7 @@ public class Map_Node : MonoBehaviour
         //int y = Mathf.RoundToInt((gridY - 1f) * percentY);
         int x = Mathf.Clamp((int)(gridX * percentX), 0, gridX - 1);
         int y = Mathf.Clamp((int)(gridY * percentY), 0, gridY - 1);
-        Debug.LogWarning($"{percentX}:{x}");
-        adsfafd.transform.position = nodeMap[x, y].worldPosition;
+        //Debug.LogWarning($"{percentX}:{x}");
         return nodeMap[x, y];
     }
 
@@ -288,7 +305,7 @@ public class Map_Node : MonoBehaviour
 
             foreach (Node neighbour in GetNeighbours(currentNode))
             {
-                if (neighbour.close || closedSet.Contains(neighbour))
+                if (neighbour.onObject || closedSet.Contains(neighbour))
                 {
                     continue;
                 }
@@ -388,9 +405,8 @@ public class Node
         Monster
     }
     public NodeType nodeType;
-    public bool close;
     public Vector3 worldPosition;
-    public Transform onObject;
+    public GameObject onObject;
     //public Renderer tileRenderer;
     //public NodeDisplay nodeDisplay;
 
@@ -400,9 +416,8 @@ public class Node
 
     //public string neighbours;
 
-    public Node(bool _close, Vector3 _worldPos, Vector2Int _grid)
+    public Node(Vector3 _worldPos, Vector2Int _grid)
     {
-        close = _close;
         worldPosition = _worldPos;
         grid = _grid;
 
@@ -415,9 +430,8 @@ public class Node
         nodeName = $"{nodeType} : {grid}, {cost}";
     }
 
-    public void UnitOnNode(Transform _onObject = null)
+    public void UnitOnNode(GameObject _onObject)
     {
-        close = (_onObject != null);
         onObject = _onObject;
     }
 

@@ -20,7 +20,7 @@ public class Unit_AI_Manager : MonoBehaviour
 
     private Dictionary<GameObject, Unit_AI> unitDict = new Dictionary<GameObject, Unit_AI>();
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return unitDict; } }
-    public Unit_AI selectUnit;
+    //public Unit_AI selectUnit;
     public List<Node> randomNodes;
 
     public static Unit_AI_Manager instance;
@@ -35,9 +35,10 @@ public class Unit_AI_Manager : MonoBehaviour
         Time.timeScale = timeScale;
         map.SetMapGrid();
 
+        players.Clear();
+        monsters.Clear();
         NormalSpawn();
         //AmbushSpawn();
-        StartBattle();
     }
 
 
@@ -45,31 +46,31 @@ public class Unit_AI_Manager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            //StartBattle();
+            StartBattle();
         }
 
         if (Input.GetMouseButtonDown(0))
         {
-            RayCasting(true, true);
+            RayCasting(true);
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            RayCasting(false, true);
+            RayCasting(false);
         }
         if (Input.GetMouseButton(0))
         {
-            RayCasting(true, true);
+            RayCasting(true);
         }
 
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            RayCasting(true, false);
-        }
-        else if (Input.GetMouseButtonUp(1))
-        {
-            RayCasting(false, false);
-        }
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    RayCasting(true);
+        //}
+        //else if (Input.GetMouseButtonUp(1))
+        //{
+        //    RayCasting(false);
+        //}
     }
 
     public void SetTimeScale(float _timeScale)
@@ -122,76 +123,87 @@ public class Unit_AI_Manager : MonoBehaviour
 
     void SpawnPlayer(Node _node, string _unitID)
     {
-        Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
-        Unit_AI inst = Instantiate(unit, transform);
-        inst.transform.position = _node.worldPosition;
-        inst.transform.rotation = Quaternion.Euler(_node.worldPosition);
-
+        Unit_AI inst = InstnaceUnit(_node, _unitID);
+        inst.SetUnit(_unitID, LayerMask.NameToLayer("Player"));
         inst.deadUnit += DeadPlayer;// 죽음 카운트
-        inst.playerList = PlayerList;// 타겟을 찾기 위해
-        inst.monsterList = MonsterList;// 타겟을 찾기 위해
-        inst.SetUnitStruct(_unitID, LayerMask.NameToLayer("Player"));
 
-        unitDict[inst.gameObject] = inst;
+        players.Add(inst);
     }
 
     void SpawnMonster(Node _node, string _unitID)
     {
+        Unit_AI inst = InstnaceUnit(_node, _unitID);
+        inst.SetUnit(_unitID, LayerMask.NameToLayer("Monster"));
+        inst.deadUnit += DeadMonster;
+
+        monsters.Add(inst);
+    }
+
+    Unit_AI InstnaceUnit(Node _node, string _unitID)
+    {
         Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
         Unit_AI inst = Instantiate(unit, transform);
         inst.transform.position = _node.worldPosition;
         inst.transform.rotation = Quaternion.Euler(_node.worldPosition);
-
-        inst.deadUnit += DeadMonster;
-        inst.playerList = PlayerList;
-        inst.monsterList = MonsterList;
-        inst.SetUnitStruct(_unitID, LayerMask.NameToLayer("Monster"));
+        inst.playerList = PlayerList;// 타겟을 찾기 위해
+        inst.monsterList = MonsterList;// 타겟을 찾기 위해
 
         unitDict[inst.gameObject] = inst;
+        _node.UnitOnNode(inst.gameObject);
+
+        return inst;
     }
 
     void StartBattle()
     {
-        players.Clear();
-        monsters.Clear();
         foreach (var child in unitDict)
         {
-            switch (child.Key.layer)
-            {
-                case 10:
-                    players.Add(child.Value);
-                    break;
-
-                case 11:
-                    monsters.Add(child.Value);
-                    break;
-            }
-            child.Value.SetUnit();
+            child.Value.StartBattle();
         }
     }
 
-    void RayCasting(bool _input, bool _left)
+    public GameObject asdfadsf;
+    void RayCasting(bool _input)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int layerMask = 1 << 0;
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
-            map.GetNodeFromPosition(hit.point);
+            Node node = map.GetNodeFromPosition(hit.point);
             if (_input == true)
             {
+                asdfadsf.gameObject.SetActive(true);
+                asdfadsf.transform.position = node.worldPosition;
                 if (unitDict.ContainsKey(hit.transform.gameObject))
                 {
-                    selectUnit = unitDict[hit.transform.gameObject];
+                    //selectUnit = unitDict[hit.transform.gameObject];
                 }
                 else
                 {
-                    selectUnit = null;
+                    //selectUnit = null;
                 }
             }
-            else if (selectUnit != null)
+            else
+            //if (selectUnit != null)
             {
-                Vector3 targetPosition = hit.point;
-                selectUnit.CommendMoveing(targetPosition);
+                asdfadsf.gameObject.SetActive(false);
+                if (node != null)
+                {
+                    if (node.onObject == null)
+                    {
+                        SpawnPlayer(node, "U10010");
+                    }
+                    else if (node.onObject.layer == LayerMask.NameToLayer("Player"))
+                    {
+                        Unit_AI unit = unitDict[node.onObject];
+                        unit.deadUnit -= DeadPlayer;// 죽음 카운트
+                        players.Remove(unit);
+                        unitDict.Remove(unit.gameObject);
+                        node.UnitOnNode(null);
+                        Destroy(unit.gameObject);
+                    }
+                }
+                //selectUnit.CommendMoveing(targetPosition);
             }
 
             Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);

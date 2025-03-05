@@ -7,7 +7,7 @@ public class UI_Inventory : MonoBehaviour
     public Image dragIcon;
     public Transform slotParent;
     public UI_InvenSlot invenSlot;
-    private UI_InvenSlot dragSlot, enterSlot;
+    public UI_InvenSlot dragSlot, enterSlot;
     public Transform lootingParent, quickParent;
     public UI_InvenSlot[] lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
@@ -99,6 +99,7 @@ public class UI_Inventory : MonoBehaviour
             return;
         }
         dragSlot.ChangeSlot(enterSlot);
+        dragSlot = null;
         dragIcon.gameObject.SetActive(false);
     }
 
