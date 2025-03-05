@@ -12,10 +12,16 @@ public class UI_Inventory : MonoBehaviour
     public UI_InvenSlot[] lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
 
+    private void Start()
+    {
+        SetInventory();
+    }
+
     public void SetInventory()
     {
         List<string> skillIDs = new List<string>();
         List<string> itemIDs = new List<string>();
+        List<string> unitIDs = new List<string>();
 
         foreach (var child in Singleton_Data.INSTANCE.Dict_Skill)
         {
@@ -25,11 +31,14 @@ public class UI_Inventory : MonoBehaviour
         {
             itemIDs.Add(child.Key);
         }
-
+        foreach (var child in Singleton_Data.INSTANCE.Dict_Unit)
+        {
+            unitIDs.Add(child.Key);
+        }
 
         for (int i = 0; i < 25; i++)
         {
-            int randomType = Random.Range(0, 3);
+            int randomType = Random.Range(0, 4);
             UI_InvenSlot inst = Instantiate(invenSlot, slotParent);
             inst.SetSlot(UI_InvenSlot.SlotType.Inventory);
             switch (randomType)
@@ -47,6 +56,12 @@ public class UI_Inventory : MonoBehaviour
                     break;
 
                 case 2:
+                    id = unitIDs[Random.Range(0, unitIDs.Count)];
+                    Data_Manager.UnitStruct unitSlot = Singleton_Data.INSTANCE.Dict_Unit[id];
+                    inst.SetUnitSlot(unitSlot);
+                    break;
+
+                case 3:
                     inst.SetEmptySlot();
                     break;
             }

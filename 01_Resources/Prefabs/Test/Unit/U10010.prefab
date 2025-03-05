@@ -57,7 +57,6 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
-  groupType: 0
   healthPoint: 0
   image: {fileID: 8791324237773838242}
   testAggro: []

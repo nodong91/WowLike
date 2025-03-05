@@ -454,7 +454,7 @@ MonoBehaviour:
   - ID: U10010
     unitName: U10010
     unitDescription: U10010
-    unitIcon: {fileID: 21300000, guid: f0dc8c07460ed904a84e60cf2deb328b, type: 3}
+    unitIcon: {fileID: 21300000, guid: 95af63e89959298479df131007c8bc47, type: 3}
     unitProp: {fileID: 3016066162043043107, guid: 0a81c70789806a947b1a1167d25780ef, type: 3}
     unitSize: 0.5
     defaultSkill01: S10010
@@ -466,7 +466,7 @@ MonoBehaviour:
   - ID: U10011
     unitName: U10011
     unitDescription: U10011
-    unitIcon: {fileID: 21300000, guid: b7df21e0e83e23749aef42f0ec4d7943, type: 3}
+    unitIcon: {fileID: 21300000, guid: b8a900ef9d1d8ab44a96e0f303189e27, type: 3}
     unitProp: {fileID: 6584309200855796371, guid: f508d64afc88a664f9e7b5ccdd7a424d, type: 3}
     unitSize: 0.5
     defaultSkill01: S10012
@@ -478,7 +478,7 @@ MonoBehaviour:
   - ID: U10012
     unitName: U10012
     unitDescription: U10012
-    unitIcon: {fileID: 21300000, guid: a10a63135d16a714cb4bd48ef8c957ce, type: 3}
+    unitIcon: {fileID: 21300000, guid: 6c6cab4d3aead5b4bb3a173bcdb35f9c, type: 3}
     unitProp: {fileID: 7717851964388432483, guid: c0d2dd0bcc415254ca6c578486e5eddb, type: 3}
     unitSize: 0.5
     defaultSkill01: S10010
@@ -490,7 +490,7 @@ MonoBehaviour:
   - ID: U10013
     unitName: U10013
     unitDescription: U10013
-    unitIcon: {fileID: 21300000, guid: c32af3544faf66d498ba271ec1fd6920, type: 3}
+    unitIcon: {fileID: 21300000, guid: 40bca8b83cbaf714d9f6fb77f4b629fd, type: 3}
     unitProp: {fileID: 5282940889516444751, guid: 5f2da0dd0d53c8e478ce685d8bc0965c, type: 3}
     unitSize: 0.5
     defaultSkill01: S10012

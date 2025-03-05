@@ -113,6 +113,10 @@ public class Game_Manager : MonoBehaviour
             case UI_InvenSlot.ItemType.Item:
                 Debug.LogWarning($"ΩΩ∑‘ {_index} : æ∆¿Ã≈€");
                 break;
+
+            case UI_InvenSlot.ItemType.Unit:
+                Debug.LogWarning($"ΩΩ∑‘ {_index} : æ∆¿Ã≈€");
+                break;
         }
         return;
     }

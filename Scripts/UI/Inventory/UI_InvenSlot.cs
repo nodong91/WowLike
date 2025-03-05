@@ -9,7 +9,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     {
         Empty,
         Item,
-        Skill
+        Skill,
+        Unit
     }
     public ItemType itemType;
     public enum SlotType
@@ -88,6 +89,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     public Data_Manager.ItemStruct itemStruct;
     public Data_Manager.SkillStruct skillStruct;
+    public Data_Manager.UnitStruct unitStruct;
 
     public delegate void DeleGateAction();
     public DeleGateAction deleGateAction;
@@ -147,6 +149,12 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
                 _enterSlot.TakeSlot(this);// °¡Á®¿Â ½½·Ô ¹Ù²Þ
                 SetSkillSlot(slotSkill);// ³» ½½·Ô ¹Ù²Þ
                 break;
+
+            case ItemType.Unit:
+                Data_Manager.UnitStruct unitSlot = _enterSlot.unitStruct;
+                _enterSlot.TakeSlot(this);// °¡Á®¿Â ½½·Ô ¹Ù²Þ
+                SetUnitSlot(unitSlot);// ³» ½½·Ô ¹Ù²Þ
+                break;
         }
     }
 
@@ -165,8 +173,12 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
             case ItemType.Skill:
                 SetSkillSlot(_dragSlot.skillStruct);
                 break;
+
+            case ItemType.Unit:
+                SetUnitSlot(_dragSlot.unitStruct);
+                break;
         }
-        Game_Manager.instance.checkDistance();
+        Game_Manager.instance?.checkDistance();// Äü½½·Ô ½ºÅ³ °Å¸® ÃøÁ¤¿ë
     }
 
     public void SetEmptySlot()
@@ -201,7 +213,16 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
     }
 
+    public void SetUnitSlot(Data_Manager.UnitStruct _unitStruct)
+    {
+        itemType = ItemType.Unit;
+        unitStruct = _unitStruct;
+        icon.sprite = _unitStruct.unitIcon;
 
+        icon.gameObject.SetActive(true);
+        itemIndex.gameObject.SetActive(false);
+        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
+    }
 
 
 

@@ -3280,8 +3280,8 @@
     "m_ObjectId": "76eeccfb5a6e4eca80d87d36c5ddb464",
     "m_Title": "New Group",
     "m_Position": {
-        "x": -1589.0001220703125,
-        "y": 614.0000610351563
+        "x": -1589.0,
+        "y": 613.9999389648438
     }
 }
 
@@ -4565,7 +4565,7 @@
     "m_CustomColors": {
         "m_SerializableColors": []
     },
-    "m_BlendMode": 15
+    "m_BlendMode": 13
 }
 
 {

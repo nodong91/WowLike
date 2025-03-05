@@ -7,12 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UI_Filled
-  m_Shader: {fileID: -6465566751694194690, guid: 9b36a943a8842b24a9baf7869d02af2e, type: 3}
+  m_Name: Sprite_Blur
+  m_Shader: {fileID: -6465566751694194690, guid: 7108dcb8790aea04b870e9b43f0945ea, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _FILL_METHOD_RADIAL_360
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -43,12 +42,6 @@ Material:
     m_Ints: []
     m_Floats:
     - _ColorMask: 15
-    - _FILL_METHOD: 4
-    - _FillAmount: 1
-    - _Float: 5.59
-    - _Float_1: 0.1
-    - _Intencity: 0
-    - _RotateAngle: 0
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -58,7 +51,6 @@ Material:
     - _UIMaskSoftnessY: 1
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _MainColor: {r: 2.9960787, g: 2.9960787, b: 2.9960787, a: 1}
-    - _SubColor: {r: 0, g: 0, b: 0, a: 0.23921569}
+    - _Vector2: {r: 0, g: 0.1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

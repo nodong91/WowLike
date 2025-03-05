@@ -42,16 +42,20 @@ Material:
     m_Ints: []
     m_Floats:
     - _ColorMask: 15
-    - _FillAmount: 0.507
-    - _FillValue: 700
-    - _Float: 314.4
-    - _Float_1: -86.1
-    - _Float_2: 0
-    - _Float_3: 95
-    - _Float_4: 8.3
+    - _FillAmount: 1
+    - _FillValue: 500
+    - _Float: 1
+    - _Float_1: 0.1
+    - _Float_2: 66
+    - _Float_3: 31.8
+    - _Float_4: 0
     - _Float_5: 114.68
-    - _GradiantAmount: 7.8
-    - _Rotate: 347
+    - _GradiantAmount: 4.5
+    - _LightNoise: 8.6
+    - _LightRange: 30
+    - _LightWidth: 50
+    - _NoiseScale: 0.16
+    - _Rotate: 360
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -61,9 +65,11 @@ Material:
     - _UIMaskSoftnessY: 1
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 1.2680557, g: 12.4887495, b: 15.813399, a: 0}
+    - _Color: {r: 0.55823165, g: 1.2832261, b: 1.4980392, a: 0}
+    - _FillMinMax: {r: -190.05, g: 188.5, b: 0, a: 0}
+    - _LightColor: {r: 1.5263042, g: 5.1472707, b: 11.984314, a: 0}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Vector2: {r: 747, g: 0, b: 0, a: 0}
+    - _Vector2: {r: 0, g: 0, b: 0, a: 0}
     - _Vector2_1: {r: -700, g: 700, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

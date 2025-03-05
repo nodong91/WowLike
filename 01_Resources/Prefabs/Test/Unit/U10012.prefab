@@ -230,7 +230,6 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
-  groupType: 0
   healthPoint: 0
   image: {fileID: 2682421560309785718}
   testAggro: []
