@@ -6,10 +6,11 @@ public class UI_Inventory : MonoBehaviour
 {
     public Image dragIcon;
     public Transform slotParent;
-    public UI_InvenSlot invenSlot;
-    public UI_InvenSlot dragSlot, enterSlot;
+    public UI_InvenSlot baseSlot;
+    private UI_InvenSlot dragSlot, enterSlot;
+    public UI_InvenSlot GetDragSlot { get { return dragSlot; } }
     public Transform lootingParent, quickParent;
-    public UI_InvenSlot[] lootingSlots, quickSlots;
+    public UI_InvenSlot[] invenSlots, lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
 
     private void Start()
@@ -35,12 +36,19 @@ public class UI_Inventory : MonoBehaviour
         {
             unitIDs.Add(child.Key);
         }
-
-        for (int i = 0; i < 25; i++)
+        invenSlots = new UI_InvenSlot[25];
+        for (int i = 0; i < invenSlots.Length; i++)
         {
-            int randomType = Random.Range(0, 4);
-            UI_InvenSlot inst = Instantiate(invenSlot, slotParent);
+            UI_InvenSlot inst = Instantiate(baseSlot, slotParent);
             inst.SetSlot(UI_InvenSlot.SlotType.Inventory);
+            inst.onBeginDrag += OnBeginDrag;
+            inst.onDrag += OnDrag;
+            inst.onEndDrag += OnEndDrag;
+            inst.onPointerEnter += OnPointerEnter;
+            invenSlots[i] = inst;
+
+            // 테스트 세팅
+            int randomType = Random.Range(0, 4);
             switch (randomType)
             {
                 case 0:
@@ -65,10 +73,6 @@ public class UI_Inventory : MonoBehaviour
                     inst.SetEmptySlot();
                     break;
             }
-            inst.onBeginDrag += OnBeginDrag;
-            inst.onDrag += OnDrag;
-            inst.onEndDrag += OnEndDrag;
-            inst.onPointerEnter += OnPointerEnter;
         }
         SetQuickSlot();
         SetLooting();
@@ -118,6 +122,24 @@ public class UI_Inventory : MonoBehaviour
         enterSlot = _slot;
     }
 
+    public UI_InvenSlot TryEmptySlot()
+    {
+        for(int i = 0;i< invenSlots.Length; i++)
+        {
+            UI_InvenSlot slot = invenSlots[i];  
+            if (slot.itemType == UI_InvenSlot.ItemType.Empty)
+            {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
 
 
 
@@ -128,7 +150,7 @@ public class UI_Inventory : MonoBehaviour
         lootingSlots = new UI_InvenSlot[lootingAmount];
         for (int i = 0; i < lootingAmount; i++)
         {
-            UI_InvenSlot inst = Instantiate(invenSlot, lootingParent);
+            UI_InvenSlot inst = Instantiate(baseSlot, lootingParent);
             inst.SetSlot(UI_InvenSlot.SlotType.Looting);
             inst.SetEmptySlot();
             inst.onBeginDrag += OnBeginDrag;
@@ -182,7 +204,7 @@ public class UI_Inventory : MonoBehaviour
         quickSlots = new UI_InvenSlot[quickAmount];
         for (int i = 0; i < quickAmount; i++)
         {
-            UI_InvenSlot inst = Instantiate(invenSlot, quickParent);
+            UI_InvenSlot inst = Instantiate(baseSlot, quickParent);
             inst.SetSlot(UI_InvenSlot.SlotType.Quick);
             inst.SetQuickIndex((i + 1).ToString());
 

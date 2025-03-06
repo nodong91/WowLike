@@ -225,8 +225,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     }
 
 
-
-
     bool inDist, cooling, isActive;
     public bool GetIsActive { get { return isActive; } }
 

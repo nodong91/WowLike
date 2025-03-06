@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Unit_AI_Manager : MonoBehaviour
 {
@@ -23,6 +25,7 @@ public class Unit_AI_Manager : MonoBehaviour
     //public Unit_AI selectUnit;
     public List<Node> randomNodes;
 
+    public UI_Inventory inventory;
     public static Unit_AI_Manager instance;
 
     private void Awake()
@@ -51,15 +54,15 @@ public class Unit_AI_Manager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            RayCasting(true);
+            InputBegin();
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            RayCasting(false);
+            InputEnd();
         }
         if (Input.GetMouseButton(0))
         {
-            RayCasting(true);
+            InputIng();
         }
 
 
@@ -163,51 +166,129 @@ public class Unit_AI_Manager : MonoBehaviour
     }
 
     public GameObject asdfadsf;
-    void RayCasting(bool _input)
+    bool selectedObject;
+    public Node objectNode;
+    UI_InvenSlot dragSlot;
+
+    void InputBegin()
+    {
+        Node node = RayCasting(true);
+        selectedObject = node?.onObject != null;
+        if (selectedObject == true)
+        {
+            objectNode = node;
+        }
+    }
+
+    void InputIng()
+    {
+        Debug.LogWarning(EventSystem.current.IsPointerOverGameObject() == true);
+        if (EventSystem.current.IsPointerOverGameObject() == true ||
+            inventory.GetDragSlot == null || inventory.GetDragSlot.itemType != UI_InvenSlot.ItemType.Unit)
+            return;
+
+        dragSlot = inventory.GetDragSlot;
+        Node node = RayCasting(true);
+        if (node != null)
+        {
+            asdfadsf.gameObject.SetActive(dragSlot != null);
+            asdfadsf.transform.position = node.worldPosition;
+        }
+    }
+
+    void InputEnd()
+    {
+        Node node = RayCasting(false);
+        asdfadsf.gameObject.SetActive(false);
+
+        if (EventSystem.current.IsPointerOverGameObject() == true || node == null)
+        {
+            return;
+        }
+
+        if (selectedObject == true)// 선택한 오브젝트가 있고
+        {
+            //if (node.onObject?.layer != LayerMask.NameToLayer("Player"))
+            //    return;
+
+            selectedObject = false;
+            if (objectNode.onObject == node.onObject)// 같은 노드를 눌렀을 때
+            {
+                UnitRemove(node);
+            }
+            else
+            {
+                UnitMove(node);
+            }
+        }
+        else if (dragSlot != null)
+        {
+            UnitInstance(node);
+            dragSlot = null;
+        }
+    }
+
+    void UnitRemove(Node _node)
+    {
+        UI_InvenSlot emptySlot = inventory.TryEmptySlot();
+        if (emptySlot == null)// 빈슬롯 확인
+        {
+            return;
+        }
+        // 제거
+        Unit_AI unit = unitDict[_node.onObject];
+        unit.deadUnit -= DeadPlayer;// 죽음 카운트
+        players.Remove(unit);
+        unitDict.Remove(unit.gameObject);
+        _node.UnitOnNode(null);
+        // 인벤토리에 생성
+        emptySlot.SetUnitSlot(unit.GetUnitStruct);
+
+        Destroy(unit.gameObject);
+    }
+
+    void UnitMove(Node _node)
+    {
+        // 이동
+        GameObject from = objectNode.onObject;
+        GameObject to = _node.onObject;
+
+        objectNode.onObject = to;
+        if (to != null)
+            to.transform.position = objectNode.worldPosition;
+        _node.onObject = from;
+        if (from != null)
+            from.transform.position = _node.worldPosition;
+    }
+
+    void UnitInstance(Node _node)
+    {
+        if (_node.onObject == null)// 빈칸에 놓을 때
+        {
+            // 생성
+            string unitID = dragSlot.unitStruct.ID;
+            SpawnPlayer(_node, unitID);
+            // 인벤토리에서 제거
+
+            dragSlot.SetEmptySlot();
+        }
+        else// 빈칸이 아니면 못놓게
+        {
+            Debug.LogWarning("놓을 수 없음!!!");
+        }
+    }
+
+    Node RayCasting(bool _input)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int layerMask = 1 << 0;
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
             Node node = map.GetNodeFromPosition(hit.point);
-            if (_input == true)
-            {
-                asdfadsf.gameObject.SetActive(true);
-                asdfadsf.transform.position = node.worldPosition;
-                if (unitDict.ContainsKey(hit.transform.gameObject))
-                {
-                    //selectUnit = unitDict[hit.transform.gameObject];
-                }
-                else
-                {
-                    //selectUnit = null;
-                }
-            }
-            else
-            //if (selectUnit != null)
-            {
-                asdfadsf.gameObject.SetActive(false);
-                if (node != null)
-                {
-                    if (node.onObject == null)
-                    {
-                        SpawnPlayer(node, "U10010");
-                    }
-                    else if (node.onObject.layer == LayerMask.NameToLayer("Player"))
-                    {
-                        Unit_AI unit = unitDict[node.onObject];
-                        unit.deadUnit -= DeadPlayer;// 죽음 카운트
-                        players.Remove(unit);
-                        unitDict.Remove(unit.gameObject);
-                        node.UnitOnNode(null);
-                        Destroy(unit.gameObject);
-                    }
-                }
-                //selectUnit.CommendMoveing(targetPosition);
-            }
-
             Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);
+            return node;
         }
+        return null;
     }
 
     void DeadPlayer(Unit_AI _unit)

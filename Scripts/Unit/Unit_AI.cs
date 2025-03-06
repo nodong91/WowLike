@@ -15,6 +15,7 @@ public class Unit_AI : MonoBehaviour
     Unit_AI target;
     Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
     Data_Manager.UnitStruct unitStruct;
+    public Data_Manager.UnitStruct GetUnitStruct { get { return unitStruct; } }
     Data_Manager.UnitStruct.UnitAttributes unitAttributes;
 
     public delegate List<Unit_AI> DeleUnitList();
