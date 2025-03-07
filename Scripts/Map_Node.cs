@@ -120,13 +120,6 @@ public class Map_Node : MonoBehaviour
 
     //}
 
-    // 노드 세팅
-    [ContextMenu("SetMapGrid")]
-    public void Setasdfaf()
-    {
-        SetMapGrid();
-    }
-
     public void SetMapGrid()
     {
         if (worldSize.x * worldSize.y <= 0)
@@ -149,6 +142,16 @@ public class Map_Node : MonoBehaviour
                 nodeMap[x, y] = new Node(worldPoint, grid);
                 allNodes.Add(nodeMap[x, y]);
             }
+        }
+
+        for (int i = 0; i < spawnData.playerNodes.Count; i++)
+        {
+            int x = spawnData.playerNodes[i].spawnGrid.x;
+            int y = spawnData.playerNodes[i].spawnGrid.y;
+            if (x < 0 || y < 0 || x >= gridX || y >= gridY)
+                continue;
+            Node node = nodeMap[x, y];
+            node.SetNodeType(Node.NodeType.Player);
         }
 
         for (int i = 0; i < spawnData.monsterNodes.Count; i++)

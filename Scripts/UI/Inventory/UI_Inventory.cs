@@ -12,6 +12,7 @@ public class UI_Inventory : MonoBehaviour
     public Transform lootingParent, quickParent;
     public UI_InvenSlot[] invenSlots, lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
+    public int inventoryAmount = 25;
 
     private void Start()
     {
@@ -36,7 +37,7 @@ public class UI_Inventory : MonoBehaviour
         {
             unitIDs.Add(child.Key);
         }
-        invenSlots = new UI_InvenSlot[25];
+        invenSlots = new UI_InvenSlot[inventoryAmount];
         for (int i = 0; i < invenSlots.Length; i++)
         {
             UI_InvenSlot inst = Instantiate(baseSlot, slotParent);

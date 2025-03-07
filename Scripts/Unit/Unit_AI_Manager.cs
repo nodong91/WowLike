@@ -1,10 +1,16 @@
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UI_Battle;
 
 public class Unit_AI_Manager : MonoBehaviour
 {
+    public enum SpawnType
+    {
+        Normal,
+        Ambush
+    }
+    public SpawnType spawnType = SpawnType.Normal;
     public Map_Node map;
     public float timeScale = 1f;
 
@@ -22,10 +28,9 @@ public class Unit_AI_Manager : MonoBehaviour
 
     private Dictionary<GameObject, Unit_AI> unitDict = new Dictionary<GameObject, Unit_AI>();
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return unitDict; } }
-    //public Unit_AI selectUnit;
+    public UI_Battle uiBattle;
     public List<Node> randomNodes;
 
-    public UI_Inventory inventory;
     public static Unit_AI_Manager instance;
 
     private void Awake()
@@ -40,10 +45,19 @@ public class Unit_AI_Manager : MonoBehaviour
 
         players.Clear();
         monsters.Clear();
-        NormalSpawn();
-        //AmbushSpawn();
-    }
+        switch (spawnType)
+        {
+            case SpawnType.Normal:
+                NormalSpawn();
+                break;
 
+            case SpawnType.Ambush:
+                AmbushSpawn();
+                break;
+        }
+        uiBattle.deleTimeScale = SetTimeScale;
+        uiBattle.deleBattleStart = StartBattle;
+    }
 
     private void Update()
     {
@@ -90,16 +104,6 @@ public class Unit_AI_Manager : MonoBehaviour
             Vector2Int grid = spawnNode[i].spawnGrid;
             Node node = map.nodeMap[grid.x, grid.y];
             SpawnMonster(node, spawnNode[i].unitID);
-            //switch (spawnNode[i].nodeType)
-            //{
-            //    case Node.NodeType.Player:
-            //        SpawnPlayer(node, spawnNode[i].unitID);
-            //        break;
-
-            //    case Node.NodeType.Monster:
-            //        SpawnMonster(node, spawnNode[i].unitID);
-            //        break;
-            //}
         }
     }
 
@@ -163,6 +167,7 @@ public class Unit_AI_Manager : MonoBehaviour
         {
             child.Value.StartBattle();
         }
+        Debug.LogWarning("Battle Start");
     }
 
     public GameObject asdfadsf;
@@ -179,19 +184,18 @@ public class Unit_AI_Manager : MonoBehaviour
             objectNode = node;
         }
     }
-
+    
     void InputIng()
     {
-        Debug.LogWarning(EventSystem.current.IsPointerOverGameObject() == true);
+        dragSlot = uiBattle.inventory.GetDragSlot;
         if (EventSystem.current.IsPointerOverGameObject() == true ||
-            inventory.GetDragSlot == null || inventory.GetDragSlot.itemType != UI_InvenSlot.ItemType.Unit)
+            dragSlot == null || dragSlot.itemType != UI_InvenSlot.ItemType.Unit)
             return;
 
-        dragSlot = inventory.GetDragSlot;
         Node node = RayCasting(true);
         if (node != null)
         {
-            asdfadsf.gameObject.SetActive(dragSlot != null);
+            asdfadsf.gameObject.SetActive(dragSlot != null || selectedObject == true);
             asdfadsf.transform.position = node.worldPosition;
         }
     }
@@ -223,6 +227,13 @@ public class Unit_AI_Manager : MonoBehaviour
         }
         else if (dragSlot != null)
         {
+            // 생성
+            if (node.nodeType != Node.NodeType.Player)
+            {
+                Debug.LogWarning("놓을 수 없음");
+                return;
+            }
+
             UnitInstance(node);
             dragSlot = null;
         }
@@ -230,7 +241,7 @@ public class Unit_AI_Manager : MonoBehaviour
 
     void UnitRemove(Node _node)
     {
-        UI_InvenSlot emptySlot = inventory.TryEmptySlot();
+        UI_InvenSlot emptySlot = uiBattle.inventory.TryEmptySlot();
         if (emptySlot == null)// 빈슬롯 확인
         {
             return;
