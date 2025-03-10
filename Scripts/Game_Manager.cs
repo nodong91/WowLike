@@ -96,6 +96,7 @@ public class Game_Manager : MonoBehaviour
     Coroutine casting;
     public void InputSlot(int _index)
     {
+        // Äü½½·Ô
         currentIndex = _index;
 
         UI_InvenSlot slot = UI_Manager.instance.GetQuickSlot(_index);

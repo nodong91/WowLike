@@ -11,7 +11,8 @@ using UnityEditor;
 public class Unit_AI : MonoBehaviour
 {
     public string unitID = "U10010";
-    NavMeshAgent agent;
+    public NavMeshAgent agent;
+    //public NavMeshObstacle obstacle;
     Unit_AI target;
     Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
     Data_Manager.UnitStruct unitStruct;
@@ -90,6 +91,8 @@ public class Unit_AI : MonoBehaviour
         Debug.LogWarning(unitID);
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
+        //obstacle = GetComponentInChildren<NavMeshObstacle>();
+        //obstacle.enabled = false;
 
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
         unitAttributes = unitStruct.TryAttributes();
@@ -539,6 +542,20 @@ public class Unit_AI : MonoBehaviour
         //agent.ResetPath();
         //agent.isStopped = true;
         agent.SetDestination(_point);
+
+        //bool stop = (_point == transform.position);
+        //if(stop == true)
+        //{
+        //    //agent.SetDestination(_point);
+        //    agent.enabled = false;
+        //    obstacle.enabled = true;
+        //}
+        //else
+        //{
+        //    obstacle.enabled = false;
+        //    agent.enabled = true;
+        //    agent.SetDestination(_point);
+        //}
     }
 
     IEnumerator DeadActing()

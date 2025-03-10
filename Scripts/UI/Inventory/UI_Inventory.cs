@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UI_InvenSlot;
 
 public class UI_Inventory : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class UI_Inventory : MonoBehaviour
     public UI_InvenSlot[] invenSlots, lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
     public int inventoryAmount = 25;
+
+    public UI_SlotInfo slotInfo;
 
     private void Start()
     {
@@ -46,6 +49,7 @@ public class UI_Inventory : MonoBehaviour
             inst.onDrag += OnDrag;
             inst.onEndDrag += OnEndDrag;
             inst.onPointerEnter += OnPointerEnter;
+            inst.deleLooting += LootingItem;
             invenSlots[i] = inst;
 
             // 테스트 세팅
@@ -77,6 +81,35 @@ public class UI_Inventory : MonoBehaviour
         }
         SetQuickSlot();
         SetLooting();
+    }
+
+    void LootingItem(UI_InvenSlot _slot)
+    {
+        switch (_slot.slotType)
+        {
+            case SlotType.Inventory:
+                // 정보 보여주기
+                slotInfo.OnInfomation(_slot);
+                break;
+
+            case SlotType.Looting:
+                // 루팅
+                UI_InvenSlot emptySlot = TryEmptySlot();
+                if (emptySlot == null)
+                {
+                    Debug.LogWarning("빈 슬롯이 없습니다.");
+                    return;
+                }
+
+                emptySlot.LootingItem(_slot);
+                Debug.LogWarning(_slot.itemType);
+                _slot.SetEmptySlot();// 기존 슬롯 비우기
+                break;
+
+            case SlotType.Quick:
+                // 사용
+                break;
+        }
     }
 
     public void OnBeginDrag(UI_InvenSlot _slot)
@@ -125,9 +158,9 @@ public class UI_Inventory : MonoBehaviour
 
     public UI_InvenSlot TryEmptySlot()
     {
-        for(int i = 0;i< invenSlots.Length; i++)
+        for (int i = 0; i < invenSlots.Length; i++)
         {
-            UI_InvenSlot slot = invenSlots[i];  
+            UI_InvenSlot slot = invenSlots[i];
             if (slot.itemType == UI_InvenSlot.ItemType.Empty)
             {
                 return slot;
@@ -158,6 +191,7 @@ public class UI_Inventory : MonoBehaviour
             inst.onDrag += OnDrag;
             inst.onEndDrag += OnEndDrag;
             inst.onPointerEnter += OnPointerEnter;
+            inst.deleLooting += LootingItem;
 
             lootingSlots[i] = inst;
         }
@@ -213,10 +247,10 @@ public class UI_Inventory : MonoBehaviour
             inst.onDrag += OnDrag;
             inst.onEndDrag += OnEndDrag_Quick;
             inst.onPointerEnter += OnPointerEnter;
+            inst.deleLooting += LootingItem;
 
             int index = i;
-            //inst.deleGateAction = delegate { _action(index); };
-            inst.deleGateAction = delegate { Game_Manager.instance.InputSlot(index); };
+            inst.quickSlotAction = delegate { Game_Manager.instance?.InputSlot(index); };
             quickSlots[index] = inst;
         }
     }

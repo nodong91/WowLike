@@ -1,51 +1,23 @@
 using System.Collections.Generic;
-using UnityEngine;
-# if UNITY_EDITOR
 using UnityEditor;
-[CustomEditor(typeof(Map_Node))]
-public class Map_Node_Editor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        GUIStyle fontStyle = new GUIStyle(GUI.skin.button);
-        fontStyle.fontSize = 15;
-        fontStyle.normal.textColor = Color.yellow;
-
-        Map_Node Inspector = target as Map_Node;
-        if (GUILayout.Button("Update Data", fontStyle, GUILayout.Height(30f)))
-        {
-            Inspector.UpdateData();
-            EditorUtility.SetDirty(Inspector);
-        }
-        GUILayout.Space(10f);
-        base.OnInspectorGUI();
-    }
-}
-#endif
-[ExecuteInEditMode]
+using UnityEngine;
+//[ExecuteInEditMode]
 public class Map_Node : MonoBehaviour
 {
     [Header("[ Map Grid ]")]
-    public Vector2 worldSize;
-    public float nodeSize;
+    public float nodeSize = 2f;
+    Vector2Int worldGrid;
+    Vector2 worldSize;
 
     [Tooltip("8방향 이동가능")]
     public bool diagonal;
 
     public Node[,] nodeMap;
 
-    float nodeDiameter;
-    public int gridX, gridY;
-    public Data_Spawn spawnData;
+    Data_Spawn spawnData;
     public Data_Spawn GetSpawnData { get { return spawnData; } }
-    public List<Node> allNodes;
+    List<Node> allNodes;
 
-#if UNITY_EDITOR
-    public void UpdateData()
-    {
-        SetMapGrid();
-    }
-#endif
     public List<Node> RandomNodes()
     {
         List<Node> randomNodes = ShuffleList(allNodes, 0);
@@ -66,78 +38,27 @@ public class Map_Node : MonoBehaviour
         }
         return _list;
     }
-    //Vector2Int prevGrid;
-    //public void EditorMapSetting(Vector3 _worldPosition, bool _input, bool _left)
-    //{
-    //    if (_input)
-    //    {
-    //        Node node = GetNodeFromPosition(_worldPosition);
-    //        prevGrid = node.grid;
-    //    }
-    //    else
-    //    {
-    //        Node node = GetNodeFromPosition(_worldPosition);
-    //        int minX = Mathf.Min(prevGrid.x, node.grid.x);
-    //        int minY = Mathf.Min(prevGrid.y, node.grid.y);
-    //        int maxX = Mathf.Max(prevGrid.x, node.grid.x) + 1;
-    //        int maxY = Mathf.Max(prevGrid.y, node.grid.y) + 1;
 
-    //        for (int x = minX; x < maxX; x++)
-    //        {
-    //            for (int y = minY; y < maxY; y++)
-    //            {
-    //                Vector2Int grid = new Vector2Int(x, y);
-    //                if (_left)
-    //                {
-    //                    if (spawnData.playerNode.Contains(grid))
-    //                    {
-    //                        spawnData.playerNode.Remove(grid);
-    //                        nodeMap[x, y].SetNodeType(Node.NodeType.None);
-    //                    }
-    //                    else
-    //                    {
-    //                        spawnData.playerNode.Add(grid);
-    //                        nodeMap[x, y].SetNodeType(Node.NodeType.Player);
-    //                    }
-    //                }
-    //                else
-    //                {
-    //                    if (spawnData.monsterNode.Contains(grid))
-    //                    {
-    //                        spawnData.monsterNode.Remove(grid);
-    //                        nodeMap[x, y].SetNodeType(Node.NodeType.None);
-    //                    }
-    //                    else
-    //                    {
-    //                        spawnData.monsterNode.Add(grid);
-    //                        nodeMap[x, y].SetNodeType(Node.NodeType.Monster);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //        Debug.LogWarning($"{prevGrid} {node.grid} : {node.nodeType}");
-    //    }
-
-    //}
-
-    public void SetMapGrid()
+    public void SetMapGrid(Data_Spawn _spawnData)
     {
-        if (worldSize.x * worldSize.y <= 0)
+        spawnData = _spawnData;
+        if (spawnData == null)
             return;
 
-        nodeDiameter = nodeSize * 2;
-        gridX = Mathf.RoundToInt(worldSize.x / nodeDiameter);
-        gridY = Mathf.RoundToInt(worldSize.y / nodeDiameter);
+        worldGrid = spawnData.worldGrid;
+        worldSize = (Vector2)worldGrid * nodeSize;
 
-        nodeMap = new Node[gridX, gridY];
+        nodeMap = new Node[worldGrid.x, worldGrid.y];
         Vector3 worldBottomLeft = transform.position - Vector3.right * worldSize.x / 2 - Vector3.forward * worldSize.y / 2;
+        if (allNodes == null)
+            allNodes = new List<Node>();
         allNodes.Clear();
 
-        for (int x = 0; x < gridX; x++)
+        for (int x = 0; x < worldGrid.x; x++)
         {
-            for (int y = 0; y < gridY; y++)
+            for (int y = 0; y < worldGrid.y; y++)
             {
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeSize) + Vector3.forward * (y * nodeDiameter + nodeSize);
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeSize + nodeSize * 0.5f) + Vector3.forward * (y * nodeSize + nodeSize * 0.5f);
                 Vector2Int grid = new Vector2Int(x, y);
                 nodeMap[x, y] = new Node(worldPoint, grid);
                 allNodes.Add(nodeMap[x, y]);
@@ -148,7 +69,7 @@ public class Map_Node : MonoBehaviour
         {
             int x = spawnData.playerNodes[i].spawnGrid.x;
             int y = spawnData.playerNodes[i].spawnGrid.y;
-            if (x < 0 || y < 0 || x >= gridX || y >= gridY)
+            if (x < 0 || y < 0 || x >= worldGrid.x || y >= worldGrid.y)
                 continue;
             Node node = nodeMap[x, y];
             node.SetNodeType(Node.NodeType.Player);
@@ -158,10 +79,21 @@ public class Map_Node : MonoBehaviour
         {
             int x = spawnData.monsterNodes[i].spawnGrid.x;
             int y = spawnData.monsterNodes[i].spawnGrid.y;
-            if (x < 0 || y < 0 || x >= gridX || y >= gridY)
+            if (x < 0 || y < 0 || x >= worldGrid.x || y >= worldGrid.y)
                 continue;
             Node node = nodeMap[x, y];
             node.SetNodeType(Node.NodeType.Monster);
+        }
+        InstanceNodeTile();
+    }
+    public GameObject baseTile;
+    void InstanceNodeTile()
+    {
+        for (int i = 0; i < spawnData.playerNodes.Count; i++)
+        {
+            Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
+            GameObject inst = Instantiate(baseTile, transform);
+            inst.transform.position = nodeMap[grid.x, grid.y].worldPosition;
         }
     }
 
@@ -180,7 +112,7 @@ public class Map_Node : MonoBehaviour
                 int checkX = node.grid.x + x;
                 int checkY = node.grid.y + y;
 
-                if (checkX >= 0 && checkX < gridX && checkY >= 0 && checkY < gridY)
+                if (checkX >= 0 && checkX < worldGrid.x && checkY >= 0 && checkY < worldGrid.y)
                 {
                     if (diagonal || (x == 0 || y == 0))    // 대각선 움직임 (8방향)
                     {
@@ -192,20 +124,6 @@ public class Map_Node : MonoBehaviour
         return neighbours;
     }
 
-    //public Node GetNodeFromPosition(Vector3 worldPosition)
-    //{
-    //    float percentX = (worldPosition.x + gridSize.x * 0.5f) / gridSize.x;
-    //    float percentY = (worldPosition.z + gridSize.y * 0.5f) / gridSize.y;
-
-    //    percentX = Mathf.Clamp01(percentX);
-    //    percentY = Mathf.Clamp01(percentY);
-
-    //    int x = Mathf.RoundToInt((gridX - 1f) * percentX);
-    //    int y = Mathf.RoundToInt((gridY - 1f) * percentY);
-    //    Debug.LogWarning(worldPosition);
-    //    adsfafd.transform.position = nodeMap[x, y].worldPosition;
-    //    return nodeMap[x, y];
-    //}
     public Node GetNodeFromPosition(Vector3 worldPosition)
     {
         float percentX = (worldPosition.x + worldSize.x * 0.5f) / worldSize.x;
@@ -216,8 +134,8 @@ public class Map_Node : MonoBehaviour
 
         //int x = Mathf.RoundToInt((gridX - 1f) * percentX);
         //int y = Mathf.RoundToInt((gridY - 1f) * percentY);
-        int x = Mathf.Clamp((int)(gridX * percentX), 0, gridX - 1);
-        int y = Mathf.Clamp((int)(gridY * percentY), 0, gridY - 1);
+        int x = Mathf.Clamp((int)(worldGrid.x * percentX), 0, worldGrid.x - 1);
+        int y = Mathf.Clamp((int)(worldGrid.y * percentY), 0, worldGrid.y - 1);
         //Debug.LogWarning($"{percentX}:{x}");
         return nodeMap[x, y];
     }
@@ -252,7 +170,7 @@ public class Map_Node : MonoBehaviour
                     int neighbourX = _node.grid.x + x;
                     int neighbourY = _node.grid.y + y;
 
-                    if (neighbourX >= 0 && neighbourX < gridX && neighbourY >= 0 && neighbourY < gridY)
+                    if (neighbourX >= 0 && neighbourX < worldGrid.x && neighbourY >= 0 && neighbourY < worldGrid.y)
                     {
                         Node tile = nodeMap[neighbourX, neighbourY];
                         if (TryAccessibleTiles(tile, _activeArea) == true)
@@ -357,7 +275,6 @@ public class Map_Node : MonoBehaviour
             return 14 * distY + 10 * (distX - distY);
         return 14 * distX + 10 * (distY - distX);
     }
-
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using static UI_InvenSlot;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -91,8 +92,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public Data_Manager.SkillStruct skillStruct;
     public Data_Manager.UnitStruct unitStruct;
 
-    public delegate void DeleGateAction();
-    public DeleGateAction deleGateAction;
+    public delegate void DelegateAction();
+    public DelegateAction quickSlotAction;
 
     public void SetSlot(SlotType _slotType)
     {
@@ -107,9 +108,48 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         quickIndex.gameObject.SetActive(true);
     }
 
+    public delegate void DeleLooting(UI_InvenSlot _slot);
+    public DeleLooting deleLooting;
+
+    public void LootingItem(UI_InvenSlot _slot)
+    {
+        switch (_slot.itemType)
+        {
+            case ItemType.Item:
+                SetItemSlot(_slot.itemStruct);
+                break;
+
+            case ItemType.Skill:
+                SetSkillSlot(_slot.skillStruct);
+                break;
+
+            case ItemType.Unit:
+                SetUnitSlot(_slot.unitStruct);
+                break;
+        }
+    }
+
     void ClickLeft()
     {
-        deleGateAction?.Invoke();
+        quickSlotAction?.Invoke();
+        deleLooting?.Invoke(this);
+        //switch (slotType)
+        //{
+        //    case SlotType.Inventory:
+        //        // 정보 보여주기
+        //        break;
+
+        //    case SlotType.Looting:
+        //        // 루팅
+        //        deleLooting?.Invoke(this);
+        //        //SetEmptySlot();
+        //        break;
+
+        //    case SlotType.Quick:
+        //        // 사용
+        //        break;
+        //}
+        Debug.LogWarning(slotType);
     }
 
     void ClickRight()

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UI_Battle;
 
 public class Unit_AI_Manager : MonoBehaviour
 {
@@ -30,6 +29,7 @@ public class Unit_AI_Manager : MonoBehaviour
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return unitDict; } }
     public UI_Battle uiBattle;
     public List<Node> randomNodes;
+    public Data_Spawn spawnData;
 
     public static Unit_AI_Manager instance;
 
@@ -41,7 +41,7 @@ public class Unit_AI_Manager : MonoBehaviour
     private void Start()
     {
         Time.timeScale = timeScale;
-        map.SetMapGrid();
+        map.SetMapGrid(spawnData);
 
         players.Clear();
         monsters.Clear();
@@ -130,6 +130,8 @@ public class Unit_AI_Manager : MonoBehaviour
 
     void SpawnPlayer(Node _node, string _unitID)
     {
+        if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
+            return;
         Unit_AI inst = InstnaceUnit(_node, _unitID);
         inst.SetUnit(_unitID, LayerMask.NameToLayer("Player"));
         inst.deadUnit += DeadPlayer;// 죽음 카운트
@@ -139,6 +141,8 @@ public class Unit_AI_Manager : MonoBehaviour
 
     void SpawnMonster(Node _node, string _unitID)
     {
+        if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
+            return;
         Unit_AI inst = InstnaceUnit(_node, _unitID);
         inst.SetUnit(_unitID, LayerMask.NameToLayer("Monster"));
         inst.deadUnit += DeadMonster;
@@ -184,7 +188,7 @@ public class Unit_AI_Manager : MonoBehaviour
             objectNode = node;
         }
     }
-    
+
     void InputIng()
     {
         dragSlot = uiBattle.inventory.GetDragSlot;
@@ -212,23 +216,36 @@ public class Unit_AI_Manager : MonoBehaviour
 
         if (selectedObject == true)// 선택한 오브젝트가 있고
         {
-            //if (node.onObject?.layer != LayerMask.NameToLayer("Player"))
-            //    return;
-
-            selectedObject = false;
-            if (objectNode.onObject == node.onObject)// 같은 노드를 눌렀을 때
+            if (objectNode.onObject?.layer == LayerMask.NameToLayer("Player"))
             {
-                UnitRemove(node);
+                selectedObject = false;
+                if (objectNode.onObject == node.onObject)// 같은 노드를 눌렀을 때
+                {
+                    // 제거
+                    UnitRemove(node);
+                }
+                else if (node.nodeType == Node.NodeType.Player)
+                {
+                    if (node.onObject == null)
+                    {
+                        // 이동
+                        UnitMove(node);
+                    }
+                    else
+                    {
+                        // 교체
+                    }
+                }
             }
             else
             {
-                UnitMove(node);
+
             }
         }
-        else if (dragSlot != null)
+        else if (dragSlot != null)// 인벤토리에서 꺼내고
         {
             // 생성
-            if (node.nodeType != Node.NodeType.Player)
+            if (node.nodeType != Node.NodeType.Player)// 플레이어 놓을 수 있는 곳
             {
                 Debug.LogWarning("놓을 수 없음");
                 return;
@@ -329,4 +346,17 @@ public class Unit_AI_Manager : MonoBehaviour
             Debug.LogWarning($"승리 : units {players.Count:D2}");
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
