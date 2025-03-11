@@ -23,8 +23,6 @@ MonoBehaviour:
   - unitID: 
     spawnGrid: {x: 2, y: 7}
   - unitID: 
-    spawnGrid: {x: 2, y: 6}
-  - unitID: 
     spawnGrid: {x: 2, y: 4}
   - unitID: 
     spawnGrid: {x: 2, y: 3}
@@ -74,6 +72,30 @@ MonoBehaviour:
     spawnGrid: {x: 1, y: 5}
   - unitID: 
     spawnGrid: {x: 1, y: 4}
+  - unitID: 
+    spawnGrid: {x: 5, y: 2}
+  - unitID: 
+    spawnGrid: {x: 5, y: 1}
+  - unitID: 
+    spawnGrid: {x: 6, y: 1}
+  - unitID: 
+    spawnGrid: {x: 6, y: 2}
+  - unitID: 
+    spawnGrid: {x: 6, y: 6}
+  - unitID: 
+    spawnGrid: {x: 4, y: 6}
+  - unitID: 
+    spawnGrid: {x: 4, y: 5}
+  - unitID: 
+    spawnGrid: {x: 5, y: 5}
+  - unitID: 
+    spawnGrid: {x: 6, y: 5}
+  - unitID: 
+    spawnGrid: {x: 5, y: 7}
+  - unitID: 
+    spawnGrid: {x: 6, y: 7}
+  - unitID: 
+    spawnGrid: {x: 4, y: 7}
   monsterNodes:
   - unitID: U10010
     spawnGrid: {x: 7, y: 5}
