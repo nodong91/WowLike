@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 //[ExecuteInEditMode]
-public class Map_Node : MonoBehaviour
+public class Map_Node : Map_Tile
 {
     [Header("[ Map Grid ]")]
     public float nodeSize = 2f;
@@ -124,15 +124,39 @@ public class Map_Node : MonoBehaviour
         float percentX = (worldPosition.x + worldSize.x * 0.5f) / worldSize.x;
         float percentY = (worldPosition.z + worldSize.y * 0.5f) / worldSize.y;
 
-        //percentX = Mathf.Clamp01(percentX);
-        //percentY = Mathf.Clamp01(percentY);
-
-        //int x = Mathf.RoundToInt((gridX - 1f) * percentX);
-        //int y = Mathf.RoundToInt((gridY - 1f) * percentY);
         int x = Mathf.Clamp((int)(worldGrid.x * percentX), 0, worldGrid.x - 1);
         int y = Mathf.Clamp((int)(worldGrid.y * percentY), 0, worldGrid.y - 1);
-        //Debug.LogWarning($"{percentX}:{x}");
         return nodeMap[x, y];
+    }
+
+    public List<Node> testList = new List<Node>();
+    public GameObject instParent;
+    public void TestNodeArea(Node _node)
+    {
+        if (instParent != null)
+        {
+            Destroy(instParent);
+        }
+        instParent = new GameObject();
+        instParent.transform.SetParent(tileParent);
+        instParent.transform.localPosition = Vector3.zero;
+        instParent.transform.rotation = tileParent.rotation;
+        instParent.transform.localScale = Vector3.one;
+
+        testList.Add(_node);
+        for (int i = 0; i < testList.Count; i++)
+        {
+            Node node = testList[i];
+            UnityEngine.UI.Button inst = Instantiate(baseTile, instParent.transform);
+            inst.onClick.AddListener(delegate { ClickEvent(node.grid); });
+            inst.transform.position = node.worldPosition + instParent.transform.position;
+
+            node.neighbours = TryTile(node);
+            Sprite sprite = SetTileSprite(node.neighbours, out float _angle);
+            inst.image.sprite = sprite;
+            inst.transform.localEulerAngles = new Vector3(0f, 0f, _angle);
+        }
+      
     }
 
     //=====================================================================================================
@@ -275,20 +299,21 @@ public class Map_Node : MonoBehaviour
     public RectTransform tileParent;
     void InstanceNodeTile()
     {
-        for (int i = 0; i < spawnData.playerNodes.Count; i++)
-        {
-            Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
-            Node node = nodeMap[grid.x, grid.y];
-            UnityEngine.UI.Button inst = Instantiate(baseTile, tileParent);
-            inst.onClick.AddListener(delegate { ClickEvent(grid); });
-            inst.transform.position = node.worldPosition;
+        //for (int i = 0; i < spawnData.playerNodes.Count; i++)
+        //{
+        //    Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
+        //    Node node = nodeMap[grid.x, grid.y];
+        //    UnityEngine.UI.Button inst = Instantiate(baseTile, tileParent);
+        //    inst.onClick.AddListener(delegate { ClickEvent(grid); });
+        //    inst.transform.position = node.worldPosition + tileParent.position;
 
-            node.neighbours = TryTile(node);
-            Sprite sprite = SetTileSprite(node.neighbours, out float _angle);
-            inst.image.sprite = sprite;
-            inst.transform.localEulerAngles = new Vector3(0f, 0f, _angle);
-        }
+        //    node.neighbours = TryTile(node);
+        //    Sprite sprite = SetTileSprite(node.neighbours, out float _angle);
+        //    inst.image.sprite = sprite;
+        //    inst.transform.localEulerAngles = new Vector3(0f, 0f, _angle);
+        //}
     }
+
     public string TryTile(Node _node)
     {
         string neighbours = "";
@@ -325,644 +350,22 @@ public class Map_Node : MonoBehaviour
 
     bool TryAccessibleTiles(Node _node)
     {
-        for (int i = 0; i < spawnData.playerNodes.Count; i++)
+        //for (int i = 0; i < spawnData.playerNodes.Count; i++)
+        //{
+        //    Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
+        //    if (_node.grid == grid)
+        //    {
+        //        return true;
+        //    }
+        //}
+        for (int i = 0; i < testList.Count; i++)
         {
-            Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
-            if (_node.grid == grid)
+            if (_node.grid == testList[i].grid)
             {
                 return true;
             }
         }
         return false;
-    }
-    public Sprite[] tileSprites;
-    Sprite SetTileSprite(string _dir, out float _angle)
-    {
-        int index = 0;
-        for (int i = 0; i < _dir.Length; i++)
-        {
-            if (_dir[i] == 'O')
-            {
-                index++;
-            }
-        }
-
-        Sprite sprite = null;
-        float angle = 0;
-        switch (index)
-        {
-            case 1:
-
-                break;
-
-            case 2:
-                sprite = tileSprites[2];
-                break;
-        }
-
-        if (_dir[1] == 'O')// 좌 있고
-        {
-            if (_dir[3] == 'O')// 아래 있고
-            {
-                if (_dir[4] == 'O') // 위 있고
-                {
-                    if (_dir[6] == 'O')// 오른 있고
-                    {
-                        // 대각선 위치
-                        if (_dir[0] == 'O')
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')// 주변 전부 잇음
-                                    {
-                                        sprite = tileSprites[14];
-                                    }
-                                    else
-                                    {
-                                        angle = -90f;
-                                        sprite = tileSprites[13];
-                                    }
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[13];
-                                    }
-                                    else
-                                    {
-                                        angle = -90f;
-                                        sprite = tileSprites[11];
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        sprite = tileSprites[13];
-                                    }
-                                    else
-                                    {
-                                        angle = 0f;
-                                        sprite = tileSprites[11];
-                                    }
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        sprite = tileSprites[11];
-                                    }
-                                    else
-                                    {
-                                        sprite = tileSprites[10];
-                                    }
-                                }
-                            }
-                        }
-                        else// 0 없음
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[11];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 90f;
-                                        sprite = tileSprites[11];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                        }
-                    }
-                    else// 좌 있고 아래 있고 위 있고 오른 없고
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                            angle = -90f;
-                            sprite = tileSprites[9];
-                        }
-                        else
-                        {
-                            if (_dir[2] == 'O')
-                            {
-
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = -90f;
-                                        sprite = tileSprites[4];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                        }
-                    }
-                }
-                else // 좌 있고 아래 있고 위 없음
-                {
-                    if (_dir[6] == 'O')// 우 있음
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                            angle = 0f;
-                            sprite = tileSprites[9];
-                        }
-                        else
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-
-                                        angle = 0f;
-                                        sprite = tileSprites[8];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 0f;
-                                        sprite = tileSprites[4];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                            angle = -90f;
-                            sprite = tileSprites[5];
-                        }
-                        else
-                        {
-                            angle = -90f;
-                            sprite = tileSprites[2];
-                        }
-                    }
-                }
-            }
-            else // 좌측 있고 아래 없음
-            {
-                if (_dir[4] == 'O') // 위쪽 있음
-                {
-                    if (_dir[6] == 'O')// 오른 잇음
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[9];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                     
-                                    }
-                                    else
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[4];
-                                    }
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                        }
-                        else// 0 없고
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                     
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[9];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-
-                                    }
-                                    else
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[4];
-                                    }
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                        }
-                    }
-                    else// 오른 없고
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                angle = 180f;
-                                sprite = tileSprites[5];
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[2];
-                                    }
-                                    else
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[2];
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-
-                                    }
-                                    else
-                                    {
-                                        angle = 180f;
-                                        sprite = tileSprites[5];
-                                    }
-                                }
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (_dir[6] == 'O')
-                    {
-                        angle = 0f;
-                        sprite = tileSprites[3];
-                    }
-                    else
-                    {
-                        angle = -90f;
-                        sprite = tileSprites[1];
-                    }
-                }
-            }
-        }
-        else// 좌측 없음
-        {
-            if (_dir[3] == 'O')// 아래 있고
-            {
-                if (_dir[4] == 'O')// 위 있고
-                {
-                    if (_dir[6] == 'O')// 오른 있고
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-
-                                    }
-                                    else
-                                    {
-                                        angle = 90f;
-                                        sprite = tileSprites[4];
-                                    }
-                                }
-                            }
-                            else
-                            {
-                               
-                            }
-                        }
-                        else
-                        {
-                            if (_dir[2] == 'O')
-                            {
-
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 90f;
-                                        sprite = tileSprites[9];
-                                    }
-                                    else
-                                    {
-                                    
-                                    }
-                                }
-                                else
-                                {
-                                  
-                                }
-                            }
-                        }
-                    }
-                    else// 오른쪽 없음
-                    {
-                        angle = 90f;
-                        sprite = tileSprites[3];
-                    }
-                }
-                else// 위 없고
-                {
-                    if (_dir[6] == 'O')// 오른 있고
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                            if (_dir[2] == 'O')
-                            {
-
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 0f;
-                                        sprite = tileSprites[5];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 0f;
-                                        sprite = tileSprites[2];
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                      
-                                    }
-                                    else
-                                    {
-                                        angle = 0f;
-                                        sprite = tileSprites[5];
-                                    }
-                                }
-                                else
-                                {
-
-                                }
-                            }
-                        }
-                    }
-                    else// 오른쪽 없음
-                    {
-                        angle = 0f;
-                        sprite = tileSprites[1];
-                    }
-                }
-            }
-            else// 아래 없음
-            {
-                if (_dir[4] == 'O')// 위 있고
-                {
-                    if (_dir[6] == 'O')// 오른 있고
-                    {
-                        if (_dir[0] == 'O')
-                        {
-                           
-                        }
-                        else
-                        {
-                            if (_dir[2] == 'O')
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 90f;
-                                        sprite = tileSprites[5];
-                                    }
-                                    else
-                                    {
-                                        angle = 90f;
-                                        sprite = tileSprites[2];
-                                    }
-                                }
-                                else
-                                {
-                                
-                                }
-                            }
-                            else
-                            {
-                                if (_dir[5] == 'O')
-                                {
-                                
-                                }
-                                else
-                                {
-                                    if (_dir[7] == 'O')
-                                    {
-                                        angle = 90f;
-                                        sprite = tileSprites[5];
-                                    }
-                                    else
-                                    {
-                                        //angle = 90f;
-                                        //sprite = tileSprites[5];
-                                    }
-                                }
-                            }
-                        }
-                     
-                    }
-                    else// 오른쪽 없음
-                    {
-                        angle = 180f;
-                        sprite = tileSprites[1];
-                    }
-                }
-                else// 위없음
-                {
-                    if (_dir[6] == 'O')
-                    {
-                        angle = 90f;
-                        sprite = tileSprites[1];
-                    }
-                    else// 오른쪽 없음
-                    {
-                        angle = 0f;
-                        sprite = tileSprites[0];
-                    }
-                }
-            }
-        }
-        _angle = angle;
-        return sprite;
     }
 
 #if UNITY_EDITOR

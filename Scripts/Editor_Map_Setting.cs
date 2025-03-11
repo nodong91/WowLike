@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 //[ExecuteInEditMode]
-public class Map_Setting : EditorWindow
+public class Editor_Map_Setting : EditorWindow
 {
-    [MenuItem("Graphics Tool/09. Map_Setting")]
+    [MenuItem("Graphics Tool/09. Editor_Map_Setting")]
     public static void OpenWindow()
     {
-        Map_Setting window = EditorWindow.GetWindow<Map_Setting>("Map_Setting");
+        Editor_Map_Setting window = EditorWindow.GetWindow<Editor_Map_Setting>("Editor_Map_Setting");
         window.minSize = new Vector2(500f, 200f);
         window.Show();
     }
