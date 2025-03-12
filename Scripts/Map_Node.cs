@@ -137,13 +137,20 @@ public class Map_Node : Map_Tile
         {
             Destroy(instParent);
         }
+        if (testList.Contains(_node))
+        {
+            testList.Remove(_node);
+        }
+        else
+        {
+            testList.Add(_node);
+        }
+
         instParent = new GameObject();
         instParent.transform.SetParent(tileParent);
         instParent.transform.localPosition = Vector3.zero;
         instParent.transform.rotation = tileParent.rotation;
         instParent.transform.localScale = Vector3.one;
-
-        testList.Add(_node);
         for (int i = 0; i < testList.Count; i++)
         {
             Node node = testList[i];
@@ -152,11 +159,12 @@ public class Map_Node : Map_Tile
             inst.transform.position = node.worldPosition + instParent.transform.position;
 
             node.neighbours = TryTile(node);
-            Sprite sprite = SetTileSprite(node.neighbours, out float _angle);
-            inst.image.sprite = sprite;
-            inst.transform.localEulerAngles = new Vector3(0f, 0f, _angle);
+            //Sprite sprite = SetTileSprite(node.neighbours, out float _angle);
+            //inst.image.sprite = sprite;
+            //inst.transform.localEulerAngles = new Vector3(0f, 0f, _angle);
+            Test(inst.image, node.neighbours);
         }
-      
+
     }
 
     //=====================================================================================================

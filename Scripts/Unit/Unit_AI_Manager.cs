@@ -313,7 +313,10 @@ public class Unit_AI_Manager : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
             Node node = map.GetNodeFromPosition(hit.point);
-          map.TestNodeArea(node);// 테스트용
+            if (_input == true)
+            {
+                map.TestNodeArea(node);// 테스트용
+            }
             Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);
             return node;
         }
