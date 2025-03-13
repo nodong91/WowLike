@@ -17,6 +17,9 @@ public class Map_Node : Map_Tile
     Data_Spawn spawnData;
     public Data_Spawn GetSpawnData { get { return spawnData; } }
     public List<Node> allNodes;
+    public GameObject instParent;
+    public UnityEngine.UI.Button baseTile;
+    public RectTransform tileParent;
 
     public List<Node> RandomNodes()
     {
@@ -129,42 +132,9 @@ public class Map_Node : Map_Tile
         return nodeMap[x, y];
     }
 
-    public List<Node> testList = new List<Node>();
-    public GameObject instParent;
-    public void TestNodeArea(Node _node)
+    public void ClickNode(Node _node)
     {
-        if (instParent != null)
-        {
-            Destroy(instParent);
-        }
-        if (testList.Contains(_node))
-        {
-            testList.Remove(_node);
-        }
-        else
-        {
-            testList.Add(_node);
-        }
-
-        instParent = new GameObject();
-        instParent.transform.SetParent(tileParent);
-        instParent.transform.localPosition = Vector3.zero;
-        instParent.transform.rotation = tileParent.rotation;
-        instParent.transform.localScale = Vector3.one;
-        for (int i = 0; i < testList.Count; i++)
-        {
-            Node node = testList[i];
-            UnityEngine.UI.Button inst = Instantiate(baseTile, instParent.transform);
-            inst.onClick.AddListener(delegate { ClickEvent(node.grid); });
-            inst.transform.position = node.worldPosition + instParent.transform.position;
-
-            node.neighbours = TryTile(node);
-            //Sprite sprite = SetTileSprite(node.neighbours, out float _angle);
-            //inst.image.sprite = sprite;
-            //inst.transform.localEulerAngles = new Vector3(0f, 0f, _angle);
-            Test(inst.image, node.neighbours);
-        }
-
+        Debug.LogWarning($"ClickNode : {_node.grid}");
     }
 
     //=====================================================================================================
@@ -303,23 +273,28 @@ public class Map_Node : Map_Tile
         return 14 * distX + 10 * (distY - distX);
     }
 
-    public UnityEngine.UI.Button baseTile;
-    public RectTransform tileParent;
     void InstanceNodeTile()
     {
-        //for (int i = 0; i < spawnData.playerNodes.Count; i++)
-        //{
-        //    Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
-        //    Node node = nodeMap[grid.x, grid.y];
-        //    UnityEngine.UI.Button inst = Instantiate(baseTile, tileParent);
-        //    inst.onClick.AddListener(delegate { ClickEvent(grid); });
-        //    inst.transform.position = node.worldPosition + tileParent.position;
+        if (instParent != null)
+            Destroy(instParent);
+        instParent = new GameObject();
+        instParent.transform.SetParent(tileParent);
+        instParent.transform.localPosition = Vector3.zero;
+        instParent.transform.rotation = tileParent.rotation;
+        instParent.transform.localScale = Vector3.one;
 
-        //    node.neighbours = TryTile(node);
-        //    Sprite sprite = SetTileSprite(node.neighbours, out float _angle);
-        //    inst.image.sprite = sprite;
-        //    inst.transform.localEulerAngles = new Vector3(0f, 0f, _angle);
-        //}
+        List<Data_Spawn.UnitNode> tempList = spawnData.playerNodes;
+        for (int i = 0; i < tempList.Count; i++)
+        {
+            Vector2Int grid = tempList[i].spawnGrid;
+            Node node = nodeMap[grid.x, grid.y];
+            UnityEngine.UI.Button inst = Instantiate(baseTile, instParent.transform);
+            inst.onClick.AddListener(delegate { ClickEvent(node.grid); });
+            inst.transform.position = node.worldPosition + instParent.transform.position;
+
+            node.neighbours = TryTile(node);
+            SetTile(inst.image, node.neighbours);
+        }
     }
 
     public string TryTile(Node _node)
@@ -358,17 +333,10 @@ public class Map_Node : Map_Tile
 
     bool TryAccessibleTiles(Node _node)
     {
-        //for (int i = 0; i < spawnData.playerNodes.Count; i++)
-        //{
-        //    Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
-        //    if (_node.grid == grid)
-        //    {
-        //        return true;
-        //    }
-        //}
-        for (int i = 0; i < testList.Count; i++)
+        for (int i = 0; i < spawnData.playerNodes.Count; i++)
         {
-            if (_node.grid == testList[i].grid)
+            Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
+            if (_node.grid == grid)
             {
                 return true;
             }

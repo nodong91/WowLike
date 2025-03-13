@@ -9,7 +9,6 @@ public class Data_Spawn : ScriptableObject
     public struct UnitNode
     {
         public string unitID;
-        //public Node.NodeType nodeType;
         public Vector2Int spawnGrid;
     }
     public List<UnitNode> playerNodes = new List<UnitNode>();// 플레이어 영역
