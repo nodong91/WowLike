@@ -18,7 +18,7 @@ public class Map_Node : Map_Tile
     public Data_Spawn GetSpawnData { get { return spawnData; } }
     public List<Node> allNodes;
     public GameObject instParent;
-    public UnityEngine.UI.Button baseTile;
+    public UnityEngine.UI.Image baseTile;
     public RectTransform tileParent;
 
     public List<Node> RandomNodes()
@@ -288,12 +288,12 @@ public class Map_Node : Map_Tile
         {
             Vector2Int grid = tempList[i].spawnGrid;
             Node node = nodeMap[grid.x, grid.y];
-            UnityEngine.UI.Button inst = Instantiate(baseTile, instParent.transform);
-            inst.onClick.AddListener(delegate { ClickEvent(node.grid); });
+            UnityEngine.UI.Image inst = Instantiate(baseTile, instParent.transform);
+            //inst.onClick.AddListener(delegate { ClickEvent(node.grid); });
             inst.transform.position = node.worldPosition + instParent.transform.position;
 
             node.neighbours = TryTile(node);
-            SetTile(inst.image, node.neighbours);
+            SetTile(inst, node.neighbours);
         }
     }
 
