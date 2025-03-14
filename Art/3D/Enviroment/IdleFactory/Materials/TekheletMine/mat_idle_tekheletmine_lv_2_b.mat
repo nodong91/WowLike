@@ -8,13 +8,11 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_idle_tekheletmine_lv_2_b
-  m_Shader: {fileID: -6465566751694194690, guid: 950230609ac5a1e4caf3ada439633f20, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 6897050808bc4ce418b13b412558921a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
   - _SURFACE_TYPE_TRANSPARENT
-  - _UV_CHANNEL_AO_UV0
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -94,7 +92,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Emission_Map:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 7dbaa4dc5e7b3014995da8dd83c29cf7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissiveRampTex:
@@ -246,9 +244,6 @@ Material:
     - _FlagWaveSpeed: 0.1
     - _Flag_1: 0
     - _Fog_Density: -2
-    - _Fog_Hight: 1
-    - _Fog_On: 0
-    - _Fog_Smooth: 0.1
     - _Fresnel_Power: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -288,7 +283,7 @@ Material:
     - _SnowFresnel: 5
     - _SpecSource: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _SubIntencity: 1
     - _SubOn_Off: 0
@@ -338,7 +333,6 @@ Material:
     - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
     - _FlagWaveSize: {r: 1, g: 1, b: 1, a: 0}
     - _FogColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Fog_Color: {r: 0, g: 0, b: 0, a: 0}
     - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
     - _Fresnel_Color: {r: 1, g: 1, b: 1, a: 1}
     - _Gradient_Angle: {r: -0.09, g: 1, b: 0, a: 0}

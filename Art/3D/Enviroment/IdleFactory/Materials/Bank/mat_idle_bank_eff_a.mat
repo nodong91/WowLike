@@ -8,16 +8,17 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_idle_bank_eff_a
-  m_Shader: {fileID: -6465566751694194690, guid: 950230609ac5a1e4caf3ada439633f20, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: b0aefa723a61a2245ad157d5e09a9bc2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _UV_CHANNEL_AO_UV0
+  - _ROTATE_DEGREES_V
+  - _UV_CHANNEL_RAMP_UV0
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3400
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses:
@@ -107,7 +108,7 @@ Material:
         m_Scale: {x: 15, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MRHMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 65e462f939cec4e419f4c8cb4f49e8b8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MRHMapB:
@@ -147,7 +148,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: dfa7b3782cd52184d8ffd223d612ce99, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapB:
@@ -228,9 +229,6 @@ Material:
     - _FlagWaveSpeed: 0.1
     - _Flag_1: 0
     - _Fog_Density: -2
-    - _Fog_Hight: 1
-    - _Fog_On: 0
-    - _Fog_Smooth: 0.1
     - _Fresnel_Power: 1
     - _Glitch_Speed: 0
     - _Glitch_Strength: 0
@@ -312,7 +310,6 @@ Material:
     - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
     - _FlagWaveSize: {r: 1, g: 1, b: 1, a: 0}
     - _FogColor: {r: 1, g: 1, b: 1, a: 0}
-    - _Fog_Color: {r: 0, g: 0, b: 0, a: 0}
     - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
     - _Fresnel_Color: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 0}
     - _Gradient_Angle: {r: 0, g: 1, b: 0, a: 0}
