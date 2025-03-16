@@ -1,48 +1,26 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 //[ExecuteInEditMode]
 public class UI_OpenCanvas : MonoBehaviour
 {
     public enum SideType
     {
-        Left, Right, Top, Bottom
+        Left, Right, Top, Bottom, Alpha
     }
     public SideType sideType;
     RectTransform rect;
+    CanvasGroup canvasGroup;
     public float safeSize;
-    public Camera UICamera;
+    Coroutine moving;
 
-    void Start()
+    const float speed = 25f;
+
+    public void SetCanvas()
     {
         rect = GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
         CloseCanvas();
-        if (UICamera == null)
-            return;
-        SetUICamera();
-    }
-
-    void SetUICamera()
-    {
-        Camera mainCamera = Camera.main;
-        var cameraData = mainCamera.GetUniversalAdditionalCameraData();
-        if (cameraData.cameraStack.Contains(UICamera) == false)
-        {
-            cameraData.cameraStack.Add(UICamera);
-        }
-    }
-
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            OpenCanvas();
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            CloseCanvas();
-        }
     }
 
     public void OpenCanvas()
@@ -73,6 +51,10 @@ public class UI_OpenCanvas : MonoBehaviour
                 rect.anchorMin = new Vector2(0.5f, 0f);
                 rect.anchorMax = new Vector2(0.5f, 0f);
                 moving = StartCoroutine(MovingCanvas(0f, safeSize));
+                break;
+
+            case SideType.Alpha:
+                moving = StartCoroutine(AlphaCanvas(1f));
                 break;
         }
     }
@@ -106,33 +88,58 @@ public class UI_OpenCanvas : MonoBehaviour
                 rect.anchorMax = new Vector2(0.5f, 0f);
                 moving = StartCoroutine(MovingCanvas(1f, -safeSize));
                 break;
+
+            case SideType.Alpha:
+                moving = StartCoroutine(AlphaCanvas(0f));
+                break;
         }
     }
-    Coroutine moving;
+
     IEnumerator MovingCanvas(float _pivot, float _anchoredPosition)
     {
+        Vector2 prevPivot = rect.pivot;
+        Vector2 prevAnchoredPosition = rect.anchoredPosition;
         float normalilze = 0f;
         while (normalilze < 1f)
         {
-            normalilze += Time.deltaTime * 3f;
+            normalilze += Time.deltaTime * (speed - normalilze * speed);
             switch (sideType)
             {
                 case SideType.Left:
                 case SideType.Right:
-                    float pivot = Mathf.Lerp(rect.pivot.x, _pivot, normalilze);
-                    float anchoredPosition = Mathf.Lerp(rect.anchoredPosition.x, _anchoredPosition, normalilze);
+                    float pivot = Mathf.Lerp(prevPivot.x, _pivot, normalilze);
+                    float anchoredPosition = Mathf.Lerp(prevAnchoredPosition.x, _anchoredPosition, normalilze);
                     rect.pivot = new Vector2(pivot, 0.5f);
                     rect.anchoredPosition = new Vector2(anchoredPosition, 0f);
                     break;
 
                 case SideType.Top:
                 case SideType.Bottom:
-                    pivot = Mathf.Lerp(rect.pivot.y, _pivot, normalilze);
-                    anchoredPosition = Mathf.Lerp(rect.anchoredPosition.y, _anchoredPosition, normalilze);
+                    pivot = Mathf.Lerp(prevPivot.y, _pivot, normalilze);
+                    anchoredPosition = Mathf.Lerp(prevAnchoredPosition.y, _anchoredPosition, normalilze);
                     rect.pivot = new Vector2(0.5f, pivot);
                     rect.anchoredPosition = new Vector2(0f, anchoredPosition);
                     break;
             }
+            yield return null;
+            Debug.LogWarning("ijefeijf");
+        }
+    }
+
+    IEnumerator AlphaCanvas(float _targetAlpha)
+    {
+        if (canvasGroup == null)
+            yield break;
+
+        canvasGroup.interactable = _targetAlpha > 0;
+        canvasGroup.blocksRaycasts = _targetAlpha > 0;
+        float prevAlpha = canvasGroup.alpha;
+        float normalilze = 0f;
+        while (normalilze < 1f)
+        {
+            normalilze += Time.deltaTime * (speed - normalilze * speed);
+            float alpha = Mathf.Lerp(prevAlpha, _targetAlpha, normalilze);
+            canvasGroup.alpha = alpha;
             yield return null;
         }
     }

@@ -6,24 +6,22 @@ using static UI_InvenSlot;
 public class UI_Inventory : MonoBehaviour
 {
     public Image dragIcon;
-    public Transform slotParent;
+    public UI_OpenCanvas inventoryParent, lootingParent, quickParent;
     public UI_InvenSlot baseSlot;
     private UI_InvenSlot dragSlot, enterSlot;
     public UI_InvenSlot GetDragSlot { get { return dragSlot; } }
-    public Transform lootingParent, quickParent;
     public UI_InvenSlot[] invenSlots, lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
     public int inventoryAmount = 25;
 
     public UI_SlotInfo slotInfo;
 
-    private void Start()
-    {
-        SetInventory();
-    }
-
     public void SetInventory()
     {
+        inventoryParent.SetCanvas();
+        lootingParent.SetCanvas();
+        quickParent.SetCanvas();
+
         List<string> skillIDs = new List<string>();
         List<string> itemIDs = new List<string>();
         List<string> unitIDs = new List<string>();
@@ -43,7 +41,7 @@ public class UI_Inventory : MonoBehaviour
         invenSlots = new UI_InvenSlot[inventoryAmount];
         for (int i = 0; i < invenSlots.Length; i++)
         {
-            UI_InvenSlot inst = Instantiate(baseSlot, slotParent);
+            UI_InvenSlot inst = Instantiate(baseSlot, inventoryParent.transform);
             inst.SetSlot(UI_InvenSlot.SlotType.Inventory);
             inst.onBeginDrag += OnBeginDrag;
             inst.onDrag += OnDrag;
@@ -184,7 +182,7 @@ public class UI_Inventory : MonoBehaviour
         lootingSlots = new UI_InvenSlot[lootingAmount];
         for (int i = 0; i < lootingAmount; i++)
         {
-            UI_InvenSlot inst = Instantiate(baseSlot, lootingParent);
+            UI_InvenSlot inst = Instantiate(baseSlot, lootingParent.transform);
             inst.SetSlot(UI_InvenSlot.SlotType.Looting);
             inst.SetEmptySlot();
             inst.onBeginDrag += OnBeginDrag;
@@ -202,22 +200,27 @@ public class UI_Inventory : MonoBehaviour
     {
         if (_ids != null)
         {
-            lootingParent.gameObject.SetActive(true);
+            lootingParent.OpenCanvas();
             for (int i = 0; i < lootingSlots.Length; i++)
             {
                 if (i < _ids.Length)
                 {
                     string id = _ids[i];
-                    switch (id[0].ToString().ToLower())
+                    switch (id[0].ToString().ToUpper())// 소문자로 변경
                     {
-                        case "s":
+                        case "S":
                             Data_Manager.SkillStruct skillSlot = Singleton_Data.INSTANCE.Dict_Skill[id];
                             lootingSlots[i].SetSkillSlot(skillSlot);
                             break;
 
-                        case "t":
+                        case "T":
                             Data_Manager.ItemStruct itemSlot = Singleton_Data.INSTANCE.Dict_Item[id];
                             lootingSlots[i].SetItemSlot(itemSlot);
+                            break;
+
+                        case "U":
+                            Data_Manager.UnitStruct unitSlot = Singleton_Data.INSTANCE.Dict_Unit[id];
+                            lootingSlots[i].SetUnitSlot(unitSlot);
                             break;
                     }
                 }
@@ -229,7 +232,7 @@ public class UI_Inventory : MonoBehaviour
         }
         else
         {
-            lootingParent.gameObject.SetActive(false);
+            lootingParent.CloseCanvas();
         }
     }
 
@@ -239,7 +242,7 @@ public class UI_Inventory : MonoBehaviour
         quickSlots = new UI_InvenSlot[quickAmount];
         for (int i = 0; i < quickAmount; i++)
         {
-            UI_InvenSlot inst = Instantiate(baseSlot, quickParent);
+            UI_InvenSlot inst = Instantiate(baseSlot, quickParent.transform);
             inst.SetSlot(UI_InvenSlot.SlotType.Quick);
             inst.SetQuickIndex((i + 1).ToString());
 
@@ -253,5 +256,93 @@ public class UI_Inventory : MonoBehaviour
             inst.quickSlotAction = delegate { Game_Manager.instance?.InputSlot(index); };
             quickSlots[index] = inst;
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void OpenAllCanvas()
+    {
+        if (invenBool && lootingBool && quickBool == true)
+        {
+            inventoryParent.CloseCanvas();
+            lootingParent.CloseCanvas();
+            quickParent.CloseCanvas();
+            invenBool = lootingBool = quickBool = false;
+        }
+        else
+        {
+            inventoryParent.OpenCanvas();
+            lootingParent.OpenCanvas();
+            quickParent.OpenCanvas();
+            invenBool = lootingBool = quickBool = true;
+        }
+    }
+
+    public void CloseAllCanvas()
+    {
+        if (invenBool && lootingBool && quickBool == true)
+        {
+            inventoryParent.CloseCanvas();
+            lootingParent.CloseCanvas();
+            quickParent.CloseCanvas();
+            invenBool = lootingBool = quickBool = false;
+        }
+        else
+        {
+            inventoryParent.OpenCanvas();
+            lootingParent.OpenCanvas();
+            quickParent.OpenCanvas();
+            invenBool = lootingBool = quickBool = true;
+        }
+    }
+
+    bool invenBool, lootingBool, quickBool;
+    public void OpenInventory()
+    {
+        if (invenBool == true)
+        {
+            inventoryParent.CloseCanvas();
+        }
+        else
+        {
+            inventoryParent.OpenCanvas();
+        }
+        invenBool = !invenBool;
+    }
+
+    public void OpenLooting()
+    {
+        if (lootingBool == true)
+        {
+            lootingParent.CloseCanvas();
+        }
+        else
+        {
+            lootingParent.OpenCanvas();
+        }
+        lootingBool = !lootingBool;
+    }
+
+    public void OpenQuick()
+    {
+        if (quickBool == true)
+        {
+            quickParent.CloseCanvas();
+        }
+        else
+        {
+            quickParent.OpenCanvas();
+        }
+        quickBool = !quickBool;
     }
 }
