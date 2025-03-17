@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
 //[ExecuteInEditMode]
 public class Editor_Map_Setting : EditorWindow
 {
@@ -192,3 +191,5 @@ public class Editor_Map_Setting : EditorWindow
         return color;
     }
 }
+
+#endif
