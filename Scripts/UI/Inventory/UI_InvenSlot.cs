@@ -93,7 +93,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public Data_Manager.UnitStruct unitStruct;
 
     public delegate void DelegateAction();
-    public DelegateAction quickSlotAction;
+    public DelegateAction quickSlotAction;// 퀵슬롯 액션용
 
     public void SetSlot(SlotType _slotType)
     {
@@ -108,8 +108,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         quickIndex.gameObject.SetActive(true);
     }
 
-    public delegate void DeleLooting(UI_InvenSlot _slot);
-    public DeleLooting deleLooting;
+    public delegate void DeleClickAction(UI_InvenSlot _slot);
+    public DeleClickAction deleClockAction;
 
     public void LootingItem(UI_InvenSlot _slot)
     {
@@ -132,23 +132,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     void ClickLeft()
     {
         quickSlotAction?.Invoke();
-        deleLooting?.Invoke(this);
-        //switch (slotType)
-        //{
-        //    case SlotType.Inventory:
-        //        // 정보 보여주기
-        //        break;
-
-        //    case SlotType.Looting:
-        //        // 루팅
-        //        deleLooting?.Invoke(this);
-        //        //SetEmptySlot();
-        //        break;
-
-        //    case SlotType.Quick:
-        //        // 사용
-        //        break;
-        //}
+        deleClockAction?.Invoke(this);
         Debug.LogWarning(slotType);
     }
 

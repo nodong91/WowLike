@@ -4,6 +4,7 @@ using UnityEngine;
 //[ExecuteInEditMode]
 public class UI_OpenCanvas : MonoBehaviour
 {
+    public bool opened;
     public enum SideType
     {
         Left, Right, Top, Bottom, Alpha
@@ -23,10 +24,24 @@ public class UI_OpenCanvas : MonoBehaviour
         CloseCanvas();
     }
 
+    public void TryOpenCanvas()
+    {
+        if (opened == true)
+        {
+            CloseCanvas();
+        }
+        else
+        {
+            OpenCanvas();
+        }
+    }
+
     public void OpenCanvas()
     {
+        opened = true;
         if (moving != null)
             StopCoroutine(moving);
+
         switch (sideType)
         {
             case SideType.Left:
@@ -61,8 +76,10 @@ public class UI_OpenCanvas : MonoBehaviour
 
     public void CloseCanvas()
     {
+        opened = false;
         if (moving != null)
             StopCoroutine(moving);
+
         switch (sideType)
         {
             case SideType.Left:
@@ -122,7 +139,6 @@ public class UI_OpenCanvas : MonoBehaviour
                     break;
             }
             yield return null;
-            Debug.LogWarning("ijefeijf");
         }
     }
 

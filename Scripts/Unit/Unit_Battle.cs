@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -58,7 +59,7 @@ public class Unit_Battle : MonoBehaviour
         uiBattle.deleTimeScale = SetTimeScale;
         uiBattle.deleBattleStart = StartBattle;
     }
-
+    Coroutine cameraInput;
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -68,10 +69,16 @@ public class Unit_Battle : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            //if (cameraInput != null)
+            //    StopCoroutine(cameraInput);
+            //cameraInput = StartCoroutine(MouseLeftDrag(true));
             InputBegin();
         }
         else if (Input.GetMouseButtonUp(0))
         {
+            //if (cameraInput != null)
+            //    StopCoroutine(cameraInput);
+            //cameraInput = StartCoroutine(MouseLeftDrag(false));
             InputEnd();
         }
         if (Input.GetMouseButton(0))
@@ -247,7 +254,7 @@ public class Unit_Battle : MonoBehaviour
         else if (dragSlot != null)// 인벤토리에서 꺼내고
         {
             // 생성
-            if (node.nodeType != Node.NodeType.Player)// 플레이어 놓을 수 있는 곳
+            if (node.nodeType != Node.NodeType.Player || dragSlot.itemType != UI_InvenSlot.ItemType.Unit)// 플레이어 놓을 수 있는 곳이 아니면
             {
                 Debug.LogWarning("놓을 수 없음");
                 return;
@@ -374,4 +381,52 @@ public class Unit_Battle : MonoBehaviour
 
 
 
+    //public enum RotateType
+    //{
+    //    Normal,
+    //    Focus
+    //}
+    //[SerializeField] private RotateType rotateType;
+    //public bool clickLeft, isLeftDrag, inputMouseRight;
+    //public Vector2 clickPosition;
+
+    //IEnumerator MouseLeftDrag(bool _input)
+    //{
+    //    rotateType = RotateType.Normal;
+    //    CameraManager.instance.InputRotate(_input);
+    //    if (_input == true)
+    //    {
+    //        isLeftDrag = false;
+    //        while (isLeftDrag == false)
+    //        {
+    //            Vector2 tempPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+    //            float dist = (tempPosition - clickPosition).magnitude;
+    //            if (dist > 0.01f)
+    //            {
+    //                isLeftDrag = true;
+    //            }
+    //            yield return null;
+    //        }
+    //    }
+    //}
+
+    //void InputMouseRight(bool _input)
+    //{
+    //    inputMouseRight = _input;
+    //    if (_input == true)
+    //    {
+    //        rotateType = RotateType.Focus;
+    //    }
+    //    //else if (inputDir != 0)
+    //    //{
+    //    //    rotateType = RotateType.Normal;
+    //    //}
+    //    CameraManager.instance.InputRotate(_input);
+    //}
+
+    //void InputMouseWheel(bool _input)
+    //{
+    //    float input = _input ? 0.1f : -0.1f;
+    //    CameraManager.instance.delegateInputScroll(input);
+    //}
 }

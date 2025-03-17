@@ -353,8 +353,8 @@ public class Unit_AI : MonoBehaviour
 
                 distance = (target.transform.position - transform.position).magnitude;
                 float unitAllSize = target.GetUnitSize + GetUnitSize;
-                // 거리체크 (약간 1f 멀어져도 OK)
-                if (distance < GetSkillRange.y + unitAllSize + 1f && state != State.Dead)
+                // 거리체크 (스킬 거리의 반정도는 멀어져도 OK)
+                if (distance < GetSkillRange.y + (GetSkillRange.y * 0.5f) + unitAllSize && state != State.Dead)
                 {
                     ActionSkill();
                 }

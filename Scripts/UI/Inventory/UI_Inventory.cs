@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UI_InvenSlot;
 
 public class UI_Inventory : MonoBehaviour
 {
@@ -47,7 +46,7 @@ public class UI_Inventory : MonoBehaviour
             inst.onDrag += OnDrag;
             inst.onEndDrag += OnEndDrag;
             inst.onPointerEnter += OnPointerEnter;
-            inst.deleLooting += LootingItem;
+            inst.deleClockAction += SlotClick;
             invenSlots[i] = inst;
 
             // 테스트 세팅
@@ -81,16 +80,16 @@ public class UI_Inventory : MonoBehaviour
         SetLooting();
     }
 
-    void LootingItem(UI_InvenSlot _slot)
+    void SlotClick(UI_InvenSlot _slot)
     {
         switch (_slot.slotType)
         {
-            case SlotType.Inventory:
+            case UI_InvenSlot.SlotType.Inventory:
                 // 정보 보여주기
                 slotInfo.OnInfomation(_slot);
                 break;
 
-            case SlotType.Looting:
+            case UI_InvenSlot.SlotType.Looting:
                 // 루팅
                 UI_InvenSlot emptySlot = TryEmptySlot();
                 if (emptySlot == null)
@@ -104,7 +103,7 @@ public class UI_Inventory : MonoBehaviour
                 _slot.SetEmptySlot();// 기존 슬롯 비우기
                 break;
 
-            case SlotType.Quick:
+            case UI_InvenSlot.SlotType.Quick:
                 // 사용
                 break;
         }
@@ -125,6 +124,7 @@ public class UI_Inventory : MonoBehaviour
         if (dragSlot == null)
             return;
 
+        slotInfo.OnInfomation(null);
         dragIcon.transform.position = _position;
     }
 
@@ -152,6 +152,11 @@ public class UI_Inventory : MonoBehaviour
     public void OnPointerEnter(UI_InvenSlot _slot)
     {
         enterSlot = _slot;
+        if (dragSlot != null)
+            return;
+
+        // 정보 보여주기
+        slotInfo.OnInfomation(_slot);
     }
 
     public UI_InvenSlot TryEmptySlot()
@@ -189,7 +194,7 @@ public class UI_Inventory : MonoBehaviour
             inst.onDrag += OnDrag;
             inst.onEndDrag += OnEndDrag;
             inst.onPointerEnter += OnPointerEnter;
-            inst.deleLooting += LootingItem;
+            inst.deleClockAction += SlotClick;
 
             lootingSlots[i] = inst;
         }
@@ -250,7 +255,7 @@ public class UI_Inventory : MonoBehaviour
             inst.onDrag += OnDrag;
             inst.onEndDrag += OnEndDrag_Quick;
             inst.onPointerEnter += OnPointerEnter;
-            inst.deleLooting += LootingItem;
+            inst.deleClockAction += SlotClick;
 
             int index = i;
             inst.quickSlotAction = delegate { Game_Manager.instance?.InputSlot(index); };
@@ -272,77 +277,30 @@ public class UI_Inventory : MonoBehaviour
 
     public void OpenAllCanvas()
     {
-        if (invenBool && lootingBool && quickBool == true)
-        {
-            inventoryParent.CloseCanvas();
-            lootingParent.CloseCanvas();
-            quickParent.CloseCanvas();
-            invenBool = lootingBool = quickBool = false;
-        }
-        else
-        {
-            inventoryParent.OpenCanvas();
-            lootingParent.OpenCanvas();
-            quickParent.OpenCanvas();
-            invenBool = lootingBool = quickBool = true;
-        }
+        inventoryParent.OpenCanvas();
+        lootingParent.OpenCanvas();
+        quickParent.OpenCanvas();
     }
 
     public void CloseAllCanvas()
     {
-        if (invenBool && lootingBool && quickBool == true)
-        {
-            inventoryParent.CloseCanvas();
-            lootingParent.CloseCanvas();
-            quickParent.CloseCanvas();
-            invenBool = lootingBool = quickBool = false;
-        }
-        else
-        {
-            inventoryParent.OpenCanvas();
-            lootingParent.OpenCanvas();
-            quickParent.OpenCanvas();
-            invenBool = lootingBool = quickBool = true;
-        }
+        inventoryParent.CloseCanvas();
+        lootingParent.CloseCanvas();
+        quickParent.CloseCanvas();
     }
 
-    bool invenBool, lootingBool, quickBool;
     public void OpenInventory()
     {
-        if (invenBool == true)
-        {
-            inventoryParent.CloseCanvas();
-        }
-        else
-        {
-            inventoryParent.OpenCanvas();
-        }
-        invenBool = !invenBool;
+        inventoryParent.TryOpenCanvas();
     }
 
     public void OpenLooting()
     {
-        if (lootingBool == true)
-        {
-            lootingParent.CloseCanvas();
-        }
-        else
-        {
-            lootingParent.OpenCanvas();
-        }
-        lootingBool = !lootingBool;
+        lootingParent.TryOpenCanvas();
     }
 
     public void OpenQuick()
     {
-        if (quickBool == true)
-        {
-            quickParent.CloseCanvas();
-        }
-        else
-        {
-            quickParent.OpenCanvas();
-        }
-        quickBool = !quickBool;
+        quickParent.TryOpenCanvas();
     }
 }

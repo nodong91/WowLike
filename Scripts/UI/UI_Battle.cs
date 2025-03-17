@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UI_Battle : MonoBehaviour
 {
     public Camera UICamera;
+    public UI_OpenCanvas menuCanvas;
     public Button[] timeScaleButtons;
     public Button battleStart, invenButton, quickButton, allButton, lootingButton;
     public delegate void DeleTimeScale(float timeScale);
@@ -30,7 +31,7 @@ public class UI_Battle : MonoBehaviour
         battleStart.onClick.AddListener(BattleStart);
         invenButton.onClick.AddListener(OpenInventory);
         quickButton.onClick.AddListener(OpenQuick);
-        allButton.onClick.AddListener(OpenAll);
+        allButton.onClick.AddListener(CloseAll);
         lootingButton.onClick.AddListener(OpenLooting);
 
         instInventory = Instantiate(inventory, overlayCanvas);
@@ -54,7 +55,7 @@ public class UI_Battle : MonoBehaviour
     void BattleStart()
     {
         deleBattleStart();
-        OpenAll();
+        CloseAll();
     }
 
     void OpenInventory()
@@ -75,5 +76,10 @@ public class UI_Battle : MonoBehaviour
     void OpenAll()
     {
         instInventory.OpenAllCanvas();
+    }
+
+    void CloseAll()
+    {
+        instInventory.CloseAllCanvas();
     }
 }

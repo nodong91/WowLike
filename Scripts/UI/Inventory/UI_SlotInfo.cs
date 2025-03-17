@@ -1,31 +1,38 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Splines;
 using UnityEngine.UI;
 
 public class UI_SlotInfo : MonoBehaviour, IPointerClickHandler
 {
     public RectTransform rect;
-    public Camera mainCamera;
     public Vector2 point;
     public TMPro.TMP_Text typeText, nameText;
     public Image iconImage;
+    public CanvasGroup canvasGroup;
 
     void Start()
     {
-        mainCamera = Camera.main;
-        gameObject.SetActive(false);
-    }
-
-    void Update()
-    {
-        //OnInfomation();
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0f;
     }
 
     public void OnInfomation(UI_InvenSlot _slot)
     {
-        if (_slot.itemType == UI_InvenSlot.ItemType.Empty)
+        if (showInfo != null)
+            StopCoroutine(showInfo);
+
+        if (_slot == null || _slot.itemType == UI_InvenSlot.ItemType.Empty)
+        {
+            showInfo = StartCoroutine(OffInfomation());
             return;
+        }
+        showInfo = StartCoroutine(ShowInfomation(_slot));
+    }
+    Coroutine showInfo;
+    IEnumerator ShowInfomation(UI_InvenSlot _slot)
+    {
+        yield return new WaitForSeconds(0.3f);
 
         string nameString = "";
         Sprite sprite = null;
@@ -49,14 +56,28 @@ public class UI_SlotInfo : MonoBehaviour, IPointerClickHandler
         typeText.text = _slot.itemType.ToString();
         nameText.text = nameString;
         iconImage.sprite = sprite;
-        gameObject.SetActive(true);
+
         rect.position = Input.mousePosition;
-        point = mainCamera.ScreenToViewportPoint(Input.mousePosition);
+        point = Camera.main.ScreenToViewportPoint(Input.mousePosition);
         rect.pivot = point;
+
+        canvasGroup.alpha = 1f;
+    }
+
+    IEnumerator OffInfomation()
+    {
+        float normalize = 0f;
+        while (normalize < 1f)
+        {
+            normalize += Time.deltaTime * 3f;
+            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 0f, normalize);
+            yield return null;
+        }
+        canvasGroup.alpha = 0f;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gameObject.SetActive(false);
+
     }
 }

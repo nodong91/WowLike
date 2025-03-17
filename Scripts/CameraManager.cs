@@ -37,6 +37,11 @@ public class CameraManager : MonoBehaviour
         instance = this;
     }
 
+    private void Start()
+    {
+        SetCameraManager();
+    }
+
     public void SetCameraManager()
     {
         brain = Camera.main.gameObject.GetComponent<CinemachineBrain>();
@@ -53,7 +58,7 @@ public class CameraManager : MonoBehaviour
 
     void SetDefault()
     {
-        Vector2 zoomLimit = new Vector2(0.3f, 1.0f);
+        Vector2 zoomLimit = new Vector2(0.3f, 3.0f);
         orbitalFollow.RadialAxis.Range = zoomLimit;
         orbitalFollow.RadialAxis.Value = (zoomLimit.x + zoomLimit.y) * 0.5f;
         orbitalFollow.OrbitStyle = CinemachineOrbitalFollow.OrbitStyles.ThreeRing;
