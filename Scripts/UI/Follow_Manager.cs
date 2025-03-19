@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowTest : MonoBehaviour
+public class Follow_Manager : MonoBehaviour
 {
-    public Transform image;
+    public Follow_Target followTarget;
     public Transform target;
     public Camera uiCamera;
     public Vector3 offset;
@@ -13,25 +13,25 @@ public class FollowTest : MonoBehaviour
     {
         public Transform followTarget;
         public Vector3 followOffset;
-        public bool camera;
+        public Follow_Target.FollowType followType;
 
-        public FollowStruct(Transform _target, Vector3 _offset, bool _camera)
+        public FollowStruct(Transform _target, Vector3 _offset, Follow_Target.FollowType _followType)
         {
             followTarget = _target;
             followOffset = _offset;
-            camera = _camera;
+            followType = _followType;
         }
     }
-    public Dictionary<Transform, FollowStruct> dictFollow = new Dictionary<Transform, FollowStruct>();
+    public Dictionary<Follow_Target, FollowStruct> dictFollow = new Dictionary<Follow_Target, FollowStruct>();
     Coroutine followUI;
 
     void Start()
     {
-        FollowStruct followTarget = new FollowStruct(target, offset, true);
-        AddFollowUI(image, followTarget);
+        FollowStruct newFollow = new FollowStruct(target, offset, Follow_Target.FollowType.Camera);
+        AddFollowUI(followTarget, newFollow);
     }
 
-    public void AddFollowUI(Transform _addFollow, FollowStruct _addStruct)
+    public void AddFollowUI(Follow_Target _addFollow, FollowStruct _addStruct)
     {
         if (dictFollow.ContainsKey(_addFollow) == false)
         {
@@ -40,7 +40,7 @@ public class FollowTest : MonoBehaviour
         }
     }
 
-    public void RemoveFollowUI(Transform _addFollow)
+    public void RemoveFollowUI(Follow_Target _addFollow)
     {
         dictFollow.Remove(_addFollow);
     }
@@ -64,21 +64,24 @@ public class FollowTest : MonoBehaviour
         followUI = StartCoroutine(StartFollowing(dictFollow));
     }
 
-    IEnumerator StartFollowing(Dictionary<Transform, FollowStruct> _follows)
+    IEnumerator StartFollowing(Dictionary<Follow_Target, FollowStruct> _follows)
     {
         while (dictFollow.Count > 0)
         {
             foreach (var child in _follows)
             {
                 Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value.followTarget.position + child.Value.followOffset);
-                if (child.Value.camera == true)// 카메라 캔버스인 경우
+                switch (child.Value.followType)// 카메라 캔버스인 경우
                 {
-                    Vector3 followPosition = uiCamera.ScreenToWorldPoint(screenPosition);
-                    child.Key.position = followPosition;
-                }
-                else
-                {
-                    child.Key.position = screenPosition;
+                    case Follow_Target.FollowType.Overlay:
+                        child.Key.transform.position = screenPosition;
+                        break;
+
+                    case Follow_Target.FollowType.Camera:
+                    case Follow_Target.FollowType.HP:
+                        Vector3 followPosition = uiCamera.ScreenToWorldPoint(screenPosition);
+                        child.Key.transform.position = followPosition;
+                        break;
                 }
             }
             yield return null;

@@ -178,6 +178,7 @@ public class Unit_Battle : MonoBehaviour
         {
             child.Value.StartBattle();
         }
+        map.OnTileCanvas(false);// ¸Ê¾Æ·¡ Äµ¹ö½º Á¦°Å
         Debug.LogWarning("Battle Start");
     }
 

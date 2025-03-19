@@ -19,7 +19,7 @@ public class Map_Generator : Map_Tile
     public List<Node> allNodes;
     public GameObject instParent;
     public UnityEngine.UI.Image baseTile;
-    public RectTransform tileParent;
+    public CanvasGroup tileParent;
 
     public List<Node> RandomNodes()
     {
@@ -278,9 +278,9 @@ public class Map_Generator : Map_Tile
         if (instParent != null)
             Destroy(instParent);
         instParent = new GameObject();
-        instParent.transform.SetParent(tileParent);
+        instParent.transform.SetParent(tileParent.transform);
         instParent.transform.localPosition = Vector3.zero;
-        instParent.transform.rotation = tileParent.rotation;
+        instParent.transform.rotation = tileParent.transform.rotation;
         instParent.transform.localScale = Vector3.one;
 
         List<Data_Spawn.UnitNode> tempList = spawnData.playerNodes;
@@ -342,6 +342,11 @@ public class Map_Generator : Map_Tile
             }
         }
         return false;
+    }
+
+    public void OnTileCanvas(bool _on)
+    {
+        tileParent.alpha = _on == true ? 1f : 0f;
     }
 
 #if UNITY_EDITOR
