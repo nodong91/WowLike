@@ -233,6 +233,7 @@ public class Unit_Battle : MonoBehaviour
                 {
                     // 제거
                     UnitRemove(node);
+                    Debug.LogWarning($"놓을 수{node.grid}");
                 }
                 else if (node.nodeType == Node.NodeType.Player)
                 {
@@ -245,11 +246,13 @@ public class Unit_Battle : MonoBehaviour
                     {
                         // 교체
                     }
+                    Debug.LogWarning($"놓을 수{node.grid}");
                 }
             }
             else
             {
 
+                Debug.LogWarning($"오브젝트가 몬스터 {node.grid} {objectNode.onObject.layer}");
             }
         }
         else if (dragSlot != null)// 인벤토리에서 꺼내고
@@ -263,6 +266,11 @@ public class Unit_Battle : MonoBehaviour
 
             UnitInstance(node);
             dragSlot = null;
+            Debug.LogWarning($"놓을 수{node.grid}");
+        }
+        else
+        {
+            Debug.LogWarning($"놓을 수{node.grid}");
         }
     }
 

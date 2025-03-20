@@ -134,7 +134,7 @@ public class Map_Generator : Map_Tile
 
     public void ClickNode(Node _node)
     {
-        Debug.LogWarning($"ClickNode : {_node.grid}");
+        Debug.Log($"ClickNode : {_node.grid}");
     }
 
     //=====================================================================================================

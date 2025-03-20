@@ -25,7 +25,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _DISTORTIONTYPE_WAVE
+  - _DISTORTIONTYPE_LINE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -83,7 +83,7 @@ Material:
     - _BumpOutline: 0
     - _ColorMask: 15
     - _CullMode: 0
-    - _DISTORTIONTYPE: 2
+    - _DISTORTIONTYPE: 1
     - _Diffuse: 0.5
     - _DistortionSpeed: 3
     - _FaceDilate: 0
@@ -91,21 +91,21 @@ Material:
     - _FaceUVSpeedY: 0
     - _FontThickness: 0.375
     - _FractionValue: 0.5
-    - _FramePerSecond: 23.1
+    - _FramePerSecond: 3
     - _GlowInner: 0.05
     - _GlowOffset: 0
     - _GlowOuter: 0.05
     - _GlowPower: 0.75
     - _GradientScale: 5
     - _LightAngle: 3.1416
-    - _LineFraction: 0
-    - _LineRotate: 35
-    - _LineSize: 17.76
-    - _LineSpeed: 0
+    - _LineFraction: 0.167
+    - _LineRotate: 0
+    - _LineSize: 13.75
+    - _LineSpeed: 2.62
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _OutlineMode: 0
-    - _OutlineOffset: 1
+    - _OutlineOffset: 0
     - _OutlineSoftness: 0
     - _OutlineThickness: 0.217
     - _OutlineUVSpeedX: 0
@@ -148,12 +148,12 @@ Material:
     - _Color_B: {r: 1, g: 1, b: 1, a: 1}
     - _Distortion: {r: 1, g: 1, b: 0, a: 0}
     - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
-    - _FaceColor: {r: 7.999999, g: 0.79496783, b: 0, a: 1}
+    - _FaceColor: {r: 3.9999998, g: 3.9999998, b: 3.9999998, a: 0.34117648}
     - _FaceText_ST: {r: 1, g: 1, b: 0, a: 0}
     - _FaceUVSpeed: {r: 0, g: 0, b: 0, a: 0}
     - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
     - _IsoPerimeter: {r: 0, g: 0, b: 0, a: 0}
-    - _LineDistortion: {r: 1, g: 1, b: 0, a: 0}
+    - _LineDistortion: {r: 1, g: 1.5, b: 0, a: 0}
     - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0.6745098}
     - _OutlineColor1: {r: 0, g: 1, b: 1, a: 1}

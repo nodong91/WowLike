@@ -3,7 +3,19 @@ using UnityEngine;
 
 public class Controll_Manager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public bool clickLeft, isLeftDrag, inputMouseRight;
+    public float clickTime;
+    public Vector2 clickPosition;
+    public Coroutine clickLefting;
+
+    public LayerMask layerMask;
+    public enum RotateType
+    {
+        Normal,
+        Focus
+    }
+    [SerializeField] private RotateType rotateType;
+
     void Start()
     {
         Singleton_Controller.INSTANCE.SetController();
@@ -39,19 +51,6 @@ public class Controll_Manager : MonoBehaviour
         }
         clickLefting = StartCoroutine(MouseLeftDrag(_input));
     }
-
-    public bool clickLeft, isLeftDrag, inputMouseRight;
-    public float clickTime;
-    public Vector2 clickPosition;
-    public Coroutine clickLefting;
-
-    public LayerMask layerMask;
-    public enum RotateType
-    {
-        Normal,
-        Focus
-    }
-    [SerializeField] private RotateType rotateType;
 
     IEnumerator MouseLeftDrag(bool _input)
     {
