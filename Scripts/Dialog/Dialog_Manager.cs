@@ -27,10 +27,23 @@ public class Dialog_Manager : MonoBehaviour
     public Image nextMark;
     public Button button;
 
+    private void Start()
+    {
+        SetDialogManager();
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            SetTest();
+        }
+    }
+
     public void SetDialogManager()
     {
         typingSpeed = defaultTypingSpeed;
-        button.onClick.AddListener(SetTest);
+        //button.onClick.AddListener(SetTest);
     }
 
     void SetTest()

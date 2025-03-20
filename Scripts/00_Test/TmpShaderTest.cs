@@ -8,6 +8,7 @@ public class TmpShaderTest : MonoBehaviour
     public Material tmpMaterial;
     public float test;
     public AnimationCurve aniCurve;
+    public DialogTest dialogTest;
 
     void Start()
     {
@@ -21,6 +22,8 @@ public class TmpShaderTest : MonoBehaviour
             if (glitching != null)
                 StopCoroutine(glitching);
             glitching = StartCoroutine(Glitching());
+
+            dialogTest.Startasdfadsf();
         }
     }
 
