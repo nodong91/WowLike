@@ -5,37 +5,42 @@ using UnityEngine;
 public class TmpShaderTest : MonoBehaviour
 {
     public TMPro.TMP_Text tmpText;
-    public Material tmpMaterial;
-    public float test;
+    Material tmpMaterial;
     public AnimationCurve aniCurve;
     public DialogTest dialogTest;
+    public string dialogID;
+
+    public float duration;
+    Coroutine glitching;
+    public Vector2 glitchSize;
+    public Transform parent;
+    Vector2 prevPosition;
 
     void Start()
     {
         tmpMaterial = tmpText.fontMaterial;
+        prevPosition = tmpText.rectTransform.anchoredPosition;
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (glitching != null)
-                StopCoroutine(glitching);
-            glitching = StartCoroutine(Glitching());
-
-            dialogTest.Startasdfadsf();
+            //InstanceText();
+            //GlitchStart();
+            dialogTest.SetDialog(dialogID);
         }
     }
 
-    public float duration;
-    Coroutine glitching;
-    public Vector2 fffff;
-    public Transform parent;
+    void GlitchStart()
+    {
+        if (glitching != null)
+            StopCoroutine(glitching);
+        glitching = StartCoroutine(Shaking());
+    }
 
     IEnumerator Glitching()
     {
-        InstanceText();
-        Vector3 prevPosition = tmpText.transform.localPosition;
         float normalize = 0f;
         while (normalize < 1f)
         {
@@ -43,9 +48,9 @@ public class TmpShaderTest : MonoBehaviour
             float curveTime = aniCurve.Evaluate(normalize);
             for (int i = 0; i < instText.Count; i++)
             {
-                Vector2 randomCircle = Random.insideUnitCircle * fffff * curveTime;
-                Vector3 fffffsdf = new Vector3(randomCircle.x, randomCircle.y, 0f);
-                instText[i].transform.localPosition = prevPosition + fffffsdf;
+                Vector2 randomCircle = Random.insideUnitCircle * glitchSize * curveTime;
+                Vector2 randomPos = new Vector3(randomCircle.x, randomCircle.y);
+                instText[i].rectTransform.anchoredPosition = prevPosition + randomPos;
                 instText[i].alpha = curveTime;
             }
             tmpText.alpha = 1f - curveTime;
@@ -54,6 +59,24 @@ public class TmpShaderTest : MonoBehaviour
         }
         tmpText.alpha = 1f;
     }
+
+    IEnumerator Shaking()
+    {
+        float normalize = 0f;
+        while (normalize < 1f)
+        {
+            normalize += Time.deltaTime / duration;
+            float curveTime = aniCurve.Evaluate(normalize);
+
+            Vector2 randomCircle = Random.insideUnitCircle * glitchSize * curveTime;
+            Vector2 randomPos = new Vector3(randomCircle.x, randomCircle.y);
+            tmpText.rectTransform.anchoredPosition = prevPosition + randomPos;
+            tmpText.alpha = curveTime;
+            tmpMaterial.SetFloat("_LineFraction", curveTime);
+            yield return null;
+        }
+    }
+
     List<TMPro.TMP_Text> instText = new List<TMPro.TMP_Text>();
     void InstanceText()
     {
