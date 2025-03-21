@@ -583,6 +583,9 @@ Material:
     - _BevelWidth: 0
     - _BumpFace: 0
     - _BumpOutline: 0
+    - _CartoonAngle: 45
+    - _CartoonSize: 0.5
+    - _CartoonTile: 1
     - _ColorMask: 15
     - _CullMode: 0
     - _DISTORTIONTYPE: 0
@@ -592,7 +595,7 @@ Material:
     - _FaceUVSpeedY: 0
     - _Float: 0.99
     - _Float_1: 0.292
-    - _Float_2: 39.81
+    - _Float_2: 32.98
     - _FramePerSecond: 0
     - _GlowInner: 0.05
     - _GlowOffset: 0
@@ -641,8 +644,9 @@ Material:
     - _WeightBold: 0.75
     - _WeightNormal: 0
     m_Colors:
+    - _CartoonColor: {r: 1, g: 0, b: 1, a: 1}
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
-    - _Color: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 0}
+    - _Color: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 0.6117647}
     - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
     - _FaceColor: {r: 0, g: 0, b: 0, a: 0}
     - _FaceText_ST: {r: 1, g: 1, b: 0, a: 0}
