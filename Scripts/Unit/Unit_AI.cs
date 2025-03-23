@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using Unity.Cinemachine;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -88,7 +90,7 @@ public class Unit_AI : MonoBehaviour
     public void SetUnit(string _unitID, LayerMask _layerMask)// 첫세팅
     {
         unitID = _unitID;
-        Debug.LogWarning(unitID);
+        Debug.LogWarning("생성 : " + unitID);
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         //obstacle = GetComponentInChildren<NavMeshObstacle>();
@@ -116,6 +118,7 @@ public class Unit_AI : MonoBehaviour
         readySkills.Add(skill_02);
         agent.speed = unitAttributes.MoveSpeed;
         healthPoint = unitAttributes.Health;
+        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health);
 
         renderers = GetComponentsInChildren<Renderer>();
     }
@@ -455,10 +458,15 @@ public class Unit_AI : MonoBehaviour
         return Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg;
     }
 
+    public delegate void DeleUpdateHP(float _current, float _max);
+    public DeleUpdateHP deleUpdateHP;
     public void TakeDamage(Unit_AI _from, Vector3 _center, float _damage, Data_Manager.SkillStruct _skillStruct)
     {
+        // _from 때린 유닛
+        // _center 맞은 포인트
         Debug.Log($"{_from.gameObject.name} : {_damage}");
         healthPoint -= _damage;
+        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health);
         if (healthPoint <= 0)
         {
             StateMachine(State.Dead);

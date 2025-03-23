@@ -37,6 +37,7 @@ public class UI_Battle : MonoBehaviour
         instInventory = Instantiate(inventory, overlayCanvas);
         instInventory.SetInventory();
     }
+
     void SetUICamera()
     {
         Camera mainCamera = Camera.main;
@@ -81,5 +82,36 @@ public class UI_Battle : MonoBehaviour
     void CloseAll()
     {
         instInventory.CloseAllCanvas();
+    }
+
+    public Follow_Target followTarget;
+    public Follow_HP followHP;
+    public RectTransform followParent;
+    Follow_Manager followManager;
+
+    public Follow_HP AddFollow_Unit(Unit_AI _unit)
+    {
+        Follow_HP instHP = Instantiate(followHP, followParent);
+        instHP.SetUnit = _unit;
+        instHP.followType = Follow_Target.FollowType.Camera;
+        instHP.followOffset = new Vector3(0f, 1f, 0f);
+        followManager = GetComponent<Follow_Manager>();
+        followManager.AddFollowUI(_unit.gameObject, instHP);
+
+        return instHP;
+    }
+
+    public void AddFollow(GameObject _target)
+    {
+        Follow_Target instTarget = Instantiate(followTarget, followParent);
+        instTarget.followType = Follow_Target.FollowType.Camera;
+        instTarget.followOffset = new Vector3(0f, 1f, 0f);
+        followManager = GetComponent<Follow_Manager>();
+        followManager.AddFollowUI(_target.gameObject, instTarget);
+    }
+
+    public void ShakingUI(GameObject _target)
+    {
+        followManager.ShakingUI(_target);
     }
 }

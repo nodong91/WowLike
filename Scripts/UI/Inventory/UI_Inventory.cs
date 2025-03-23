@@ -157,8 +157,8 @@ public class UI_Inventory : MonoBehaviour
         if (dragSlot != null)
             return;
 
-        // 정보 보여주기
-        slotInfo.OnInfomation(_slot);
+        //// 정보 보여주기
+        //slotInfo.OnInfomation(_slot);
     }
 
     public UI_InvenSlot TryEmptySlot()

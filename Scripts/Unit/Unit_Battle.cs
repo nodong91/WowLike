@@ -2,16 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static Data_Manager.UnitStruct;
+using static Unit_AI;
 
 public class Unit_Battle : MonoBehaviour
 {
+    [SerializeField] UI_Battle uiBattle;
+    UI_Battle instUIBattle;
     public enum SpawnType
     {
         Normal,
         Ambush
     }
     public SpawnType spawnType = SpawnType.Normal;
-    public Map_Generator map;
+    [SerializeField] Map_Generator mapGenerator;
+    Map_Generator instMapGenerator;
     public float timeScale = 1f;
 
     [SerializeField] private List<Unit_AI> players = new List<Unit_AI>();
@@ -28,21 +33,35 @@ public class Unit_Battle : MonoBehaviour
 
     private Dictionary<GameObject, Unit_AI> unitDict = new Dictionary<GameObject, Unit_AI>();
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return unitDict; } }
-    public UI_Battle uiBattle;
+
     public List<Node> randomNodes;
     public Data_Spawn spawnData;
 
-    public static Unit_Battle instance;
+    public GameObject asdfadsf;
+    [SerializeField] Node selectedNode;
+    UI_InvenSlot dragSlot;
+
+    Coroutine cameraInput;
+
+    public static Unit_Battle INSTANCE;
 
     private void Awake()
     {
-        instance = this;
+        INSTANCE = this;
     }
 
     private void Start()
     {
         Time.timeScale = timeScale;
-        map.SetMapGrid(spawnData);
+        if (instMapGenerator == null)
+            instMapGenerator = Instantiate(mapGenerator, transform);
+        instMapGenerator.SetMapGrid(spawnData);
+
+        if (instUIBattle == null)
+            instUIBattle = Instantiate(uiBattle, transform);
+        instUIBattle.deleTimeScale = SetTimeScale;
+        instUIBattle.deleBattleStart = StartBattle;
+        instUIBattle.AddFollow(asdfadsf);// 임시 테스트
 
         players.Clear();
         monsters.Clear();
@@ -56,10 +75,8 @@ public class Unit_Battle : MonoBehaviour
                 AmbushSpawn();
                 break;
         }
-        uiBattle.deleTimeScale = SetTimeScale;
-        uiBattle.deleBattleStart = StartBattle;
     }
-    Coroutine cameraInput;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -84,6 +101,7 @@ public class Unit_Battle : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             InputIng();
+            instUIBattle.ShakingUI(asdfadsf);
         }
 
 
@@ -105,11 +123,11 @@ public class Unit_Battle : MonoBehaviour
 
     void NormalSpawn()
     {
-        List<Data_Spawn.UnitNode> spawnNode = map.GetSpawnData.monsterNodes;
+        List<Data_Spawn.UnitNode> spawnNode = instMapGenerator.GetSpawnData.monsterNodes;
         for (int i = 0; i < spawnNode.Count; i++)
         {
             Vector2Int grid = spawnNode[i].spawnGrid;
-            Node node = map.nodeMap[grid.x, grid.y];
+            Node node = instMapGenerator.nodeMap[grid.x, grid.y];
             SpawnMonster(node, spawnNode[i].unitID);
         }
     }
@@ -117,7 +135,7 @@ public class Unit_Battle : MonoBehaviour
     void AmbushSpawn()
     {
         // 매복당했을 때 막 섞여서 나오게
-        randomNodes = map.RandomNodes();
+        randomNodes = instMapGenerator.RandomNodes();
         Queue<Node> queueNodes = new Queue<Node>();
         for (int i = 0; i < randomNodes.Count; i++)
         {
@@ -142,6 +160,7 @@ public class Unit_Battle : MonoBehaviour
         Unit_AI inst = InstnaceUnit(_node, _unitID);
         inst.SetUnit(_unitID, LayerMask.NameToLayer("Player"));
         inst.deadUnit += DeadPlayer;// 죽음 카운트
+        instUIBattle.AddFollow_Unit(inst);
 
         players.Add(inst);
     }
@@ -151,8 +170,10 @@ public class Unit_Battle : MonoBehaviour
         if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
             return;
         Unit_AI inst = InstnaceUnit(_node, _unitID);
-        inst.SetUnit(_unitID, LayerMask.NameToLayer("Monster"));
+        Follow_HP hp = instUIBattle.AddFollow_Unit(inst);
         inst.deadUnit += DeadMonster;
+        inst.deleUpdateHP = hp.SetHP;// 체력 바
+        inst.SetUnit(_unitID, LayerMask.NameToLayer("Monster"));
 
         monsters.Add(inst);
     }
@@ -178,23 +199,17 @@ public class Unit_Battle : MonoBehaviour
         {
             child.Value.StartBattle();
         }
-        map.OnTileCanvas(false);// 맵아래 캔버스 제거
+        instMapGenerator.OnTileCanvas(false);// 맵아래 캔버스 제거
         Debug.LogWarning("Battle Start");
     }
 
-    public GameObject asdfadsf;
-    bool selectedObject;
-    public Node objectNode;
-    UI_InvenSlot dragSlot;
-
     void InputBegin()
     {
+        if (EventSystem.current.IsPointerOverGameObject() == true)
+            return;
+
         Node node = RayCasting(true);
-        selectedObject = node?.onObject != null;
-        if (selectedObject == true)
-        {
-            objectNode = node;
-        }
+        selectedNode = node;
     }
 
     void InputIng()
@@ -202,9 +217,9 @@ public class Unit_Battle : MonoBehaviour
         if (EventSystem.current.IsPointerOverGameObject() == true)
             return;
 
-        dragSlot = uiBattle.GetInventory.GetDragSlot;
+        dragSlot = instUIBattle.GetInventory.GetDragSlot;
         bool moveUnit = (dragSlot != null && dragSlot.itemType == UI_InvenSlot.ItemType.Unit)
-            || (selectedObject == true);
+            || (selectedNode.onObject != null);
 
         Node node = RayCasting(true);
         if (node != null)
@@ -224,16 +239,14 @@ public class Unit_Battle : MonoBehaviour
             return;
         }
 
-        if (selectedObject == true)// 선택한 오브젝트가 있고
+        if (selectedNode.onObject != null)
         {
-            if (objectNode.onObject?.layer == LayerMask.NameToLayer("Player"))
+            Debug.LogWarning($"놓을 수{node.grid}  {selectedNode.onObject.layer}");
+            if (selectedNode.onObject.layer == LayerMask.NameToLayer("Player"))// 플레이어 선택
             {
-                selectedObject = false;
-                if (objectNode.onObject == node.onObject)// 같은 노드를 눌렀을 때
+                if (selectedNode.onObject == node.onObject)// 같은 노드를 눌렀을 때
                 {
-                    // 제거
-                    UnitRemove(node);
-                    Debug.LogWarning($"놓을 수{node.grid}");
+                    UnitRemove(node);  // 제거
                 }
                 else if (node.nodeType == Node.NodeType.Player)
                 {
@@ -246,37 +259,29 @@ public class Unit_Battle : MonoBehaviour
                     {
                         // 교체
                     }
-                    Debug.LogWarning($"놓을 수{node.grid}");
                 }
-            }
-            else
-            {
-
-                Debug.LogWarning($"오브젝트가 몬스터 {node.grid} {objectNode.onObject.layer}");
             }
         }
         else if (dragSlot != null)// 인벤토리에서 꺼내고
         {
             // 생성
-            if (node.nodeType != Node.NodeType.Player || dragSlot.itemType != UI_InvenSlot.ItemType.Unit)// 플레이어 놓을 수 있는 곳이 아니면
+            if (node.nodeType == Node.NodeType.Player && dragSlot.itemType == UI_InvenSlot.ItemType.Unit)// 플레이어 놓을 수 있는 곳이 아니면
             {
-                Debug.LogWarning("놓을 수 없음");
-                return;
+                UnitInstance(node);
+                dragSlot = null;
+                Debug.LogWarning($"놓을 {node.grid}");
             }
-
-            UnitInstance(node);
-            dragSlot = null;
-            Debug.LogWarning($"놓을 수{node.grid}");
         }
         else
         {
-            Debug.LogWarning($"놓을 수{node.grid}");
+            Debug.LogWarning($"인벤토리도 아니고{node.grid}");
         }
+        selectedNode = default;
     }
 
     void UnitRemove(Node _node)
     {
-        UI_InvenSlot emptySlot = uiBattle.GetInventory.TryEmptySlot();
+        UI_InvenSlot emptySlot = instUIBattle.GetInventory.TryEmptySlot();
         if (emptySlot == null)// 빈슬롯 확인
         {
             return;
@@ -296,12 +301,12 @@ public class Unit_Battle : MonoBehaviour
     void UnitMove(Node _node)
     {
         // 이동
-        GameObject from = objectNode.onObject;
+        GameObject from = selectedNode.onObject;
         GameObject to = _node.onObject;
 
-        objectNode.onObject = to;
+        selectedNode.onObject = to;
         if (to != null)
-            to.transform.position = objectNode.worldPosition;
+            to.transform.position = selectedNode.worldPosition;
         _node.onObject = from;
         if (from != null)
             from.transform.position = _node.worldPosition;
@@ -330,10 +335,10 @@ public class Unit_Battle : MonoBehaviour
         int layerMask = 1 << 0;
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
-            Node node = map.GetNodeFromPosition(hit.point);
+            Node node = instMapGenerator.GetNodeFromPosition(hit.point);
             if (_input == true)
             {
-                map.ClickNode(node);// 테스트용
+                instMapGenerator.ClickNode(node);// 테스트용
             }
             Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);
             return node;
@@ -377,7 +382,7 @@ public class Unit_Battle : MonoBehaviour
         {
             lootingItems[i] = "U10012";
         }
-        uiBattle.GetInventory.AddLooting(lootingItems);
+        instUIBattle.GetInventory.AddLooting(lootingItems);
     }
 
 
