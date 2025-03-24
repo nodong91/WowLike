@@ -239,7 +239,7 @@ public class Unit_Battle : MonoBehaviour
             return;
         }
 
-        if (selectedNode.onObject != null)
+        if (selectedNode?.onObject != null)
         {
             Debug.LogWarning($"놓을 수{node.grid}  {selectedNode.onObject.layer}");
             if (selectedNode.onObject.layer == LayerMask.NameToLayer("Player"))// 플레이어 선택
