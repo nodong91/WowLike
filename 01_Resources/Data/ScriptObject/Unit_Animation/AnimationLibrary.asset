@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db6dc35254a2914fa75a1634aab91b7, type: 3}
+  m_Name: AnimationLibrary
+  m_EditorClassIdentifier: 
+  resourceFolder:
+  - {fileID: 102900000, guid: f10f20fb012fbf049a687bfa03a1b9a6, type: 3}
+  AnimationDatas:
+  - typeName: '0 : Idle (9)'
+    playType: 0
+    animationClips:
+    - {fileID: 7400000, guid: 3edc27a5e6ffede41bcbfd651c41639f, type: 2}
+    - {fileID: 7400000, guid: 580030eb4906bc349a9729e9625a2893, type: 2}
+    - {fileID: 7400000, guid: 7ec2a3fbd66d6fe408b7f11eb01ed3a2, type: 2}
+    - {fileID: 7400000, guid: 133fa73229821e343b359e3a62ae6d97, type: 2}
+    - {fileID: 7400000, guid: c1661ab3e5122ef499c3975d310611a7, type: 2}
+    - {fileID: 7400000, guid: 8c8f447c42c7de942ab7140f1877835e, type: 2}
+    - {fileID: 7400000, guid: 24a99e48e09726441901994f731d38f3, type: 2}
+    - {fileID: 7400000, guid: 49ebadaf904a3324fb387efa9bf83fdb, type: 2}
+    - {fileID: 7400000, guid: e0e35b140ae5ef3459b9a6f412a68f55, type: 2}
+  - typeName: '1 : Walk (2)'
+    playType: 0
+    animationClips:
+    - {fileID: 7400000, guid: 6e7a0d50545d30e46b622f8365248fa2, type: 2}
+    - {fileID: 7400000, guid: 4b53aa30b93f28246b7577e11fb9fe15, type: 2}
+  - typeName: '2 : Run (0)'
+    playType: 0
+    animationClips: []
+  - typeName: '3 : Skill (0)'
+    playType: 0
+    animationClips: []
+  - typeName: '4 : Dodge (0)'
+    playType: 0
+    animationClips: []
+  - typeName: '5 : DamageSmall (0)'
+    playType: 0
+    animationClips: []
+  - typeName: '6 : DamageBig (0)'
+    playType: 0
+    animationClips: []
+  - typeName: '7 : Die (0)'
+    playType: 0
+    animationClips: []
