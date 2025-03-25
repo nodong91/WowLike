@@ -301,7 +301,7 @@ public class Data_Manager : Data_Parse
         public string unitName;
         public string unitDescription;// Ό³Έν
         public Sprite unitIcon;
-        public Unit_AI unitProp;
+        public Unit_Animation unitProp;
         public float unitSize;
         public string defaultSkill01;
         public string defaultSkill02;

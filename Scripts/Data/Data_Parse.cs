@@ -12,7 +12,7 @@ public class Data_Parse : MonoBehaviour
 
     public virtual void DataSetting()
     {
-        units = new List<Unit_AI>();
+        units = new List<Unit_Animation>();
         skillSet = new List<Skill_Set>();
         sprites = new List<Sprite>();
         audioClip.Clear();
@@ -35,10 +35,10 @@ public class Data_Parse : MonoBehaviour
         // 데이터 추가
         for (int i = 0; i < assets.Length; i++)
         {
-            var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(Unit_AI));
-            if (data as Unit_AI)
+            var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(Unit_Animation));
+            if (data as Unit_Animation)
             {
-                Unit_AI addData = data as Unit_AI;
+                Unit_Animation addData = data as Unit_Animation;
                 units.Add(addData);
                 EditorUtility.SetDirty(data);
             }
@@ -158,7 +158,7 @@ public class Data_Parse : MonoBehaviour
         return color;
     }
 
-    public Unit_AI FindUnit(string _str)
+    public Unit_Animation FindUnit(string _str)
     {
         for (int i = 0; i < units.Count; i++)
         {
@@ -196,5 +196,5 @@ public class Data_Parse : MonoBehaviour
     public List<AudioClip> audioClip = new List<AudioClip>();
     public List<Sprite> sprites = new List<Sprite>();
     public List<Skill_Set> skillSet = new List<Skill_Set>();
-    public List<Unit_AI> units = new List<Unit_AI>();
+    public List<Unit_Animation> units = new List<Unit_Animation>();
 }

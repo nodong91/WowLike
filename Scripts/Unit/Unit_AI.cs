@@ -25,6 +25,8 @@ public class Unit_AI : MonoBehaviour
     public DeleUnitList playerList;
     public DeleUnitList monsterList;
 
+    public Unit_Animation unit;
+
     public enum State
     {
         None,

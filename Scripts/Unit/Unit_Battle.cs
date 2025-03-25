@@ -177,15 +177,21 @@ public class Unit_Battle : MonoBehaviour
 
         monsters.Add(inst);
     }
-
+    public Unit_AI unitBase;
     Unit_AI InstnaceUnit(Node _node, string _unitID)
     {
-        Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
-        Unit_AI inst = Instantiate(unit, transform);
+        Unit_AI inst = Instantiate(unitBase, transform);
         inst.transform.position = _node.worldPosition;
         inst.transform.rotation = Quaternion.Euler(_node.worldPosition);
         inst.playerList = PlayerList;// 타겟을 찾기 위해
         inst.monsterList = MonsterList;// 타겟을 찾기 위해
+
+        Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
+        //Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
+        Unit_Animation instUnit = Instantiate(unit, inst.transform);
+        inst.unit = instUnit;
+        instUnit.SetAnimator();
+        instUnit.PlayAnimation(1);
 
         unitDict[inst.gameObject] = inst;
         _node.UnitOnNode(inst.gameObject);
