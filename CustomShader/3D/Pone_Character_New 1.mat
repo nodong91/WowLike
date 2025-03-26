@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Pone_Character_New 1
-  m_Shader: {fileID: -6465566751694194690, guid: 5479c1b47e5944343937705b3ba44f3b, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 059e167780ebcf5429185451f080ce33, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -116,7 +116,7 @@ Material:
     - _OutlineColor: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 1}
     - _PortalColor: {r: 0, g: 0, b: 0, a: 0}
     - _PortalMinMax: {r: 0, g: 1, b: 0, a: 0}
-    - _ShadowColor: {r: 0, g: 0.329082, b: 1, a: 1}
+    - _ShadowColor: {r: 0.5762727, g: 0.60397774, b: 0.6603774, a: 1}
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 0}
     - _Sub_ShadowColor: {r: 0.745283, g: 0.745283, b: 0.745283, a: 0}
   m_BuildTextureStacks: []

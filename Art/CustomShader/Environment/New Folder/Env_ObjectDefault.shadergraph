@@ -1188,6 +1188,20 @@
             },
             "m_InputSlot": {
                 "m_Node": {
+                    "m_Id": "8a95caceb90d4525ba01c5fb1e1bb515"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "9da001f9d22048a6906c4a92180ceec8"
+                },
+                "m_SlotId": 1
+            },
+            "m_InputSlot": {
+                "m_Node": {
                     "m_Id": "e5637416ce114612bcc68c9717eba629"
                 },
                 "m_SlotId": 0
@@ -4401,8 +4415,8 @@
     "m_ObjectId": "4b8d22cc08b349658772012b581dacbe",
     "m_Title": "Base Color (Base)",
     "m_Position": {
-        "x": 3621.00048828125,
-        "y": -1075.0001220703125
+        "x": 3621.0,
+        "y": -1075.0
     }
 }
 
@@ -10698,8 +10712,8 @@
     "m_ObjectId": "e8832890667d47bbb240ac172624fea7",
     "m_Title": "Roughness",
     "m_Position": {
-        "x": 3573.999755859375,
-        "y": 413.99993896484377
+        "x": 3574.0,
+        "y": 414.0
     }
 }
 
