@@ -79,11 +79,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap2_Texture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a53fc265c0e4da84b9361b5cc934237c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap_Texture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a53fc265c0e4da84b9361b5cc934237c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -103,11 +103,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Splat_Main:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b00d4eff790e9b64eb72f3d05fe97c4a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Splat_Sub:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 964cc9eb40f10ea46a1b67185c05af4f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -145,6 +145,8 @@ Material:
     - _DstBlendAlpha: 10
     - _EnvironmentReflections: 1
     - _Face: 0
+    - _Float: 0
+    - _Float_1: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.14142135
     - _GlossyReflections: 1
@@ -152,9 +154,9 @@ Material:
     - _MatCap2Blend_MSO: 0
     - _MatCap2_Channel: 0
     - _MatCap2_Value: 0
-    - _MatCapBlend_MSO: 0
+    - _MatCapBlend_MSO: 2
     - _MatCap_Channel: 0
-    - _MatCap_Value: 0
+    - _MatCap_Value: 0.648
     - _Metallic: 0
     - _Mode: 3
     - _NoiseAmount: 1
@@ -162,7 +164,7 @@ Material:
     - _NoiseSpeed: 0
     - _NormalsSensitivity: 0
     - _OcclusionChannel: 0
-    - _OcclusionStrength: 1
+    - _OcclusionStrength: 0
     - _OutlineThickness: 3
     - _Outline_Mask_Channel: 0
     - _POTALTYPE: 0
@@ -177,8 +179,8 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularChannel: 0
     - _SpecularHighlights: 1
-    - _Specular_Smooth: 0
-    - _Specular_Strength: 0
+    - _Specular_Smooth: 1
+    - _Specular_Strength: 0.898
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _SubShadowChannel: 0
@@ -194,14 +196,14 @@ Material:
     - _DamageColor: {r: 9.560206, g: 2.215383, b: 0.3156674, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MatCap2_Color: {r: 0, g: 0, b: 0, a: 0}
-    - _MatCap_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _MatCap2_Color: {r: 0.6886792, g: 0.33459416, b: 0.33459416, a: 0}
+    - _MatCap_Color: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _PortalColor: {r: 0, g: 0, b: 0, a: 0}
     - _PortalMinMax: {r: 0, g: 1, b: 0, a: 0}
-    - _ShadowColor: {r: 0.5660378, g: 0.62130684, b: 0.754717, a: 0}
+    - _ShadowColor: {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Sub_ShadowColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Sub_ShadowColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
