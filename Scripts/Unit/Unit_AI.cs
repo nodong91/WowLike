@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
-using Unity.Cinemachine;
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,13 +23,13 @@ public class Unit_AI : MonoBehaviour
     public DeleUnitList playerList;
     public DeleUnitList monsterList;
 
-    public Unit_Animation unit;
+    public Unit_Animation unitAnimation;
 
     public enum State
     {
         None,
         Dead,
-        Skill,
+        Attack,
         Idle,
         Escape,
         Move,
@@ -200,13 +198,13 @@ public class Unit_AI : MonoBehaviour
                     EscapeState();
                     break;
 
-                case State.Skill:
+                case State.Attack:
                     SkillState();
                     float castingTime = currentSkill.skillStruct.castingTime;
                     yield return StartCoroutine(SkillCasting(castingTime));
                     // 글로벌 쿨링 시작
                     StartCoroutine(GlobalCooling());// 글로벌 쿨타임? 
-                    if (state == State.Skill)
+                    if (state == State.Attack)
                     {
                         StateMachine(State.Idle);
                     }
@@ -303,7 +301,7 @@ public class Unit_AI : MonoBehaviour
         {
             if (globalCooling == false)
             {
-                StateMachine(State.Skill);
+                StateMachine(State.Attack);
             }
             else
             {
@@ -335,16 +333,7 @@ public class Unit_AI : MonoBehaviour
     IEnumerator SkillCasting(float _castingTime)
     {
         Destination(transform.position);// 제자리에 정지
-        //if (_castingTime > 0)
-        //{
-        //}
-        //else
-        //{
-        //    // 즉시 사용
-        //    ActionSkill();
-        //}
-        // 캐스팅 하는 동안 맞으면?? 밀려나면?? 스킬 풀리게
-        // 캐스팅 하는 동안 타겟이 멀리 이동 하게 되면???
+        
         skillCastring = true;
         image.CrossFadeAlpha(1f, 0.5f, false);
         float casting = 0f;
@@ -376,6 +365,7 @@ public class Unit_AI : MonoBehaviour
 
     void ActionSkill()
     {
+        unitAnimation.PlayAnimation(3);// 애니메이션
         StartCoroutine(SkillCooling(currentSkill));// 스킬 쿨타임 시작
 
         string skillID = currentSkill.skillStruct.ID;
@@ -404,11 +394,13 @@ public class Unit_AI : MonoBehaviour
 
     void DamageState()
     {
-
+        unitAnimation.PlayAnimation(5);// 애니메이션
     }
 
     void DeadState()
     {
+        unitAnimation.PlayAnimation(7);// 애니메이션
+
         deadUnit?.Invoke(this);
         Destination(transform.position);
         StartCoroutine(DeadActing());

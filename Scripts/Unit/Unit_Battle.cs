@@ -189,7 +189,7 @@ public class Unit_Battle : MonoBehaviour
         Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
         //Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
         Unit_Animation instUnit = Instantiate(unit, inst.transform);
-        inst.unit = instUnit;
+        inst.unitAnimation = instUnit;
         instUnit.SetAnimator();
         instUnit.PlayAnimation(1);
 

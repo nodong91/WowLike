@@ -76,36 +76,36 @@ public class Unit_Animation : MonoBehaviour
             clipOverrides["Action" + actionState] = aniClip;
             animatorOverrideController.ApplyOverrides(clipOverrides);
 
-            animator.Play("S_Action" + actionState, -1, 0);// 애니메이션 스테이트
+            //animator.Play("S_Action" + actionState, -1, 0);// 애니메이션 스테이트
             //animator.SetBool("B_Hold", true);// B_Hold 파라메타 필요
 
-            //Debug.LogWarning($"{aniClip.name}    {"Action" + actionState}       {"S_Action" + actionState}");
-            //switch (AnimationDatas[_index].playType)
-            //{
-            //    case AniClipClass.PlayType.Trigger:
-            //        // 블랜딩 애니메이션
-            //        animator.SetTrigger("T_Action" + actionState);// 트리거 파라메타 T_Action 필요
-            //        animator.SetBool("B_Hold", false);// B_Hold 파라메타 필요
-            //        break;
+            Debug.LogWarning($"{aniClip.name}    {"Action" + actionState}       {"S_Action" + actionState}");
+            switch (animationDatas[_index].playType)
+            {
+                case Data_Animation.AniClipClass.PlayType.Trigger:
+                    // 블랜딩 애니메이션
+                    animator.SetTrigger("T_Action" + actionState);// 트리거 파라메타 T_Action 필요
+                    animator.SetBool("B_Hold", false);// B_Hold 파라메타 필요
+                    break;
 
-            //    case AniClipClass.PlayType.Single:
-            //        // 블랜딩 안됨
-            //        animator.Play("Action State" + actionState, -1, 0);// 애니메이션 스테이트 Action State 필요
-            //        animator.SetBool("B_Hold", false);
-            //        break;
+                case Data_Animation.AniClipClass.PlayType.Single:
+                    // 블랜딩 안됨
+                    animator.Play("S_Action" + actionState, -1, 0);// 애니메이션 스테이트 S_Action01,02 필요
+                    animator.SetBool("B_Hold", false);
+                    break;
 
-            //    case AniClipClass.PlayType.Once:
-            //        // 블랜딩 없이 애니메이션 되고 마지막 프레임에서 정지(죽음 같은 애니메이션)
-            //        animator.Play("Action State" + actionState, -1, 0);// 애니메이션 스테이트
-            //        animator.SetBool("B_Hold", true);
-            //        break;
+                case Data_Animation.AniClipClass.PlayType.Once:
+                    // 블랜딩 없이 애니메이션 되고 마지막 프레임에서 정지(죽음 같은 애니메이션)
+                    animator.Play("S_Action" + actionState, -1, 0);// 애니메이션 스테이트
+                    animator.SetBool("B_Hold", true);
+                    break;
 
-            //    case AniClipClass.PlayType.Loop:
-            //        // 루프 애니메이션
-            //        animator.SetTrigger("T_Action" + actionState);// 트리거 파라메타
-            //        animator.SetBool("B_Hold", true);
-            //        break;
-            //}
+                case Data_Animation.AniClipClass.PlayType.Loop:
+                    // 루프 애니메이션
+                    animator.SetTrigger("T_Action" + actionState);// 트리거 파라메타
+                    animator.SetBool("B_Hold", true);
+                    break;
+            }
         }
         return aniClip.length * _animatorSpeed;
     }

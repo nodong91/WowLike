@@ -62,7 +62,7 @@ public class Data_Animation : ScriptableObject
         }
 
         AnimationDatas.Clear();
-        for (int i = 0; i < (int)AnimationType.Die + 1; i++)
+        for (int i = 0; i < (int)AnimationType.Death + 1; i++)
         {
             AniClipClass aniClipClass = new AniClipClass();
             animationType = (AnimationType)i;
@@ -77,23 +77,23 @@ public class Data_Animation : ScriptableObject
                 {
                     bool loopTime = false;
                     // 애니메이션 클립 이름으로 세팅
-                    switch (str)
+                    switch (animationType)
                     {
-                        case "Walk":
-                        case "Run":
+                        case  AnimationType.Walk:
+                        case  AnimationType.Sprint:
 
-                        case "Idle":
+                        case AnimationType.Idle:
                             loopTime = true;
                             aniClipClass.playType = AniClipClass.PlayType.Trigger;
                             break;
 
-                        case "Die":
+                        case AnimationType.Death:
                             aniClipClass.playType = AniClipClass.PlayType.Once;
                             break;
 
-                        case "Dodge":
-                        case "DamageSmall":
-                        case "DamageBig":
+                        case AnimationType.Roll:
+                        case AnimationType.Hit:
+                        case AnimationType.KnockBack:
                             aniClipClass.playType = AniClipClass.PlayType.Single;
                             break;
                     }
@@ -141,12 +141,12 @@ public class Data_Animation : ScriptableObject
     {
         Idle,
         Walk,
-        Run,
-        Skill,
-        Dodge,
-        DamageSmall,
-        DamageBig,
-        Die// 마지막 타입
+        Sprint,
+        Attack,
+        Roll,
+        Hit,
+        KnockBack,
+        Death// 마지막 타입
     }
     private AnimationType animationType;
 }
