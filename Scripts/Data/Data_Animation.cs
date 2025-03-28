@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using static Unit_Animation;
 #if UNITY_EDITOR
 [CustomEditor(typeof(Data_Animation))]
 public class Data_Animation_Editor : Editor
@@ -60,8 +61,11 @@ public class Data_Animation : ScriptableObject
             animationClips.Add(data as AnimationClip);
             //Debug.LogWarning("assetPath : " + data);
         }
+    }
 
-        AnimationDatas.Clear();
+    public void SetAnimationClip(List<AnimationClip> _animationClips)
+    {
+        AnimationDatas = new List<AniClipClass>();
         for (int i = 0; i < (int)AnimationType.Death + 1; i++)
         {
             AniClipClass aniClipClass = new AniClipClass();
@@ -70,17 +74,17 @@ public class Data_Animation : ScriptableObject
             List<AnimationClip> aniList = new List<AnimationClip>();
             string str = animationType.ToString();
 
-            for (int j = 0; j < animationClips.Count; j++)
+            for (int j = 0; j < _animationClips.Count; j++)
             {
-                Debug.LogWarning("assetPath : " + animationClips[j].name);
-                if (animationClips[j].name.Contains(str, System.StringComparison.OrdinalIgnoreCase))
+                Debug.LogWarning("assetPath : " + _animationClips[j].name);
+                if (_animationClips[j].name.Contains(str, System.StringComparison.OrdinalIgnoreCase))
                 {
                     bool loopTime = false;
                     // 애니메이션 클립 이름으로 세팅
                     switch (animationType)
                     {
-                        case  AnimationType.Walk:
-                        case  AnimationType.Sprint:
+                        case AnimationType.Walk:
+                        case AnimationType.Sprint:
 
                         case AnimationType.Idle:
                             loopTime = true;
@@ -98,12 +102,12 @@ public class Data_Animation : ScriptableObject
                             break;
                     }
                     // 애니메이션 루프 변경
-                    SerializedProperty AniClip = new SerializedObject(animationClips[j]).FindProperty("m_AnimationClipSettings.m_LoopTime");
+                    SerializedProperty AniClip = new SerializedObject(_animationClips[j]).FindProperty("m_AnimationClipSettings.m_LoopTime");
                     AniClip.boolValue = loopTime;
                     AniClip.serializedObject.ApplyModifiedProperties();
 
                     // 애니메이션 스타일(스트링)이 포함되어 있는 경우 추가
-                    aniList.Add(animationClips[j]);
+                    aniList.Add(_animationClips[j]);
                 }
             }
             aniClipClass.typeName = i + " : " + str + " (" + aniList.Count + ")";// 클래스 표기용

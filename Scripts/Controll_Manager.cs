@@ -88,7 +88,7 @@ public class Controll_Manager : MonoBehaviour
 
     void InputMouseWheel(bool _input)
     {
-        float input = _input ? 0.1f : -0.1f;
+        float input = _input ? -0.1f : 0.1f;
         CameraManager.instance.delegateInputScroll(input);
     }
 

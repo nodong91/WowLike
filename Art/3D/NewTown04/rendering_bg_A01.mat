@@ -165,7 +165,7 @@ Material:
     - _MatCap2_Value: 0
     - _MatCapBlend_MSO: 2
     - _MatCap_Channel: 0
-    - _MatCap_Value: 0.648
+    - _MatCap_Value: 0
     - _Metallic: 0
     - _Mode: 0
     - _NoiseAmount: 1

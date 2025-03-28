@@ -153,7 +153,7 @@ public class Unit_AI : MonoBehaviour
         Destination(_point);
     }
 
-    void StateMachine(State _state)
+    public void StateMachine(State _state)
     {
         state = _state;
         agent.avoidancePriority = (int)_state;
@@ -333,7 +333,7 @@ public class Unit_AI : MonoBehaviour
     IEnumerator SkillCasting(float _castingTime)
     {
         Destination(transform.position);// 제자리에 정지
-        
+
         skillCastring = true;
         image.CrossFadeAlpha(1f, 0.5f, false);
         float casting = 0f;

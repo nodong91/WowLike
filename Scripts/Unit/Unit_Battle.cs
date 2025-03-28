@@ -81,7 +81,13 @@ public class Unit_Battle : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            StartBattle();
+            //StartBattle();
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                monsters[i].StateMachine(State.Damage);
+                monsters[i].StartBattle();
+                //monsters[i].TakeDamage(monsters[i], monsters[i].transform.position, 0f,new Data_Manager.SkillStruct());
+            }
         }
 
         if (Input.GetMouseButtonDown(0))

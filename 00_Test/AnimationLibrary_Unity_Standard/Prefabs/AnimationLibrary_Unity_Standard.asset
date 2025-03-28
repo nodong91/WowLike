@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6db6dc35254a2914fa75a1634aab91b7, type: 3}
-  m_Name: AnimationLibrary
+  m_Name: AnimationLibrary_Unity_Standard
   m_EditorClassIdentifier: 
-  resourceFolder:
-  - {fileID: 102900000, guid: f10f20fb012fbf049a687bfa03a1b9a6, type: 3}
+  resourceFolder: []
   AnimationDatas:
   - typeName: '0 : Idle (9)'
     playType: 0
     animationClips:
-    - {fileID: 7400000, guid: 580030eb4906bc349a9729e9625a2893, type: 2}
     - {fileID: 7400000, guid: 3edc27a5e6ffede41bcbfd651c41639f, type: 2}
+    - {fileID: 7400000, guid: 580030eb4906bc349a9729e9625a2893, type: 2}
     - {fileID: 7400000, guid: 7ec2a3fbd66d6fe408b7f11eb01ed3a2, type: 2}
     - {fileID: 7400000, guid: 133fa73229821e343b359e3a62ae6d97, type: 2}
     - {fileID: 7400000, guid: c1661ab3e5122ef499c3975d310611a7, type: 2}
@@ -40,10 +39,12 @@ MonoBehaviour:
     playType: 0
     animationClips:
     - {fileID: 7400000, guid: 1cd5cc4121877d44cb2427f5ee95f1fc, type: 2}
+    - {fileID: 7400000, guid: 4b9ab099e25b25b448da557b3cea8344, type: 2}
   - typeName: '4 : Roll (2)'
     playType: 1
     animationClips:
     - {fileID: 7400000, guid: a40e3665d140cea46a4db63f9db36096, type: 2}
+    - {fileID: 7400000, guid: 3f8900a0cd6a30a4f8c3667b1c3e4ee7, type: 2}
   - typeName: '5 : Hit (2)'
     playType: 1
     animationClips:
