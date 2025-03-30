@@ -10,8 +10,8 @@ public class Follow_Target : MonoBehaviour
         Camera,
         HP
     }
-    public FollowType followType; 
-    public Transform followTarget;
+    public FollowType followType;
+    private Transform followTarget;
     public Vector3 followOffset;
     public RectTransform shackRect;
 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
@@ -87,27 +89,63 @@ public class UI_Battle : MonoBehaviour
     public Follow_Target followTarget;
     public Follow_HP followHP;
     public RectTransform followParent;
-    Follow_Manager followManager;
+    public Follow_Manager followManager;
 
     public Follow_HP AddFollow_Unit(Unit_AI _unit)
     {
-        Follow_HP instHP = Instantiate(followHP, followParent);
-        instHP.SetUnit = _unit;
-        instHP.followType = Follow_Target.FollowType.Camera;
-        instHP.followOffset = new Vector3(0f, 1f, 0f);
-        followManager = GetComponent<Follow_Manager>();
+        Follow_HP instHP = TryFollowHPTarget();
+        instHP.SetFollowUnit(_unit);
+
         followManager.AddFollowUI(_unit.gameObject, instHP);
 
         return instHP;
     }
+    Queue<Follow_HP> followHPQueue = new Queue<Follow_HP>();
+    Follow_HP TryFollowHPTarget()
+    {
+        if (followHPQueue.Count > 0)
+        {
+            Follow_HP follow = followHPQueue.Dequeue();
+            follow.gameObject.SetActive(true);
+            return follow;
+        }
+        Follow_HP instTarget = Instantiate(followHP, followParent);
+        return instTarget;
+    }
+
+    public void RemoveFollowHP(GameObject _target)
+    {
+        Follow_HP instTarget = followManager.RemoveFollowHP(_target);
+        instTarget.gameObject.SetActive(false);
+        followHPQueue.Enqueue(instTarget);
+    }
 
     public void AddFollow(GameObject _target)
     {
-        Follow_Target instTarget = Instantiate(followTarget, followParent);
+        Follow_Target instTarget = TryFollowTarget();
         instTarget.followType = Follow_Target.FollowType.Camera;
         instTarget.followOffset = new Vector3(0f, 1f, 0f);
         followManager = GetComponent<Follow_Manager>();
         followManager.AddFollowUI(_target.gameObject, instTarget);
+    }
+    Queue<Follow_Target> followQueue = new Queue<Follow_Target>();
+    Follow_Target TryFollowTarget()
+    {
+        if (followQueue.Count > 0)
+        {
+            Follow_Target follow = followQueue.Dequeue();
+            follow.gameObject.SetActive(true);
+            return follow;
+        }
+        Follow_Target instTarget = Instantiate(followTarget, followParent);
+        return instTarget;
+    }
+
+    public void RemoveFollow(GameObject _target)
+    {
+        Follow_Target instTarget = followManager.RemoveFollowUI(_target);
+        instTarget.gameObject.SetActive(false);
+        followQueue.Enqueue(instTarget);
     }
 
     public void ShakingUI(GameObject _target)

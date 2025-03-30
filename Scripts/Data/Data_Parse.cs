@@ -162,7 +162,7 @@ public class Data_Parse : MonoBehaviour
     {
         for (int i = 0; i < units.Count; i++)
         {
-            if (_str.Equals(units[i].name))
+            if (_str.Equals(units[i].ID))
                 return units[i];
         }
         return null;

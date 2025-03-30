@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Unit_Animation : MonoBehaviour
 {
+    public string ID;
     public Data_Animation dataAnimation;
     private List<Data_Animation.AniClipClass> animationDatas;
 
@@ -21,8 +22,8 @@ public class Unit_Animation : MonoBehaviour
     protected AnimatorOverrideController animatorOverrideController;
     protected AnimationClipOverrides clipOverrides;
 
-    private Animator animator;
     private bool actionBool;
+    private Animator animator;
 
     public void SetAnimator()
     {

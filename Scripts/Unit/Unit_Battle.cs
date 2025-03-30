@@ -161,13 +161,18 @@ public class Unit_Battle : MonoBehaviour
 
     void SpawnPlayer(Node _node, string _unitID)
     {
+        //    if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
+        //        return;
+        //    Unit_AI inst = InstnaceUnit(_node, _unitID);
+        //    Follow_HP hp = instUIBattle.AddFollow_Unit(inst);
+        //    inst.deadUnit += DeadPlayer;// 죽음 카운트
+        //    inst.deleUpdateHP = hp.SetHP;// 체력 바
+        //    inst.SetUnit(_unitID, LayerMask.NameToLayer("Player"));
+
         if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
             return;
-        Unit_AI inst = InstnaceUnit(_node, _unitID);
-        inst.SetUnit(_unitID, LayerMask.NameToLayer("Player"));
-        inst.deadUnit += DeadPlayer;// 죽음 카운트
-        instUIBattle.AddFollow_Unit(inst);
 
+        Unit_AI inst = SetSpawnUnit(_node, _unitID, "Player");
         players.Add(inst);
     }
 
@@ -175,16 +180,38 @@ public class Unit_Battle : MonoBehaviour
     {
         if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
             return;
-        Unit_AI inst = InstnaceUnit(_node, _unitID);
-        Follow_HP hp = instUIBattle.AddFollow_Unit(inst);
-        inst.deadUnit += DeadMonster;
-        inst.deleUpdateHP = hp.SetHP;// 체력 바
-        inst.SetUnit(_unitID, LayerMask.NameToLayer("Monster"));
 
+        Unit_AI inst = SetSpawnUnit(_node, _unitID, "Monster");
         monsters.Add(inst);
     }
+
+    Unit_AI SetSpawnUnit(Node _node, string _unitID, string _layer)
+    {
+        Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
+        Unit_AI inst = InstnaceUnit(_node, unit);
+
+        Color teamColor = Color.white;
+        switch (_layer)
+        {
+            case "Player":
+                inst.deadUnit += DeadPlayer;// 죽음 카운트
+                teamColor= Color.red;
+                break;
+            case "Monster":
+                inst.deadUnit += DeadMonster;
+                teamColor = Color.blue;
+                break;
+        }
+        // 유아이 세팅
+        Follow_HP hp = instUIBattle.AddFollow_Unit(inst);
+        hp.sliderImage.color = teamColor;
+        inst.deleUpdateHP = hp.SetHP;// 체력 바
+        inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
+        return inst;
+    }
+
     public Unit_AI unitBase;
-    Unit_AI InstnaceUnit(Node _node, string _unitID)
+    Unit_AI InstnaceUnit(Node _node, Unit_Animation _unit)
     {
         Unit_AI inst = Instantiate(unitBase, transform);
         inst.transform.position = _node.worldPosition;
@@ -192,9 +219,8 @@ public class Unit_Battle : MonoBehaviour
         inst.playerList = PlayerList;// 타겟을 찾기 위해
         inst.monsterList = MonsterList;// 타겟을 찾기 위해
 
-        Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
         //Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
-        Unit_Animation instUnit = Instantiate(unit, inst.transform);
+        Unit_Animation instUnit = Instantiate(_unit, inst.transform);
         inst.unitAnimation = instUnit;
         instUnit.SetAnimator();
         instUnit.PlayAnimation(1);
@@ -300,6 +326,7 @@ public class Unit_Battle : MonoBehaviour
         }
         // 제거
         Unit_AI unit = unitDict[_node.onObject];
+        instUIBattle.RemoveFollowHP(unit.gameObject);
         unit.deadUnit -= DeadPlayer;// 죽음 카운트
         players.Remove(unit);
         unitDict.Remove(unit.gameObject);

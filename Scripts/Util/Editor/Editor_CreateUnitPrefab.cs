@@ -20,6 +20,7 @@ namespace P01.Editor
         SerializedObject targetObject;
         [SerializeField] private List<Object> ResourceList = new List<Object>();
         Vector2 scrollPos;
+        string unitID;
         private void OnEnable()
         {
             targetObject = new SerializedObject(this);
@@ -33,7 +34,11 @@ namespace P01.Editor
                 fontSize = 13,
                 normal = { textColor = Color.yellow },
                 alignment = TextAnchor.MiddleCenter
-            };
+            }; 
+
+            GUILayout.BeginHorizontal("box");
+            unitID = EditorGUILayout.TextField("Unit ID",unitID, buttonStyle);
+            GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal("box");
             if (targetObject != null)
@@ -215,6 +220,7 @@ namespace P01.Editor
             //tempAnimator.runtimeAnimatorController = animator;
             Unit_Animation tempUnit = _unit.AddComponent<Unit_Animation>();
             tempUnit.dataAnimation = _animationData;
+            tempUnit.ID = unitID;
         }
     }
 }

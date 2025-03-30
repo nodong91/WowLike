@@ -1,13 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static Data_Manager.UnitStruct;
 
 public class Follow_HP : Follow_Target
 {
-    public Unit_AI unit;
+    [SerializeField] Unit_AI unit;
     public Unit_AI SetUnit { set { unit = value; } }
     public TMPro.TMP_Text m_Text;
 
     public Slider hpSlider;
+    public Image sliderImage;
+
+    public void SetFollowUnit(Unit_AI _unit)
+    {
+        unit = _unit;
+        followType = FollowType.Camera;
+        followOffset = new Vector3(0f, 1f, 0f);
+    }
 
     public void SetHP(float _current, float _max)
     {

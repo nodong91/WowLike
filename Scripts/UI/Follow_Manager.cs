@@ -18,9 +18,18 @@ public class Follow_Manager : MonoBehaviour
         }
     }
 
-    public void RemoveFollowUI(GameObject _object)
+    public Follow_HP RemoveFollowHP(GameObject _object)
     {
+        Follow_HP returnTarget = dictFollow[_object] as Follow_HP;
         dictFollow.Remove(_object);
+        return returnTarget;
+    }
+
+    public Follow_Target RemoveFollowUI(GameObject _object)
+    {
+        Follow_Target returnTarget = dictFollow[_object];
+        dictFollow.Remove(_object);
+        return returnTarget;
     }
 
     public void ShakingUI(GameObject _object)
@@ -51,7 +60,6 @@ public class Follow_Manager : MonoBehaviour
     {
         while (dictFollow.Count > 0)
         {
-
             foreach (var child in _follows)
             {
                 Transform target = child.Key.transform;
