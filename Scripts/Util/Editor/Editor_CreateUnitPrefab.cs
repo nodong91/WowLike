@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 namespace P01.Editor
@@ -21,6 +20,11 @@ namespace P01.Editor
         [SerializeField] private List<Object> ResourceList = new List<Object>();
         Vector2 scrollPos;
         string unitID;
+        List<Material> materials = new List<Material>();
+        List<ObjectSetting> objectSetting = new List<ObjectSetting>();
+        List<AnimationClip> animationClips = new List<AnimationClip>();
+        UnityEditor.Animations.AnimatorController animator;
+
         private void OnEnable()
         {
             targetObject = new SerializedObject(this);
@@ -34,10 +38,10 @@ namespace P01.Editor
                 fontSize = 13,
                 normal = { textColor = Color.yellow },
                 alignment = TextAnchor.MiddleCenter
-            }; 
+            };
 
             GUILayout.BeginHorizontal("box");
-            unitID = EditorGUILayout.TextField("Unit ID",unitID, buttonStyle);
+            unitID = EditorGUILayout.TextField("Unit ID", unitID, buttonStyle);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal("box");
@@ -65,12 +69,18 @@ namespace P01.Editor
                 alignment = TextAnchor.MiddleLeft
             };
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
-            if(gameObjects?.Count > 0)
+            if (objectSetting?.Count > 0)
             {
                 EditorGUILayout.LabelField("FBX", labelStyle);
-                for (int i = 0; i < gameObjects.Count; i++)
+                for (int i = 0; i < objectSetting.Count; i++)
                 {
-                    EditorGUILayout.ObjectField("", gameObjects[i], typeof(Object), true);
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.ObjectField("", objectSetting[i].unitObject, typeof(Object), true);
+                    if (GUILayout.Button("Remove", buttonStyle))
+                    {
+                        objectSetting.Remove(objectSetting[i]);
+                    }
+                    EditorGUILayout.EndHorizontal();
                 }
             }
             if (materials?.Count > 0)
@@ -91,9 +101,9 @@ namespace P01.Editor
             }
             EditorGUILayout.EndScrollView();
 
-            if (GUILayout.Button("폴더", buttonStyle))
+            if (GUILayout.Button("저장", buttonStyle))
             {
-
+                Test();
             }
         }
 
@@ -113,16 +123,13 @@ namespace P01.Editor
             }
 
             materials = new List<Material>();
-            gameObjects = new List<GameObject>();
+            objectSetting = new List<ObjectSetting>();
             animationClips = new List<AnimationClip>();
             SetAnimationClip(paths);
             SetMaterial(paths);
             SetPrefab(paths);
         }
-        List<Material> materials = new List<Material>();
-        List<GameObject> gameObjects = new List<GameObject>();
-        List<AnimationClip> animationClips = new List<AnimationClip>();
-        UnityEditor.Animations.AnimatorController animator;
+
         void SetAnimationClip(string[] _paths)
         {
             string[] assets = AssetDatabase.FindAssets("t: AnimatorController", _paths);
@@ -170,14 +177,32 @@ namespace P01.Editor
                 GameObject temp = data as GameObject;
                 if (temp != null)
                 {
-                    gameObjects.Add(temp);
+                    ObjectSetting setting = new ObjectSetting
+                    {
+                        unitObject = temp,
+                        unitPath = assetPath,
+                    };
+                    objectSetting.Add(setting);
 
-                    GameObject prefab = InstancePrefab(temp, assetPath);
-                    Data_Animation animationData = InstanceAnimationData(temp, assetPath);
-                    SetUnit(prefab, animationData);
-
-                    Selection.activeGameObject = prefab;
                 }
+            }
+        }
+        public class ObjectSetting
+        {
+            public GameObject unitObject;
+            public string unitPath;
+        }
+
+        void Test()
+        {
+            for (int i = 0; i < objectSetting.Count; i++)
+            {
+                GameObject temp = objectSetting[i].unitObject;
+                GameObject prefab = InstancePrefab(temp, objectSetting[i].unitPath);
+                Data_Animation animationData = InstanceAnimationData(temp, objectSetting[i].unitPath);
+                SetUnit(prefab, animationData);
+
+                Selection.activeGameObject = prefab;
             }
         }
 
