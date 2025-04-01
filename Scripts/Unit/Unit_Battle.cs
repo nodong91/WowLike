@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static Data_Manager.UnitStruct;
-using static Unit_AI;
 
 public class Unit_Battle : MonoBehaviour
 {
@@ -19,8 +17,7 @@ public class Unit_Battle : MonoBehaviour
     Map_Generator instMapGenerator;
     public float timeScale = 1f;
 
-    [SerializeField] private List<Unit_AI> players = new List<Unit_AI>();
-    [SerializeField] private List<Unit_AI> monsters = new List<Unit_AI>();
+    private List<Unit_AI> players, monsters;
 
     public List<Unit_AI> PlayerList()
     {
@@ -34,11 +31,13 @@ public class Unit_Battle : MonoBehaviour
     private Dictionary<GameObject, Unit_AI> unitDict = new Dictionary<GameObject, Unit_AI>();
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return unitDict; } }
 
-    public List<Node> randomNodes;
+    private List<Node> randomNodes;// 매복
     public Data_Spawn spawnData;
 
     public GameObject asdfadsf;
-    [SerializeField] Node selectedNode;
+    public Unit_AI unitBase;
+    //[SerializeField] 
+    Node selectedNode;
     UI_InvenSlot dragSlot;
 
     Coroutine cameraInput;
@@ -63,8 +62,8 @@ public class Unit_Battle : MonoBehaviour
         instUIBattle.deleBattleStart = StartBattle;
         instUIBattle.AddFollow(asdfadsf);// 임시 테스트
 
-        players.Clear();
-        monsters.Clear();
+        players = new List<Unit_AI>();
+        monsters = new List<Unit_AI>();
         switch (spawnType)
         {
             case SpawnType.Normal:
@@ -84,9 +83,14 @@ public class Unit_Battle : MonoBehaviour
             //StartBattle();
             for (int i = 0; i < monsters.Count; i++)
             {
-                monsters[i].StateMachine(State.Damage);
-                monsters[i].StartBattle();
-                //monsters[i].TakeDamage(monsters[i], monsters[i].transform.position, 0f,new Data_Manager.SkillStruct());
+                //monsters[i].StateMachine(Unit_AI.State.Damage);
+                //monsters[i].StartBattle();
+                Data_Manager.SkillStruct newStruct = new Data_Manager.SkillStruct
+                {
+                    aggro = 0,
+                    ccType = Data_Manager.SkillStruct.CCType.Normal,
+                };
+                monsters[i].TakeDamage(monsters[i], monsters[i].transform.position, 0f, newStruct);
             }
         }
 
@@ -195,7 +199,7 @@ public class Unit_Battle : MonoBehaviour
         {
             case "Player":
                 inst.deadUnit += DeadPlayer;// 죽음 카운트
-                teamColor= Color.red;
+                teamColor = Color.red;
                 break;
             case "Monster":
                 inst.deadUnit += DeadMonster;
@@ -210,7 +214,6 @@ public class Unit_Battle : MonoBehaviour
         return inst;
     }
 
-    public Unit_AI unitBase;
     Unit_AI InstnaceUnit(Node _node, Unit_Animation _unit)
     {
         Unit_AI inst = Instantiate(unitBase, transform);
@@ -235,7 +238,7 @@ public class Unit_Battle : MonoBehaviour
     {
         foreach (var child in unitDict)
         {
-            child.Value.StartBattle();
+            child.Value.StateMachine(Unit_AI.State.Idle);
         }
         instMapGenerator.OnTileCanvas(false);// 맵아래 캔버스 제거
         Debug.LogWarning("Battle Start");
@@ -256,8 +259,7 @@ public class Unit_Battle : MonoBehaviour
             return;
 
         dragSlot = instUIBattle.GetInventory.GetDragSlot;
-        bool moveUnit = (dragSlot != null && dragSlot.itemType == UI_InvenSlot.ItemType.Unit)
-            || (selectedNode.onObject != null);
+        bool moveUnit = (dragSlot?.itemType == UI_InvenSlot.ItemType.Unit) || (selectedNode?.onObject != null);
 
         Node node = RayCasting(true);
         if (node != null)

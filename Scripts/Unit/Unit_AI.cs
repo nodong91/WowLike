@@ -136,8 +136,6 @@ public class Unit_AI : MonoBehaviour
         globalCooling = false;
         escapeCooling = false;
         aggroDict.Clear();
-
-        StateMachine(State.Idle);
     }
 
     void Rebirth()
@@ -157,9 +155,10 @@ public class Unit_AI : MonoBehaviour
     {
         state = _state;
         agent.avoidancePriority = (int)_state;
+        StartBattle();
     }
 
-    public void StartBattle()
+    void StartBattle()
     {
         if (stateMachine != null)
             StopCoroutine(stateMachine);
@@ -476,7 +475,7 @@ public class Unit_AI : MonoBehaviour
         switch (_skillStruct.ccType)
         {
             case Data_Manager.SkillStruct.CCType.Normal:
-                takeDamage = StartCoroutine(CCDamage(_center, 3f));
+                //takeDamage = StartCoroutine(CCDamage(_center, 0f));
                 break;
 
             case Data_Manager.SkillStruct.CCType.KnockBack:
@@ -489,25 +488,26 @@ public class Unit_AI : MonoBehaviour
 
     IEnumerator CCDamage(Vector3 _from, float _knockBack)
     {
-        if (_knockBack > 0 && skillCastring == true)// 캐스팅 중이고 밀리면 취소
+        if (_knockBack > 0)
         {
-            skillCastring = false;
-        }
+            if (skillCastring == true)// 캐스팅 중이고 밀리면 취소
+                skillCastring = false;
 
-        Vector3 targetPoint = GetBackPoint(_from, 0f, _knockBack);
-        if (float.IsInfinity(targetPoint.x))
-            targetPoint = transform.position;
+            Vector3 targetPoint = GetBackPoint(_from, 0f, _knockBack);
+            if (float.IsInfinity(targetPoint.x))
+                targetPoint = transform.position;
 
-        float normalize = 0f;
-        while (normalize < 1f)
-        {
-            normalize += Time.deltaTime * 3f;
-            SetRanderer_Damage(normalize);
+            float normalize = 0f;
+            while (normalize < 1f)
+            {
+                normalize += Time.deltaTime * 3f;
+                SetRanderer_Damage(normalize);
 
-            Vector3 position = Vector3.Lerp(transform.position, targetPoint, normalize);
-            transform.position = position;
-            Destination(position);
-            yield return null;
+                Vector3 position = Vector3.Lerp(transform.position, targetPoint, normalize);
+                transform.position = position;
+                Destination(position);
+                yield return null;
+            }
         }
     }
 

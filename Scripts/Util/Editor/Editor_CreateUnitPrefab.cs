@@ -33,6 +33,13 @@ namespace P01.Editor
 
         void OnGUI()
         {
+            //GUIStyle fontStyle = new("box")
+            //{
+            //    fontSize = 13,
+            //    normal = { textColor = Color.cyan },
+            //    alignment = TextAnchor.MiddleCenter
+            //};
+
             GUIStyle buttonStyle = new(GUI.skin.button)
             {
                 fontSize = 13,
@@ -41,7 +48,7 @@ namespace P01.Editor
             };
 
             GUILayout.BeginHorizontal("box");
-            unitID = EditorGUILayout.TextField("Unit ID", unitID, buttonStyle);
+            unitID = EditorGUILayout.TextField("Unit ID", unitID);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal("box");

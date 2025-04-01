@@ -1,67 +1,45 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using static Unit_Animation;
-#if UNITY_EDITOR
-[CustomEditor(typeof(Data_Animation))]
-public class Data_Animation_Editor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        GUIStyle fontStyle = new GUIStyle(GUI.skin.button);
-        fontStyle.fontSize = 15;
-        fontStyle.normal.textColor = Color.yellow;
 
-        Data_Animation Inspector = target as Data_Animation;
-        if (GUILayout.Button("UpdateData", fontStyle, GUILayout.Height(30f)))
-        {
-            Inspector.UpdateData();
-            EditorUtility.SetDirty(Inspector);
-        }
-        GUILayout.Space(10f);
-        base.OnInspectorGUI();
-    }
-}
-#endif
-
-[CreateAssetMenu(fileName = "Data_Animation", menuName = "Scriptable Objects/Data_Animation")]
+//[CreateAssetMenu(fileName = "Data_Animation", menuName = "Scriptable Objects/Data_Animation")]
 public class Data_Animation : ScriptableObject
 {
 
 #if UNITY_EDITOR
-    public List<Object> resourceFolder = new List<Object>();
+    //public List<Object> resourceFolder = new List<Object>();
 
-    public void UpdateData()
-    {
-        SetDataEditor();
-    }
+    //public void UpdateData()
+    //{
+    //    SetDataEditor();
+    //}
 
-    public void SetDataEditor()
-    {
-        if (resourceFolder.Count == 0)
-        {
-            Debug.LogError("애니메이션 폴더 필요");
-            return;
-        }
+    //public void SetDataEditor()
+    //{
+    //    if (resourceFolder.Count == 0)
+    //    {
+    //        Debug.LogError("애니메이션 폴더 필요");
+    //        return;
+    //    }
 
-        List<AnimationClip> animationClips = new List<AnimationClip>();
-        string[] paths = new string[resourceFolder.Count];
+    //    List<AnimationClip> animationClips = new List<AnimationClip>();
+    //    string[] paths = new string[resourceFolder.Count];
 
-        for (int i = 0; i < resourceFolder.Count; i++)
-        {
-            paths[i] = AssetDatabase.GetAssetPath(resourceFolder[i]);
-            Debug.LogWarning("File paths : " + paths[i]);
-        }
-        // 애니메이션 클립 추출
-        var assets = AssetDatabase.FindAssets("t: AnimationClip", paths);
+    //    for (int i = 0; i < resourceFolder.Count; i++)
+    //    {
+    //        paths[i] = AssetDatabase.GetAssetPath(resourceFolder[i]);
+    //        Debug.LogWarning("File paths : " + paths[i]);
+    //    }
+    //    // 애니메이션 클립 추출
+    //    var assets = AssetDatabase.FindAssets("t: AnimationClip", paths);
 
-        for (int i = 0; i < assets.Length; i++)
-        {
-            var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(AnimationClip));
-            animationClips.Add(data as AnimationClip);
-            //Debug.LogWarning("assetPath : " + data);
-        }
-    }
+    //    for (int i = 0; i < assets.Length; i++)
+    //    {
+    //        var data = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(assets[i]), typeof(AnimationClip));
+    //        animationClips.Add(data as AnimationClip);
+    //        //Debug.LogWarning("assetPath : " + data);
+    //    }
+    //}
 
     public void SetAnimationClip(List<AnimationClip> _animationClips)
     {

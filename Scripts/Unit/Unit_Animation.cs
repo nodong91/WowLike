@@ -78,10 +78,7 @@ public class Unit_Animation : MonoBehaviour
             clipOverrides["Action" + actionState] = aniClip;
             animatorOverrideController.ApplyOverrides(clipOverrides);
 
-            //animator.Play("S_Action" + actionState, -1, 0);// 애니메이션 스테이트
-            //animator.SetBool("B_Hold", true);// B_Hold 파라메타 필요
-
-            Debug.LogWarning($"{aniClip.name}    {"Action" + actionState}       {"S_Action" + actionState}");
+            Debug.LogWarning($"{aniClip.name} : {"Action" + actionState}, {"S_Action" + actionState}");
             switch (animationDatas[_index].playType)
             {
                 case Data_Animation.AniClipClass.PlayType.Trigger:
