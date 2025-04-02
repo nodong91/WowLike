@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +16,13 @@ public class UI_Battle : MonoBehaviour
     public UI_Inventory inventory;
     UI_Inventory instInventory;
     public UI_Inventory GetInventory { get { return instInventory; } }
+
+    public Follow_Target followTarget;
+    public Follow_HP followHP;
+    public RectTransform followParent;
+    public Follow_Manager followManager;
+    private Queue<Follow_HP> followHPQueue = new Queue<Follow_HP>();
+    private Queue<Follow_Target> followQueue = new Queue<Follow_Target>();
 
     public delegate void DeleBattleStart();
     public DeleBattleStart deleBattleStart;
@@ -86,11 +92,6 @@ public class UI_Battle : MonoBehaviour
         instInventory.CloseAllCanvas();
     }
 
-    public Follow_Target followTarget;
-    public Follow_HP followHP;
-    public RectTransform followParent;
-    public Follow_Manager followManager;
-
     public Follow_HP AddFollow_Unit(Unit_AI _unit)
     {
         Follow_HP instHP = TryFollowHPTarget();
@@ -100,7 +101,7 @@ public class UI_Battle : MonoBehaviour
 
         return instHP;
     }
-    Queue<Follow_HP> followHPQueue = new Queue<Follow_HP>();
+
     Follow_HP TryFollowHPTarget()
     {
         if (followHPQueue.Count > 0)
@@ -128,7 +129,7 @@ public class UI_Battle : MonoBehaviour
         followManager = GetComponent<Follow_Manager>();
         followManager.AddFollowUI(_target.gameObject, instTarget);
     }
-    Queue<Follow_Target> followQueue = new Queue<Follow_Target>();
+
     Follow_Target TryFollowTarget()
     {
         if (followQueue.Count > 0)
@@ -151,5 +152,47 @@ public class UI_Battle : MonoBehaviour
     public void ShakingUI(GameObject _target)
     {
         followManager.ShakingUI(_target);
+    }
+
+    public TMPro.TMP_Text damageText;
+    Queue<TMPro.TMP_Text> instDamage = new Queue<TMPro.TMP_Text>();
+    public AnimationCurve textAction;
+
+    public void DamageText(Vector3 _point,string _damage)
+    {
+        TMPro.TMP_Text instText = TryDamageText();
+        instText.text = _damage;
+
+        StartCoroutine(DamageTextAction(instText, _point));
+    }
+
+    IEnumerator DamageTextAction(TMPro.TMP_Text _text, Vector3 _point)
+    {
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_point);
+        Vector3 targetPosition = UICamera.ScreenToWorldPoint(screenPosition);
+        float unitSize = 0.5f;
+        Vector3 randomPosition = (Random.insideUnitSphere * unitSize) + targetPosition;
+        _text.color = Color.red;
+        float normailze = 0f;
+        while (normailze < 1f)
+        {
+            normailze += Time.deltaTime;
+            float curve = textAction.Evaluate(normailze);
+            _text.transform.position = Vector3.Lerp(randomPosition + Vector3.up, randomPosition, curve);
+            //_text.transform.localScale = Vector3.one + Vector3.one * scale;
+            _text.alpha = curve;
+            yield return null;
+        }
+        instDamage.Enqueue(_text);
+    }
+
+    TMPro.TMP_Text TryDamageText()
+    {
+        if (instDamage.Count > 0)
+        {
+            return instDamage.Dequeue();
+        }
+        TMPro.TMP_Text inst = Instantiate(damageText, cameraCanvas);
+        return inst;
     }
 }

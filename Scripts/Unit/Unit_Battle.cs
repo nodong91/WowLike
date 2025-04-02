@@ -80,18 +80,17 @@ public class Unit_Battle : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            //StartBattle();
-            for (int i = 0; i < monsters.Count; i++)
-            {
-                //monsters[i].StateMachine(Unit_AI.State.Damage);
-                //monsters[i].StartBattle();
-                Data_Manager.SkillStruct newStruct = new Data_Manager.SkillStruct
-                {
-                    aggro = 0,
-                    ccType = Data_Manager.SkillStruct.CCType.Normal,
-                };
-                monsters[i].TakeDamage(monsters[i], monsters[i].transform.position, 0f, newStruct);
-            }
+            // 테스트!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //for (int i = 0; i < monsters.Count; i++)
+            //{
+            //    Data_Manager.SkillStruct newStruct = new Data_Manager.SkillStruct
+            //    {
+            //        aggro = 0,
+            //        ccType = Data_Manager.SkillStruct.CCType.Normal,
+            //    };
+            //    monsters[i].TakeDamage(monsters[i], monsters[i].transform.position, 0f, newStruct);
+            //}
+            instUIBattle.DamageText(monsters[0].transform.position, "oijwefo");
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -210,6 +209,7 @@ public class Unit_Battle : MonoBehaviour
         Follow_HP hp = instUIBattle.AddFollow_Unit(inst);
         hp.sliderImage.color = teamColor;
         inst.deleUpdateHP = hp.SetHP;// 체력 바
+        inst.deleDamage = instUIBattle.DamageText;// 데미지
         inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
         return inst;
     }
@@ -238,7 +238,7 @@ public class Unit_Battle : MonoBehaviour
     {
         foreach (var child in unitDict)
         {
-            child.Value.StateMachine(Unit_AI.State.Idle);
+            child.Value.StateMachineTest(Unit_AI.State.Idle);
         }
         instMapGenerator.OnTileCanvas(false);// 맵아래 캔버스 제거
         Debug.LogWarning("Battle Start");

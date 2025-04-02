@@ -101,7 +101,7 @@ public class Skill_Set : MonoBehaviour
             Unit_AI target = child.Value;
             if (VisibleTarget(_lastProjcetile, target) == true)
             {
-                //Debug.LogWarning($"Hit Unit : {target.name}");
+                //Debug.LogError($"Hit Unit : {target.name}");
                 float damage = fromUnit.GetDamage;
                 target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);
             }

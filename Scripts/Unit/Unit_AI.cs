@@ -20,8 +20,7 @@ public class Unit_AI : MonoBehaviour
     Data_Manager.UnitStruct.UnitAttributes unitAttributes;
 
     public delegate List<Unit_AI> DeleUnitList();
-    public DeleUnitList playerList;
-    public DeleUnitList monsterList;
+    public DeleUnitList playerList, monsterList;
 
     public Unit_Animation unitAnimation;
 
@@ -75,6 +74,12 @@ public class Unit_AI : MonoBehaviour
     const float globalTime = 1f;
     public float GetUnitSize { get { return unitStruct.unitSize; } }
     public float healthPoint = 10f;
+
+    public delegate void DeleUpdateHP(float _current, float _max);
+    public DeleUpdateHP deleUpdateHP;
+    public delegate void DeleDamage(Vector3 _point, string _damage);
+    public DeleDamage deleDamage;
+
     public float GetDamage
     {
         get
@@ -144,141 +149,109 @@ public class Unit_AI : MonoBehaviour
         StartCoroutine(DeadActing());
     }
 
-    public void CommendMoveing(Vector3 _point)
-    {
-        target = null;
-        StateMachine(State.None);
-        Destination(_point);
-    }
+    //public void CommendMoveing(Vector3 _point)
+    //{
+    //    target = null;
+    //    StateMachine(State.None);
+    //    Destination(_point);
+    //}
 
     public void StateMachine(State _state)
     {
         state = _state;
         agent.avoidancePriority = (int)_state;
-        StartBattle();
-    }
 
-    void StartBattle()
-    {
         if (stateMachine != null)
             StopCoroutine(stateMachine);
-        stateMachine = StartCoroutine(StateMachine());
-    }
 
-    IEnumerator StateMachine()
-    {
-        while (state != State.Dead)
+        switch (state)
         {
-            switch (state)
-            {
-                case State.None:
+            case State.None:
 
-                    break;
+                break;
 
-                case State.Idle:
-                    IdleState();
-                    break;
+            case State.Idle:
+                stateMachine = StartCoroutine(IdleState());
+                break;
 
-                case State.Move:// 공격할게 없을 때 배회
-                    MoveState();
-                    float randomTime = Random.Range(1f, 3f);
-                    yield return new WaitForSeconds(randomTime);
-                    if (state == State.Move)
-                    {
-                        StateMachine(State.Idle);
-                    }
-                    break;
+            case State.Move:// 공격할게 없을 때 배회
+                stateMachine = StartCoroutine(MoveState());
+                break;
 
-                case State.Chase:
-                    ChaseState();
-                    break;
+            case State.Chase:
+                stateMachine = StartCoroutine(ChaseState());
+                break;
 
-                case State.Escape:
-                    EscapeState();
-                    break;
+            case State.Escape:
+                stateMachine = StartCoroutine(EscapeState());
+                break;
 
-                case State.Attack:
-                    SkillState();
-                    float castingTime = currentSkill.skillStruct.castingTime;
-                    yield return StartCoroutine(SkillCasting(castingTime));
-                    // 글로벌 쿨링 시작
-                    StartCoroutine(GlobalCooling());// 글로벌 쿨타임? 
-                    if (state == State.Attack)
-                    {
-                        StateMachine(State.Idle);
-                    }
-                    break;
+            case State.Attack:
+                Debug.LogError($"Hit Unit : adsffffffffffffffffffffffffffffffffffffffffffffaWef");
+                stateMachine = StartCoroutine(AttackState());
+                break;
 
-                case State.Damage:
-                    DamageState();
-                    yield return new WaitForSeconds(3f / 1f);// 애니메이션 길이?
-                    if (state == State.Damage)
-                    {
-                        StateMachine(State.Idle);
-                    }
-                    break;
+            case State.Damage:
+                stateMachine = StartCoroutine(DamageState());
+                break;
 
-                case State.Dead:
-
-                    break;
-            }
-            yield return null;
-            if (target != null)
-            {
-                transform.LookAt(target.transform.position);
-            }
+            case State.Dead:
+                DeadState();
+                break;
         }
-        DeadState();
     }
 
-    void IdleState()
+    IEnumerator IdleState()
     {
-        if (target == null || target.state == State.Dead) // 타겟이 없는 경우
+        while (true)
         {
-            float dist = float.MaxValue;
-            List<Unit_AI> units = gameObject.layer == LayerMask.NameToLayer("Player") ? monsterList() : playerList();
-            for (int i = 0; i < units.Count; i++)
+            if (target == null || target.state == State.Dead) // 타겟이 없는 경우
             {
-                Unit_AI unit = units[i];
-                distance = (unit.transform.position - transform.position).magnitude;
-                if (dist > distance)
+                float dist = float.MaxValue;
+                List<Unit_AI> units = gameObject.layer == LayerMask.NameToLayer("Player") ? monsterList() : playerList();
+                for (int i = 0; i < units.Count; i++)
                 {
-                    dist = distance;
-                    target = unit;
+                    Unit_AI unit = units[i];
+                    distance = (unit.transform.position - transform.position).magnitude;
+                    if (dist > distance)
+                    {
+                        dist = distance;
+                        target = unit;
+                    }
                 }
             }
-        }
-        else if (readySkills?.Count > 0)// 준비된 스킬이 있다면
-        {
-            currentSkill = SelectSkill();// 스킬 선택
-
-            distance = (target.transform.position - transform.position).magnitude;
-
-            float unitAllSize = target.GetUnitSize + GetUnitSize;
-            if (distance + 0.1f < GetSkillRange.x + unitAllSize && escapeCooling == false)
+            else if (readySkills?.Count > 0)// 준비된 스킬이 있다면
             {
-                StateMachine(State.Escape);
-                // 가까워 지면 도망
+                currentSkill = SelectSkill();// 스킬 선택
+                distance = (target.transform.position - transform.position).magnitude;
+                float unitAllSize = target.GetUnitSize + GetUnitSize;
+                if (distance + 0.1f < GetSkillRange.x + unitAllSize && escapeCooling == false)
+                {
+                    // 가까워 지면 도망
+                    float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
+                    targetPosition = GetBackPoint(target.transform.position, randomIndex);
+                    Destination(targetPosition);
+
+                    StartCoroutine(EscapeCooling());// 계속 도망만 치면 한대도 못때림
+                    StateMachine(State.Escape);
+                }
+                else
+                {
+                    Debug.LogError($"Hit Unit : adsffffffffffffffffffffffffffffffffffffffffffffaWef");
+                    // 추적
+                    StateMachine(State.Chase);
+                }
+            }
+            else// 준비된 스킬이 없음
+            {
+                StateMachine(State.Move);// 혹은 배회 성향에 따라??
+                                         //StateMachine(State.Escape);
+                                         // 스킬이 없어서 도망
                 float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
                 targetPosition = GetBackPoint(target.transform.position, randomIndex);
                 Destination(targetPosition);
-
-                StartCoroutine(EscapeCooling());// 계속 도망만 치면 한대도 못때림
             }
-            else
-            {
-                // 추적
-                StateMachine(State.Chase);
-            }
-        }
-        else// 준비된 스킬이 없음
-        {
-            StateMachine(State.Move);// 혹은 배회 성향에 따라??
-            //StateMachine(State.Escape);
-            // 스킬이 없어서 도망
-            float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-            targetPosition = GetBackPoint(target.transform.position, randomIndex);
-            Destination(targetPosition);
+            yield return null;
         }
     }
 
@@ -287,45 +260,60 @@ public class Unit_AI : MonoBehaviour
         return readySkills[Random.Range(0, readySkills.Count)];
     }
 
-    void ChaseState()
+    IEnumerator ChaseState()
     {
-        // 멀면 추적
-        targetPosition = GetFrontPoint(target.transform.position, 0f);
-        Destination(targetPosition);
-
-        //float remainingDistance = agent.remainingDistance;
-        distance = (target.transform.position - transform.position).magnitude;
-        float unitAllSize = target.GetUnitSize + GetUnitSize;
-        if (distance < GetSkillRange.y + unitAllSize + 0.1f)
+        while (true)
         {
-            if (globalCooling == false)
+            // 멀면 추적
+            targetPosition = GetFrontPoint(target.transform.position, 0f);
+            Destination(targetPosition);
+            yield return null;
+
+            //float remainingDistance = agent.remainingDistance;
+            distance = (target.transform.position - transform.position).magnitude;
+            float unitAllSize = target.GetUnitSize + GetUnitSize;
+            if (distance < GetSkillRange.y + unitAllSize + 0.1f)// 사정거리 안으로 들어오면
             {
-                StateMachine(State.Attack);
-            }
-            else
-            {
-                StateMachine(State.Move);
+                if (globalCooling == false)
+                {
+                    StateMachine(State.Attack);
+                }
+                else
+                {
+                    //StateMachine(State.Move);
+                }
             }
         }
     }
 
-    void MoveState()// 배회
+    IEnumerator MoveState()// 배회
     {
         float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
         targetPosition = GetFrontPoint(target.transform.position, randomIndex);
         Destination(targetPosition);
-    }
 
-    void EscapeState()
-    {
-        float remainingDistance = agent.remainingDistance;
-        if (remainingDistance == 0f)
+        float randomTime = Random.Range(1f, 3f);
+        yield return new WaitForSeconds(randomTime);
+        if (state == State.Move)
         {
             StateMachine(State.Idle);
         }
     }
 
-    //public Skill_Set skillSet;
+    IEnumerator EscapeState()
+    {
+        while (true)
+        {
+            float remainingDistance = agent.remainingDistance;
+            Debug.LogWarning("remainingDistance : " + remainingDistance);
+            if (remainingDistance == 0f)
+            {
+                StateMachine(State.Idle);
+            }
+            yield return null;
+        }
+    }
+
     Dictionary<string, Skill_Set> dictSkillSlot = new Dictionary<string, Skill_Set>();
     bool skillCastring;
     public Image image;
@@ -343,23 +331,22 @@ public class Unit_AI : MonoBehaviour
             if (casting > _castingTime)
             {
                 skillCastring = false;
-
-                distance = (target.transform.position - transform.position).magnitude;
-                float unitAllSize = target.GetUnitSize + GetUnitSize;
-                // 거리체크 (스킬 거리의 반정도는 멀어져도 OK)
-                if (distance < GetSkillRange.y + (GetSkillRange.y * 0.5f) + unitAllSize && state != State.Dead)
-                {
-                    ActionSkill();
-                }
             }
             yield return null;
         }
         image.CrossFadeAlpha(0f, 0.5f, false);
     }
 
-    void SkillState()
+    IEnumerator AttackState()
     {
-        //StartCoroutine(SkillCasting(currentSkill.skillStruct.castingTime));
+        float castingTime = currentSkill.skillStruct.castingTime;
+        yield return StartCoroutine(SkillCasting(castingTime));
+        // 글로벌 쿨링 시작
+        StartCoroutine(GlobalCooling());// 글로벌 쿨타임? 
+        if (state == State.Attack)
+        {
+            StateMachine(State.Idle);
+        }
     }
 
     void ActionSkill()
@@ -391,9 +378,15 @@ public class Unit_AI : MonoBehaviour
         readySkills.Add(_skillStruct);
     }
 
-    void DamageState()
+    IEnumerator DamageState()
     {
         unitAnimation.PlayAnimation(5);// 애니메이션
+
+        yield return new WaitForSeconds(3f / 1f);// 애니메이션 길이?
+        if (state == State.Damage)
+        {
+            StateMachine(State.Idle);
+        }
     }
 
     void DeadState()
@@ -451,13 +444,13 @@ public class Unit_AI : MonoBehaviour
         return Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg;
     }
 
-    public delegate void DeleUpdateHP(float _current, float _max);
-    public DeleUpdateHP deleUpdateHP;
     public void TakeDamage(Unit_AI _from, Vector3 _center, float _damage, Data_Manager.SkillStruct _skillStruct)
     {
         // _from 때린 유닛
         // _center 맞은 포인트
         Debug.Log($"{_from.gameObject.name} : {_damage}");
+        Vector3 hitPoint = transform.position;
+        deleDamage?.Invoke(hitPoint, _damage.ToString());// 데미지 폰트
         healthPoint -= _damage;
         deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health);
         if (healthPoint <= 0)
@@ -466,22 +459,22 @@ public class Unit_AI : MonoBehaviour
             return;
         }
 
-        StateMachine(State.Damage);
-        float aggro = _damage * _skillStruct.aggro;
-        target = AddAggro(_from, aggro);// 어그로 추가 후 타겟 변경
+        //StateMachine(State.Damage);
+        //float aggro = _damage * _skillStruct.aggro;
+        //target = AddAggro(_from, aggro);// 어그로 추가 후 타겟 변경
 
-        if (takeDamage != null)
-            StopCoroutine(takeDamage);
-        switch (_skillStruct.ccType)
-        {
-            case Data_Manager.SkillStruct.CCType.Normal:
-                //takeDamage = StartCoroutine(CCDamage(_center, 0f));
-                break;
+        //if (takeDamage != null)
+        //    StopCoroutine(takeDamage);
+        //switch (_skillStruct.ccType)
+        //{
+        //    case Data_Manager.SkillStruct.CCType.Normal:
+        //        //takeDamage = StartCoroutine(CCDamage(_center, 0f));
+        //        break;
 
-            case Data_Manager.SkillStruct.CCType.KnockBack:
-                takeDamage = StartCoroutine(CCDamage(_center, 1f));
-                break;
-        }
+        //    case Data_Manager.SkillStruct.CCType.KnockBack:
+        //        takeDamage = StartCoroutine(CCDamage(_center, 1f));
+        //        break;
+        //}
 
 
     }
@@ -761,4 +754,214 @@ public class Unit_AI : MonoBehaviour
         Handles.Label(transform.position, hp, fontStyle);
     }
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void StateMachineTest(State _state)
+    {
+        state = _state;
+        agent.avoidancePriority = (int)_state;
+        switch (state)
+        {
+            case State.None:
+
+                break;
+
+            case State.Idle:
+                State_Idle();
+                break;
+
+            case State.Move:// 공격할게 없을 때 배회
+
+                break;
+
+            case State.Chase:
+
+                break;
+
+            case State.Escape:
+
+                break;
+
+            case State.Attack:
+
+                break;
+
+            case State.Damage:
+
+                break;
+
+            case State.Dead:
+
+                break;
+        }
+    }
+
+    void State_Idle()
+    {
+        StartCoroutine(FindTarget());
+    }
+
+    IEnumerator FindTarget()
+    {
+        List<Unit_AI> units = gameObject.layer == LayerMask.NameToLayer("Player") ? monsterList() : playerList();
+        while (target == null || target.state == State.Dead)
+        {
+            float dist = float.MaxValue;
+            for (int i = 0; i < units.Count; i++)
+            {
+                // 가까운 오브젝트 찾기
+                distance = (units[i].transform.position - transform.position).magnitude;
+                if (dist > distance)
+                {
+                    dist = distance;
+                    target = units[i];
+                }
+            }
+            yield return null;
+        }
+        FindSkill();
+    }
+
+    void FindSkill()
+    {
+        if (readySkills?.Count > 0)// 준비된 스킬이 있다면
+        {
+            currentSkill = SelectSkill();// 스킬 선택
+            State_Move();
+        }
+    }
+
+    void State_Move()
+    {
+        if (testtest != null)
+            StopCoroutine(testtest);
+        testtest = StartCoroutine(State_Moving());
+    }
+    Coroutine testtest;
+    IEnumerator State_Moving()
+    {
+        targetPosition = GetFrontPoint(target.transform.position, 0f);
+        Destination(targetPosition);
+
+        bool moving = true;
+        while (moving == true)
+        {
+            float remainingDistance = agent.remainingDistance;
+            //Debug.LogWarning("remainingDistance : " + remainingDistance);
+            if (remainingDistance == 0f)
+            {
+                moving = false;
+            }
+            yield return null;
+        }
+        State_Attack();
+    }
+
+    void State_Attack()
+    {
+        Debug.LogWarning("oij");
+        StartCoroutine(State_Attacking());
+    }
+
+    IEnumerator State_Attacking()
+    {
+        float castingTime = currentSkill.skillStruct.castingTime;
+        yield return StartCoroutine(SkillCasting(castingTime));// 캐스팅
+
+        distance = (target.transform.position - transform.position).magnitude;
+        float unitAllSize = target.GetUnitSize + GetUnitSize;
+        // 거리체크 (스킬 거리의 반정도는 멀어져도 OK)
+        if (distance < GetSkillRange.y + (GetSkillRange.y * 0.5f) + unitAllSize && state != State.Dead)
+        {
+            transform.LookAt(target.transform.position);
+            float actionTime = Attacking();
+            yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
+        }
+        State_Idle();
+    }
+
+    float Attacking()
+    {
+        string skillID = currentSkill.skillStruct.ID;
+        if (dictSkillSlot.ContainsKey(skillID) == false)
+        {
+            Data_Manager.SkillStruct skill = Singleton_Data.INSTANCE.Dict_Skill[skillID];
+            Debug.LogWarningFormat(skill.skillSet);
+            Skill_Set slot = Singleton_Data.INSTANCE.Dict_SkillSet[skill.skillSet];
+            Skill_Set inst = Instantiate(slot, transform);
+            inst.gameObject.name = skillID;
+            inst.SetSkillSlot(this, currentSkill.skillStruct);
+            dictSkillSlot[skillID] = inst;
+        }
+        dictSkillSlot[skillID].SetAction(target);
+
+        float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
+        return actionTime;
+    }
 }
