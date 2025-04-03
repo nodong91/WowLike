@@ -67,25 +67,15 @@ public class Map_Generator : Map_Tile
                 allNodes.Add(nodeMap[x, y]);
             }
         }
-
-        for (int i = 0; i < spawnData.playerNodes.Count; i++)
+        // 노드 타입 변경
+        for (int i = 0; i < spawnData.unitNodes.Count; i++)
         {
-            int x = spawnData.playerNodes[i].spawnGrid.x;
-            int y = spawnData.playerNodes[i].spawnGrid.y;
+            int x = spawnData.unitNodes[i].spawnGrid.x;
+            int y = spawnData.unitNodes[i].spawnGrid.y;
             if (x < 0 || y < 0 || x >= worldGrid.x || y >= worldGrid.y)
                 continue;
             Node node = nodeMap[x, y];
-            node.SetNodeType(Node.NodeType.Player);
-        }
-
-        for (int i = 0; i < spawnData.monsterNodes.Count; i++)
-        {
-            int x = spawnData.monsterNodes[i].spawnGrid.x;
-            int y = spawnData.monsterNodes[i].spawnGrid.y;
-            if (x < 0 || y < 0 || x >= worldGrid.x || y >= worldGrid.y)
-                continue;
-            Node node = nodeMap[x, y];
-            node.SetNodeType(Node.NodeType.Monster);
+            node.SetNodeType(spawnData.unitNodes[i].nodeType);
         }
         InstanceNodeTile();
     }
@@ -273,7 +263,7 @@ public class Map_Generator : Map_Tile
         return 14 * distX + 10 * (distY - distX);
     }
 
-    void InstanceNodeTile()
+    void InstanceNodeTile()// 플레이어 생성 가능 위치
     {
         if (instParent != null)
             Destroy(instParent);
@@ -283,9 +273,12 @@ public class Map_Generator : Map_Tile
         instParent.transform.rotation = tileParent.transform.rotation;
         instParent.transform.localScale = Vector3.one;
 
-        List<Data_Spawn.UnitNode> tempList = spawnData.playerNodes;
+        List<Data_Spawn.UnitNode> tempList = spawnData.unitNodes;
         for (int i = 0; i < tempList.Count; i++)
         {
+            if (tempList[i].nodeType != Node.NodeType.Player)// 플레이어 칸이 아니면 넘김
+                continue;
+
             Vector2Int grid = tempList[i].spawnGrid;
             Node node = nodeMap[grid.x, grid.y];
             UnityEngine.UI.Image inst = Instantiate(baseTile, instParent.transform);
@@ -333,9 +326,13 @@ public class Map_Generator : Map_Tile
 
     bool TryAccessibleTiles(Node _node)
     {
-        for (int i = 0; i < spawnData.playerNodes.Count; i++)
+        for (int i = 0; i < spawnData.unitNodes.Count; i++)
         {
-            Vector2Int grid = spawnData.playerNodes[i].spawnGrid;
+            List<Data_Spawn.UnitNode> tempList = spawnData.unitNodes;
+            if (tempList[i].nodeType != Node.NodeType.Player)// 플레이어 칸이 아니면 넘김
+                continue;
+
+            Vector2Int grid = tempList[i].spawnGrid;
             if (_node.grid == grid)
             {
                 return true;

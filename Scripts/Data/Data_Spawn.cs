@@ -10,7 +10,9 @@ public class Data_Spawn : ScriptableObject
     {
         public string unitID;
         public Vector2Int spawnGrid;
+        public Node.NodeType nodeType;
     }
-    public List<UnitNode> playerNodes = new List<UnitNode>();// 플레이어 영역
-    public List<UnitNode> monsterNodes = new List<UnitNode>();// 몬스터 생성 포지션
+    public List<UnitNode> unitNodes = new List<UnitNode>();// 유닛 노드 통합
+                                                           // (플레이어도 바로 생성가능하게)
+                                                           // 매복 당한 경우에 인벤토리 안에서 유닛 랜덤으로 뽑아서 섞어서 생성
 }

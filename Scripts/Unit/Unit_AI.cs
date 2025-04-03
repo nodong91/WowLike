@@ -796,6 +796,11 @@ public class Unit_AI : MonoBehaviour
 
     void State_Idle()
     {
+        stateAction = StartCoroutine(FindTarget());
+    }
+
+    IEnumerator FindTarget()
+    {
         List<Unit_AI> units = gameObject.layer == LayerMask.NameToLayer("Player") ? monsterList() : playerList();
         while (target == null || target.state == State.Dead)
         {
@@ -810,14 +815,23 @@ public class Unit_AI : MonoBehaviour
                     target = units[i];
                 }
             }
+            yield return null;
         }
 
         if (readySkills?.Count > 0)// 준비된 스킬이 있다면
         {
             currentSkill = SelectSkill();// 스킬 선택
+            //float addAngle = 0f;
+            //Vector3 targetPoint = Vector3.zero;
+            //while (targetPoint == Vector3.zero)// 이동할 위치 찾기
+            //{
+            //    targetPoint = GetFrontPoint(target.transform.position, addAngle);
+            //    addAngle += Random.Range(-10, 10f);
+            //    yield return null;
+            //}
+            //targetPosition = targetPoint;
             StateMachineTest(State.Move);
         }
-        //StartCoroutine(FindTarget());
     }
 
     SkillStruct SelectSkill()
@@ -836,7 +850,7 @@ public class Unit_AI : MonoBehaviour
         bool moving = true;
         while (moving == true)
         {
-            targetPosition = GetFrontPoint(target.transform.position, 0f);
+            targetPosition = target.transform.position;
             Destination(targetPosition);
             yield return new WaitForSeconds(deleyTime);
 
@@ -845,16 +859,17 @@ public class Unit_AI : MonoBehaviour
             if (distance < setDistance)
             {
                 moving = false;
+                StateMachineTest(State.Attack);
             }
-            // 목적지에 도착했는데 거리가 멀다
-            distance = (targetPosition - transform.position).magnitude;
-            if (distance < 0.1f)
-            {
-                targetPosition = GetFrontPoint(target.transform.position, 0f);
-                Destination(targetPosition);
-            }
+
+            //// 목적지에 도착했는데 거리가 멀다면 다시 자리 찾기
+            //distance = (targetPosition - transform.position).magnitude;
+            //if (distance < 0.1f)
+            //{
+            //    moving = false;
+            //    StateMachineTest(State.Idle);
+            //}
         }
-        StateMachineTest(State.Attack);
     }
 
     void Destination(Vector3 _point)
@@ -863,29 +878,47 @@ public class Unit_AI : MonoBehaviour
     }
     public delegate bool DeleTryPoint(Vector3 _target, float _unitSize);
     public DeleTryPoint tryPoint;
-
-    Vector3 GetFrontPoint(Vector3 _from, float _random)
+    Vector3 GetFrontPoint(Vector3 _from, float _addAngle)
     {
-        bool checkPoint = false;
-        Vector3 targetPosition = default;
-        float addAngle = 0f;
-        while (checkPoint == false)
-        {
-            float angle = GetAngle(_from, transform.position);
-            float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
-            Vector3 dirFromAngle = DirFromAngle(_random + angle + addAngle, null);
-            targetPosition = target.transform.position + dirFromAngle * setDistance;
+        float angle = GetAngle(_from, transform.position);
+        float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
+        Vector3 dirFromAngle = DirFromAngle(_addAngle + angle, null);
+        Vector3 tempTarget = target.transform.position + dirFromAngle * setDistance;
 
-            NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, setDistance, -1);
-            targetPosition = hit.position;
-            if (tryPoint(targetPosition, GetUnitSize) == true)
-            {
-                checkPoint = true;
-            }
-            addAngle += Random.Range(-10, 10f);
+        NavMesh.SamplePosition(tempTarget, out NavMeshHit hit, setDistance, -1);
+        tempTarget = hit.position;
+        if (tryPoint(tempTarget, GetUnitSize) == true)
+        {
+            return tempTarget;
         }
-        return targetPosition;
+        return Vector3.zero;
     }
+
+    //IEnumerator GetFrontPoint(Vector3 _from, float _random)
+    //{
+    //    bool checkPoint = false;
+    //    Vector3 tempTarget = default;
+    //    float addAngle = 0f;
+    //    while (checkPoint == false)
+    //    {
+    //        float angle = GetAngle(_from, transform.position);
+    //        float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
+    //        Vector3 dirFromAngle = DirFromAngle(_random + angle + addAngle, null);
+    //        tempTarget = target.transform.position + dirFromAngle * setDistance;
+
+    //        NavMesh.SamplePosition(tempTarget, out NavMeshHit hit, setDistance, -1);
+    //        tempTarget = hit.position;
+    //        if (tryPoint(tempTarget, GetUnitSize) == true)
+    //        {
+    //            checkPoint = true;
+    //        }
+    //        yield return null;
+
+    //        addAngle += Random.Range(-10, 10f);
+    //    }
+    //    targetPosition = tempTarget;
+    //    Destination(targetPosition);
+    //}
 
     Vector3 GetBackPoint(Vector3 _from, float _random, float _dist = 0)
     {
@@ -936,8 +969,6 @@ public class Unit_AI : MonoBehaviour
             float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
             yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
         }
-        yield return null;
-
         StateMachineTest(State.Idle);
     }
 
@@ -1056,6 +1087,7 @@ public class Unit_AI : MonoBehaviour
                 break;
         }
     }
+
     IEnumerator SetRenderer(string _renderName, float _speed)
     {
         float targetAmount = state == State.Dead ? 1f : 0f;
@@ -1079,6 +1111,7 @@ public class Unit_AI : MonoBehaviour
 
         StopAllCoroutines();
         StateMachineTest(State.End);
+        Destination(transform.position);
 
         // 승리 포즈
         unitAnimation.PlayAnimation(2);// 애니메이션

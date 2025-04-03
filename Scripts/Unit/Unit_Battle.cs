@@ -140,12 +140,19 @@ public class Unit_Battle : MonoBehaviour
 
     void NormalSpawn()
     {
-        List<Data_Spawn.UnitNode> spawnNode = instMapGenerator.GetSpawnData.monsterNodes;
+        List<Data_Spawn.UnitNode> spawnNode = instMapGenerator.GetSpawnData.unitNodes;
         for (int i = 0; i < spawnNode.Count; i++)
         {
             Vector2Int grid = spawnNode[i].spawnGrid;
             Node node = instMapGenerator.nodeMap[grid.x, grid.y];
-            SpawnMonster(node, spawnNode[i].unitID);
+            if(spawnNode[i].nodeType == Node.NodeType.Player)
+            {
+                SpawnPlayer(node, spawnNode[i].unitID);
+            }
+            else if (spawnNode[i].nodeType == Node.NodeType.Monster)
+            {
+                SpawnMonster(node, spawnNode[i].unitID);
+            }
         }
     }
 
