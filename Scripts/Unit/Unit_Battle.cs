@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Unit_Battle : MonoBehaviour
 {
@@ -13,6 +14,13 @@ public class Unit_Battle : MonoBehaviour
         Ambush
     }
     public SpawnType spawnType = SpawnType.Normal;
+    public enum CurrentMode
+    {
+        None,
+        Game,
+    }
+    public CurrentMode currentMode;
+
     [SerializeField] Map_Generator mapGenerator;
     Map_Generator instMapGenerator;
     public float timeScale = 1f;
@@ -28,8 +36,8 @@ public class Unit_Battle : MonoBehaviour
         return monsters;
     }
 
-    private Dictionary<GameObject, Unit_AI> unitDict = new Dictionary<GameObject, Unit_AI>();
-    public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return unitDict; } }
+    private Dictionary<GameObject, Unit_AI> allUnitDict = new Dictionary<GameObject, Unit_AI>();
+    public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return allUnitDict; } }
 
     private List<Node> randomNodes;// 매복
     public Data_Spawn spawnData;
@@ -150,7 +158,7 @@ public class Unit_Battle : MonoBehaviour
         {
             queueNodes.Enqueue(randomNodes[i]);
         }
-
+        // 테스트
         for (int i = 0; i < 3; i++)
         {
             SpawnPlayer(queueNodes.Dequeue(), "U10010");
@@ -164,32 +172,19 @@ public class Unit_Battle : MonoBehaviour
 
     void SpawnPlayer(Node _node, string _unitID)
     {
-        //    if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
-        //        return;
-        //    Unit_AI inst = InstnaceUnit(_node, _unitID);
-        //    Follow_HP hp = instUIBattle.AddFollow_Unit(inst);
-        //    inst.deadUnit += DeadPlayer;// 죽음 카운트
-        //    inst.deleUpdateHP = hp.SetHP;// 체력 바
-        //    inst.SetUnit(_unitID, LayerMask.NameToLayer("Player"));
-
-        if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
-            return;
-
-        Unit_AI inst = SetSpawnUnit(_node, _unitID, "Player");
-        players.Add(inst);
+        SetSpawnUnit(_node, _unitID, "Player");
     }
 
     void SpawnMonster(Node _node, string _unitID)
     {
+        SetSpawnUnit(_node, _unitID, "Monster");
+    }
+
+    void SetSpawnUnit(Node _node, string _unitID, string _layer)
+    {
         if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
             return;
 
-        Unit_AI inst = SetSpawnUnit(_node, _unitID, "Monster");
-        monsters.Add(inst);
-    }
-
-    Unit_AI SetSpawnUnit(Node _node, string _unitID, string _layer)
-    {
         Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
         Unit_AI inst = InstnaceUnit(_node, unit);
 
@@ -197,12 +192,15 @@ public class Unit_Battle : MonoBehaviour
         switch (_layer)
         {
             case "Player":
-                inst.deadUnit += DeadPlayer;// 죽음 카운트
                 teamColor = Color.red;
+                inst.deadUnit += DeadPlayer;// 죽음 카운트
+                players.Add(inst);
                 break;
+
             case "Monster":
-                inst.deadUnit += DeadMonster;
                 teamColor = Color.blue;
+                inst.deadUnit += DeadMonster;
+                monsters.Add(inst);
                 break;
         }
         // 유아이 세팅
@@ -211,7 +209,6 @@ public class Unit_Battle : MonoBehaviour
         inst.deleUpdateHP = hp.SetHP;// 체력 바
         inst.deleDamage = instUIBattle.DamageText;// 데미지
         inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
-        return inst;
     }
 
     Unit_AI InstnaceUnit(Node _node, Unit_Animation _unit)
@@ -221,26 +218,41 @@ public class Unit_Battle : MonoBehaviour
         inst.transform.rotation = Quaternion.Euler(_node.worldPosition);
         inst.playerList = PlayerList;// 타겟을 찾기 위해
         inst.monsterList = MonsterList;// 타겟을 찾기 위해
+        inst.tryPoint = TryUnitPoint;// 타겟 포인트에 갈 수 있는지 체크
 
         //Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
         Unit_Animation instUnit = Instantiate(_unit, inst.transform);
         inst.unitAnimation = instUnit;
+        inst.gameObject.name = instUnit.gameObject.name = $"{_node.grid}";
         instUnit.SetAnimator();
-        instUnit.PlayAnimation(1);
 
-        unitDict[inst.gameObject] = inst;
+        allUnitDict[inst.gameObject] = inst;
         _node.UnitOnNode(inst.gameObject);
 
+        battleOver += inst.BattleOver;
         return inst;
     }
 
     void StartBattle()
     {
-        foreach (var child in unitDict)
+        if (players.Count * monsters.Count <= 0)
+            return;
+
+        switch (currentMode)
         {
-            child.Value.StateMachineTest(Unit_AI.State.Idle);
+            case CurrentMode.None:
+                currentMode = CurrentMode.Game;
+                foreach (var child in allUnitDict)
+                {
+                    child.Value.StateMachineTest(Unit_AI.State.Idle);
+                }
+                instMapGenerator.OnTileCanvas(false);// 맵아래 캔버스 제거
+                break;
+
+            case CurrentMode.Game:
+
+                break;
         }
-        instMapGenerator.OnTileCanvas(false);// 맵아래 캔버스 제거
         Debug.LogWarning("Battle Start");
     }
 
@@ -309,7 +321,6 @@ public class Unit_Battle : MonoBehaviour
             {
                 UnitInstance(node);
                 dragSlot = null;
-                Debug.LogWarning($"놓을 {node.grid}");
             }
         }
         else
@@ -327,11 +338,11 @@ public class Unit_Battle : MonoBehaviour
             return;
         }
         // 제거
-        Unit_AI unit = unitDict[_node.onObject];
+        Unit_AI unit = allUnitDict[_node.onObject];
         instUIBattle.RemoveFollowHP(unit.gameObject);
         unit.deadUnit -= DeadPlayer;// 죽음 카운트
         players.Remove(unit);
-        unitDict.Remove(unit.gameObject);
+        allUnitDict.Remove(unit.gameObject);
         _node.UnitOnNode(null);
         // 인벤토리에 생성
         emptySlot.SetUnitSlot(unit.GetUnitStruct);
@@ -387,33 +398,46 @@ public class Unit_Battle : MonoBehaviour
         return null;
     }
 
+    bool TryUnitPoint(Vector3 _target, float _unitSize)
+    {
+        foreach (var child in allUnitDict)
+        {
+            float dist = (child.Key.transform.position - _target).magnitude;
+            float unitSize = child.Value.GetUnitSize + _unitSize;
+            if (dist < unitSize)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     void DeadPlayer(Unit_AI _unit)
     {
-        Debug.LogWarning(_unit.gameObject.name);
         players.Remove(_unit);
         if (players.Count == 0)
         {
-            for (int i = 0; i < monsters.Count; i++)
-            {
-                monsters[i].BattleOver();
-            }
-            Debug.LogWarning($"승리 : monsters {monsters.Count:D2} >> 게임 종료");
+            GameOver(false);
         }
     }
 
     void DeadMonster(Unit_AI _unit)
     {
-        Debug.LogWarning(_unit.gameObject.name);
         monsters.Remove(_unit);
         if (monsters.Count == 0)
         {
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].BattleOver();
-            }
-            Debug.LogWarning($"승리 : units {players.Count:D2} >> 보상");
-            Reward();
+            GameOver(true);
         }
+    }
+
+    public delegate void DeleBattleOver();
+    public DeleBattleOver battleOver;
+
+    void GameOver(bool _win)
+    {
+        battleOver();
+        if (_win)
+            Reward();
     }
 
     void Reward()
@@ -421,12 +445,10 @@ public class Unit_Battle : MonoBehaviour
         string[] lootingItems = new string[3];
         for (int i = 0; i < lootingItems.Length; i++)
         {
-            lootingItems[i] = "U10012";
+            lootingItems[i] = "U10012";// 보상
         }
         instUIBattle.GetInventory.AddLooting(lootingItems);
     }
-
-
 
 
 

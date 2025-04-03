@@ -78,7 +78,6 @@ public class Unit_Animation : MonoBehaviour
             clipOverrides["Action" + actionState] = aniClip;
             animatorOverrideController.ApplyOverrides(clipOverrides);
 
-            Debug.LogWarning($"{aniClip.name} : {"Action" + actionState}, {"S_Action" + actionState}");
             switch (animationDatas[_index].playType)
             {
                 case Data_Animation.AniClipClass.PlayType.Trigger:
@@ -105,6 +104,7 @@ public class Unit_Animation : MonoBehaviour
                     animator.SetBool("B_Hold", true);
                     break;
             }
+            //Debug.LogWarning($"{gameObject.name} - ({aniClip.name}) : {animationDatas[_index].playType} {animator.GetBool("B_Hold")}");
         }
         return aniClip.length * _animatorSpeed;
     }
