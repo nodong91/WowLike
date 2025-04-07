@@ -52,6 +52,7 @@ public class UI_Battle : MonoBehaviour
         var cameraData = mainCamera.GetUniversalAdditionalCameraData();
         if (cameraData.cameraStack.Contains(UICamera) == false)
         {
+            UICamera.fieldOfView = mainCamera.fieldOfView;
             cameraData.cameraStack.Add(UICamera);
         }
     }
@@ -124,8 +125,6 @@ public class UI_Battle : MonoBehaviour
     public void AddFollow(GameObject _target)
     {
         Follow_Target instTarget = TryFollowTarget();
-        instTarget.followType = Follow_Target.FollowType.Camera;
-        instTarget.followOffset = new Vector3(0f, 1f, 0f);
         followManager = GetComponent<Follow_Manager>();
         followManager.AddFollowUI(_target.gameObject, instTarget);
     }
@@ -139,6 +138,8 @@ public class UI_Battle : MonoBehaviour
             return follow;
         }
         Follow_Target instTarget = Instantiate(followTarget, followParent);
+        instTarget.SetFollow();
+
         return instTarget;
     }
 
@@ -158,7 +159,7 @@ public class UI_Battle : MonoBehaviour
     Queue<TMPro.TMP_Text> instDamage = new Queue<TMPro.TMP_Text>();
     public AnimationCurve textAction;
 
-    public void DamageText(Vector3 _point,string _damage)
+    public void DamageText(Vector3 _point, string _damage)
     {
         TMPro.TMP_Text instText = TryDamageText();
         instText.text = _damage;
@@ -172,7 +173,7 @@ public class UI_Battle : MonoBehaviour
         Vector3 targetPosition = UICamera.ScreenToWorldPoint(screenPosition);
         float unitSize = 0.5f;
         Vector3 randomPosition = (Random.insideUnitSphere * unitSize) + targetPosition;
-        _text.color = Color.red;
+        //_text.color = Color.red;
         float normailze = 0f;
         while (normailze < 1f)
         {

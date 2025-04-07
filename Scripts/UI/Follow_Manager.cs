@@ -34,7 +34,7 @@ public class Follow_Manager : MonoBehaviour
 
     public void ShakingUI(GameObject _object)
     {
-        dictFollow[_object].ShackStart();
+        dictFollow[_object].ShakeStart();
     }
 
     //public void AddHPUI(Transform _target)

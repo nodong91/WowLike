@@ -13,7 +13,8 @@ public class Follow_Target : MonoBehaviour
     public FollowType followType;
     private Transform followTarget;
     public Vector3 followOffset;
-    public RectTransform shackRect;
+    public CanvasGroup shakeCanvas;
+    public RectTransform canvasRect;
 
 
 
@@ -60,15 +61,22 @@ public class Follow_Target : MonoBehaviour
     //    }
     //}
 
+    public virtual void SetFollow()
+    {
+        followType = FollowType.Camera;
+        followOffset = new Vector3(0f, 1.5f, 0f);
+        canvasRect = shakeCanvas.GetComponent<RectTransform>();
+    }
+
     public float duration;
     public AnimationCurve durationCurve;
     Coroutine shakining;
-    public Vector2 shakSize;
+    public Vector2 shakeSize;
     Vector2 prevPosition;
 
-    public void ShackStart()
+    public void ShakeStart()
     {
-        if (shackRect == null)
+        if (shakeCanvas == null)
             return;
 
         if (shakining != null)
@@ -84,9 +92,9 @@ public class Follow_Target : MonoBehaviour
             normalize += Time.deltaTime / duration;
             float curveTime = durationCurve.Evaluate(normalize);
 
-            Vector2 randomCircle = Random.insideUnitCircle * shakSize * curveTime;
+            Vector2 randomCircle = Random.insideUnitCircle * shakeSize * curveTime;
             Vector2 randomPos = new Vector3(randomCircle.x, randomCircle.y);
-            shackRect.anchoredPosition = prevPosition + randomPos;
+            canvasRect.anchoredPosition = prevPosition + randomPos;
             //tmpText.alpha = curveTime;
             //tmpMaterial.SetFloat("_LineFraction", curveTime);
             yield return null;

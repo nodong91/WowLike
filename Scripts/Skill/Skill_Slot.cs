@@ -66,7 +66,7 @@ public class Skill_Set : MonoBehaviour
         particleLife = tryTime;
     }
 
-    public void SetAction(Unit_AI _toUnit)
+    public void PlayAction(Unit_AI _toUnit)
     {
         toUnit = _toUnit;
         if (projectile == null)

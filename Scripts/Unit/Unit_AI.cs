@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
-using Unity.VisualScripting;
-using TMPro;
-
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -25,6 +20,7 @@ public class Unit_AI : MonoBehaviour
 
     public delegate List<Unit_AI> DeleUnitList();
     public DeleUnitList playerList, monsterList;
+    public bool dummy;
 
     public Unit_Animation unitAnimation;
 
@@ -36,7 +32,7 @@ public class Unit_AI : MonoBehaviour
         Idle,
         Escape,
         Move,
-        Chase,
+        Patrol,
         Damage,
         End
     }
@@ -74,15 +70,20 @@ public class Unit_AI : MonoBehaviour
     public class SkillStruct
     {
         [HideInInspector] public string skillID;
+        public float startTime;
         public Data_Manager.SkillStruct skillStruct;
     }
-    List<SkillStruct> readySkills = new List<SkillStruct>();
+    [SerializeField] List<SkillStruct> readySkills = new List<SkillStruct>();
+    [SerializeField] List<SkillStruct> coolingSkills = new List<SkillStruct>();
     const float globalTime = 1f;
     public float GetUnitSize { get { return unitStruct.unitSize; } }
     public float healthPoint = 10f;
 
-    public delegate void DeleUpdateHP(float _current, float _max);
+    public delegate void DeleUpdateHP(float _current, float _max, bool _shake);
     public DeleUpdateHP deleUpdateHP;
+    public delegate void DeleUpdateAction(float _value);
+    public DeleUpdateAction deleUpdateAction;
+
     public delegate void DeleDamage(Vector3 _point, string _damage);
     public DeleDamage deleDamage;
 
@@ -108,6 +109,8 @@ public class Unit_AI : MonoBehaviour
         Debug.LogWarning("생성 : " + unitID);
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
+
+        unitAnimation.attackEvent = Event_Attack;// 애니메이션 이벤트 받아올
         //obstacle = GetComponentInChildren<NavMeshObstacle>();
         //obstacle.enabled = false;
 
@@ -115,7 +118,7 @@ public class Unit_AI : MonoBehaviour
         unitAttributes = unitStruct.TryAttributes();
         ResetUnit();
 
-        castingImage.material = Instantiate(castingImage.material);
+        //castingImage.material = Instantiate(castingImage.material);
         gameObject.layer = _layerMask;
 
         SkillStruct skill_01 = new SkillStruct
@@ -131,9 +134,8 @@ public class Unit_AI : MonoBehaviour
         };
 
         readySkills.Add(skill_02);
-        agent.speed = unitAttributes.MoveSpeed;
         healthPoint = unitAttributes.Health;
-        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health);
+        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health, false);// 세팅
 
         renderers = GetComponentsInChildren<Renderer>();
     }
@@ -160,7 +162,6 @@ public class Unit_AI : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    //public float viewAngle;
     private void OnDrawGizmos()
     {
         if (currentSkill == null)
@@ -183,20 +184,10 @@ public class Unit_AI : MonoBehaviour
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.x);
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.y);
 
-            //Vector3 viewAngleA = DirFromAngle(viewAngle * 0.5f, transform);
-            //Vector3 viewAngleB = DirFromAngle(-viewAngle * 0.5f, transform);
-
-            //Handles.DrawLine(transform.position, transform.position + viewAngleA * (GetUnitSize + GetSkillRange.y));
-            //Handles.DrawLine(transform.position, transform.position + viewAngleB * (GetUnitSize + GetSkillRange.y));
-
             if (target != null)
             {
                 Handles.color = Gizmos.color = color;
                 Handles.DrawLine(transform.position, target.transform.position);
-                //string visibleTarget = VisibleTarget(target.transform) ? "0000FF" : "FF0000";
-                //visibleTarget = $"<color=#{visibleTarget}>{VisibleTarget(target.transform)}</color>";
-                //Vector3 textPosition = Vector3.Lerp(transform.position, target.transform.position, 0.5f);
-                //Handles.Label(textPosition, $"{visibleTarget} : {CheckDistance():N2}", fontStyle);
                 Gizmos.DrawSphere(targetPosition, 0.3f);
             }
         }
@@ -749,7 +740,7 @@ public class Unit_AI : MonoBehaviour
     Coroutine stateAction;
     public void StateMachineTest(State _state)
     {
-        if (_state == State.End)
+        if (dummy == true || _state == State.End)
             return;
 
         if (stateAction != null)
@@ -772,8 +763,8 @@ public class Unit_AI : MonoBehaviour
                 State_Move();
                 break;
 
-            case State.Chase:
-
+            case State.Patrol:
+                State_Patrol();
                 break;
 
             case State.Escape:
@@ -801,6 +792,9 @@ public class Unit_AI : MonoBehaviour
 
     IEnumerator FindTarget()
     {
+        while (globalCooling == true)
+            yield return null;
+
         List<Unit_AI> units = gameObject.layer == LayerMask.NameToLayer("Player") ? monsterList() : playerList();
         while (target == null || target.state == State.Dead)
         {
@@ -821,16 +815,11 @@ public class Unit_AI : MonoBehaviour
         if (readySkills?.Count > 0)// 준비된 스킬이 있다면
         {
             currentSkill = SelectSkill();// 스킬 선택
-            //float addAngle = 0f;
-            //Vector3 targetPoint = Vector3.zero;
-            //while (targetPoint == Vector3.zero)// 이동할 위치 찾기
-            //{
-            //    targetPoint = GetFrontPoint(target.transform.position, addAngle);
-            //    addAngle += Random.Range(-10, 10f);
-            //    yield return null;
-            //}
-            //targetPosition = targetPoint;
             StateMachineTest(State.Move);
+        }
+        else
+        {
+            StateMachineTest(State.Patrol);
         }
     }
 
@@ -841,6 +830,7 @@ public class Unit_AI : MonoBehaviour
 
     void State_Move()
     {
+        agent.speed = unitAttributes.MoveSpeed;
         stateAction = StartCoroutine(State_Moving());
     }
 
@@ -861,14 +851,31 @@ public class Unit_AI : MonoBehaviour
                 moving = false;
                 StateMachineTest(State.Attack);
             }
+        }
+    }
 
-            //// 목적지에 도착했는데 거리가 멀다면 다시 자리 찾기
-            //distance = (targetPosition - transform.position).magnitude;
-            //if (distance < 0.1f)
-            //{
-            //    moving = false;
-            //    StateMachineTest(State.Idle);
-            //}
+    void State_Patrol()
+    {
+        agent.speed = unitAttributes.MoveSpeed * 0.3f;
+        stateAction = StartCoroutine(State_Patroling());
+    }
+
+    IEnumerator State_Patroling()
+    {
+        // 랜덤 시간동안 이동
+        float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
+        targetPosition = GetFrontPoint(target.transform.position, randomIndex);
+        Destination(targetPosition);
+
+        float randomTime = Random.Range(0.2f, 1f);
+        bool moving = true;
+        while (moving == true)
+        {
+            yield return new WaitForSeconds(randomTime);
+
+            // 시간이 지나면 다시 스킬 찾기
+            moving = false;
+            StateMachineTest(State.Idle);
         }
     }
 
@@ -876,12 +883,15 @@ public class Unit_AI : MonoBehaviour
     {
         agent.SetDestination(_point);
     }
+
     public delegate bool DeleTryPoint(Vector3 _target, float _unitSize);
-    public DeleTryPoint tryPoint;
+    public DeleTryPoint tryPoint;// 다른 유닛이 없는 곳으로 포인팅
+
     Vector3 GetFrontPoint(Vector3 _from, float _addAngle)
     {
         float angle = GetAngle(_from, transform.position);
-        float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
+        float patrolRange = 3f;
+        float setDistance = target.GetUnitSize + GetUnitSize + patrolRange;
         Vector3 dirFromAngle = DirFromAngle(_addAngle + angle, null);
         Vector3 tempTarget = target.transform.position + dirFromAngle * setDistance;
 
@@ -893,32 +903,6 @@ public class Unit_AI : MonoBehaviour
         }
         return Vector3.zero;
     }
-
-    //IEnumerator GetFrontPoint(Vector3 _from, float _random)
-    //{
-    //    bool checkPoint = false;
-    //    Vector3 tempTarget = default;
-    //    float addAngle = 0f;
-    //    while (checkPoint == false)
-    //    {
-    //        float angle = GetAngle(_from, transform.position);
-    //        float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
-    //        Vector3 dirFromAngle = DirFromAngle(_random + angle + addAngle, null);
-    //        tempTarget = target.transform.position + dirFromAngle * setDistance;
-
-    //        NavMesh.SamplePosition(tempTarget, out NavMeshHit hit, setDistance, -1);
-    //        tempTarget = hit.position;
-    //        if (tryPoint(tempTarget, GetUnitSize) == true)
-    //        {
-    //            checkPoint = true;
-    //        }
-    //        yield return null;
-
-    //        addAngle += Random.Range(-10, 10f);
-    //    }
-    //    targetPosition = tempTarget;
-    //    Destination(targetPosition);
-    //}
 
     Vector3 GetBackPoint(Vector3 _from, float _random, float _dist = 0)
     {
@@ -956,40 +940,41 @@ public class Unit_AI : MonoBehaviour
 
     IEnumerator State_Attacking()
     {
+        Destination(transform.position);// 제자리에 정지
         float castingTime = currentSkill.skillStruct.castingTime;
         yield return StartCoroutine(SkillCasting(castingTime));// 캐스팅
 
-        distance = (target.transform.position - transform.position).magnitude;
-        float unitAllSize = target.GetUnitSize + GetUnitSize;
-        // 거리체크 (스킬 거리의 반정도는 멀어져도 OK)
-        if (distance < GetSkillRange.y + (GetSkillRange.y * 0.5f) + unitAllSize && state != State.Dead)
+        if (state != State.Dead)
         {
-            Attacking();
-            transform.LookAt(target.transform.position);
-            float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
-            yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
+            distance = (target.transform.position - transform.position).magnitude;
+            float unitAllSize = target.GetUnitSize + GetUnitSize;
+            // 거리체크 (스킬 거리의 반정도는 멀어져도 OK)
+            if (distance < GetSkillRange.y + (GetSkillRange.y * 0.5f) + unitAllSize && state != State.Dead)
+            {
+                transform.LookAt(target.transform.position);
+                float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
+                yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
+            }
+            StateMachineTest(State.Idle);
         }
-        StateMachineTest(State.Idle);
     }
 
     IEnumerator SkillCasting(float _castingTime)
     {
-        Destination(transform.position);// 제자리에 정지
-
-        skillCasting = true;
-        castingImage.color = Color.white;
         float casting = 0f;
+        skillCasting = true;
         while (skillCasting == true)
         {
             casting += Time.deltaTime;
-            castingImage.material.SetFloat("_FillAmount", casting / _castingTime);// UI_Filled 쉐이더
+
+            deleUpdateAction(casting / _castingTime);
             if (casting > _castingTime)
             {
                 skillCasting = false;
             }
             yield return null;
         }
-        castingImage.color = Color.clear;
+        //deleUpdateAction(0f);
     }
 
     void Attacking()
@@ -997,17 +982,63 @@ public class Unit_AI : MonoBehaviour
         string skillID = currentSkill.skillStruct.ID;
         if (dictSkillSlot.ContainsKey(skillID) == false)
         {
+            // 스킬 이펙트 생성
             Data_Manager.SkillStruct skill = Singleton_Data.INSTANCE.Dict_Skill[skillID];
-            Debug.LogWarningFormat(skill.skillSet);
+            //Debug.LogWarningFormat(skill.skillSet);
             Skill_Set slot = Singleton_Data.INSTANCE.Dict_SkillSet[skill.skillSet];
             Skill_Set inst = Instantiate(slot, transform);
             inst.gameObject.name = skillID;
             inst.SetSkillSlot(this, currentSkill.skillStruct);
             dictSkillSlot[skillID] = inst;
         }
-        dictSkillSlot[skillID].SetAction(target);
+        dictSkillSlot[skillID].PlayAction(target);
+
+        readySkills.Remove(currentSkill);
+        currentSkill.startTime = Time.time;
+        coolingSkills.Add(currentSkill);
+        CoolingSkill();
+
+        StartCoroutine(GlobalCooling());
+    }
+    Coroutine collingSkill;
+
+    IEnumerator GlobalCooling()
+    {
+        globalCooling = true;
+        yield return new WaitForSeconds(1f);
+        globalCooling = false;
+    }
+    void Event_Attack()
+    {
+        Attacking();
     }
 
+    void CoolingSkill()
+    {
+        if (collingSkill != null)
+            StopCoroutine(collingSkill);
+        collingSkill = StartCoroutine(CoolingSkilling());
+    }
+
+    IEnumerator CoolingSkilling()
+    {
+        while (coolingSkills.Count > 0)
+        {
+            //List<SkillStruct> tempList = coolingSkills;
+            for (int i = 0; i < coolingSkills.Count; i++)
+            {
+                float cooling = coolingSkills[i].startTime + coolingSkills[i].skillStruct.coolingTime;
+                if (cooling < Time.time)
+                {
+                    readySkills.Add(coolingSkills[i]);
+                    coolingSkills.Remove(coolingSkills[i]);
+                    break;
+                }
+            }
+            yield return null;
+            //coolingSkills = tempList;
+        }
+    }
 
     public void TakeDamage(Unit_AI _from, Vector3 _center, float _damage, Data_Manager.SkillStruct _skillStruct)
     {
@@ -1020,9 +1051,9 @@ public class Unit_AI : MonoBehaviour
 
         Debug.Log($"{_from.gameObject.name} : {_damage}");
         Vector3 hitPoint = transform.position;
-        deleDamage?.Invoke(hitPoint, _damage.ToString());// 데미지 폰트
         healthPoint -= _damage;
-        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health);
+        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health, true);// 데미지 바
+        deleDamage?.Invoke(hitPoint, _damage.ToString());// 데미지 폰트
         if (healthPoint <= 0)
         {
             // 죽음 액션
@@ -1030,9 +1061,9 @@ public class Unit_AI : MonoBehaviour
             SetRanderer();
             return;
         }
+
         // 데미지 액션
         SetRanderer();
-
         float animTime = unitAnimation.PlayAnimation(5);// 애니메이션
         StartCoroutine(HoldAction(animTime));
         // 어그로
@@ -1250,4 +1281,6 @@ public class Unit_AI : MonoBehaviour
             }
         }
     }
+
+    
 }
