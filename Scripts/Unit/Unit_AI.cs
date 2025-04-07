@@ -1045,6 +1045,7 @@ public class Unit_AI : MonoBehaviour
         if (state == State.Dead)
             return;
 
+        //StopAllCoroutines();
         Destination(transform.position);
         // _from 때린 유닛
         // _center 맞은 포인트
@@ -1065,7 +1066,11 @@ public class Unit_AI : MonoBehaviour
         // 데미지 액션
         SetRanderer();
         float animTime = unitAnimation.PlayAnimation(5);// 애니메이션
-        StartCoroutine(HoldAction(animTime));
+
+        if (holdAction != null)
+            StopCoroutine(holdAction);
+        holdAction = StartCoroutine(HoldAction(animTime));
+
         // 어그로
         float aggro = _damage * _skillStruct.aggro;
         target = AddAggro(_from, aggro);// 어그로 추가
@@ -1084,7 +1089,7 @@ public class Unit_AI : MonoBehaviour
                 break;
         }
     }
-
+    Coroutine holdAction;
     IEnumerator HoldAction(float _hold)
     {
         StateMachineTest(State.None);
@@ -1262,7 +1267,7 @@ public class Unit_AI : MonoBehaviour
     {
         if (_knockBack > 0)
         {
-            if (skillCasting == true)
+            if (skillCasting == true)// 밀려나면 캐스팅 끊어짐
                 skillCasting = false;
 
             Vector3 targetPoint = GetBackPoint(_from, 0f, _knockBack);
@@ -1282,5 +1287,5 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    
+
 }
