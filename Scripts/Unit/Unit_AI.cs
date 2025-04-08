@@ -1150,7 +1150,7 @@ public class Unit_AI : MonoBehaviour
         Destination(transform.position);
 
         // 승리 포즈
-        unitAnimation.PlayAnimation(2);// 애니메이션
+        unitAnimation.PlayAnimation(4);// 애니메이션
     }
 
 

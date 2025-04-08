@@ -247,7 +247,9 @@ namespace P01.Editor
 
         void SetUnit(GameObject _unit, Data_Animation _animationData)
         {
-            Animator tempAnimator = _unit.AddComponent<Animator>();
+            Animator tempAnimator = _unit.GetComponent<Animator>();
+            if (tempAnimator == null)
+                tempAnimator = _unit.AddComponent<Animator>();
             tempAnimator.runtimeAnimatorController = animator;
             //tempAnimator.runtimeAnimatorController = animator;
             Unit_Animation tempUnit = _unit.AddComponent<Unit_Animation>();

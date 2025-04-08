@@ -1157,7 +1157,7 @@
     "m_Title": "UV",
     "m_Position": {
         "x": -1816.9998779296875,
-        "y": -57.0
+        "y": -56.999969482421878
     }
 }
 
@@ -1311,7 +1311,7 @@
     "m_Title": "Voronoi",
     "m_Position": {
         "x": -1544.9998779296875,
-        "y": 506.99993896484377
+        "y": 506.9998474121094
     }
 }
 
@@ -1704,7 +1704,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "3606b877c0a64e5fad0311ecaecda77b",
     "m_Id": 0,
-    "m_DisplayName": "MsinColor",
+    "m_DisplayName": "MainColor",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2365,10 +2365,10 @@
     "m_Guid": {
         "m_GuidSerialized": "1de5ecfb-34d8-4567-a353-aa09609361e5"
     },
-    "m_Name": "MsinColor",
+    "m_Name": "MainColor",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "MsinColor",
-    "m_DefaultReferenceName": "_MsinColor",
+    "m_RefNameGeneratedByDisplayName": "MainColor",
+    "m_DefaultReferenceName": "_MainColor",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -2712,7 +2712,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "6fdc62e29c4a4131b5d234a723734ef0",
     "m_Id": 0,
-    "m_DisplayName": "MsinColor",
+    "m_DisplayName": "MainColor",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
