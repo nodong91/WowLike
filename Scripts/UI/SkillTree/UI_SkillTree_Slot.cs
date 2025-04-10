@@ -13,7 +13,7 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
     }
     public TreeSlotType slotType;
 
-    public Image enableImage, iconImage;
+    public Image unEnableImage, enableImage, activeImage;
     public Image levelIcon, levelSlider;
     const float levelRange = 42;
 
@@ -26,7 +26,7 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
 
     public void SetSlot()
     {
-        iconImage.material = Instantiate(iconImage.material);
+        //activeImage.material = Instantiate(activeImage.material);
         levelIcon.rectTransform.sizeDelta = new Vector2(levelRange * maxLevel, levelIcon.rectTransform.sizeDelta.y);
         for (int i = 0; i < influencingSlotEXP.Count; i++)
         {
@@ -66,22 +66,23 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
         switch (slotType)
         {
             case TreeSlotType.Unenable:
-                enableImage.gameObject.SetActive(true);
-                iconImage.gameObject.SetActive(false);
+                unEnableImage.gameObject.SetActive(true);
+                enableImage.gameObject.SetActive(false);
+                activeImage.gameObject.SetActive(false);
                 deleSkillPoint?.Invoke(-currentLevel);// 남은 포인트 돌려주기
                 currentLevel = 0;
                 break;
 
             case TreeSlotType.Enable:
-                enableImage.gameObject.SetActive(false);
-                iconImage.gameObject.SetActive(true);
-                iconImage.material.SetFloat("_FillAmount", 0f);
+                unEnableImage.gameObject.SetActive(false);
+                enableImage.gameObject.SetActive(true);
+                activeImage.gameObject.SetActive(false);
                 break;
 
             case TreeSlotType.Active:
+                unEnableImage.gameObject.SetActive(false);
                 enableImage.gameObject.SetActive(false);
-                iconImage.gameObject.SetActive(true);
-                iconImage.material.SetFloat("_FillAmount", 1f);
+                activeImage.gameObject.SetActive(true);
                 break;
         }
         LevelDisplay(currentLevel);
@@ -97,6 +98,7 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.LogWarning("oihjoijf");
         if (slotType == TreeSlotType.Unenable)
             return;
 
@@ -120,10 +122,8 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
             return;
 
         currentLevel += index;
-        LevelDisplay(currentLevel);
-
-        float active = (currentLevel > 0) ? 1f : 0f;
-        iconImage.material.SetFloat("_FillAmount", active);
+        //LevelDisplay(currentLevel);
+        CheckActive();
 
         for (int i = 0; i < influencingSlotEXP.Count; i++)
         {
