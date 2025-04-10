@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class UI_Battle : MonoBehaviour
 {
     public Camera UICamera;
-    public UI_OpenCanvas menuCanvas;
     public Button[] timeScaleButtons;
     public Button battleStart, invenButton, quickButton, allButton, lootingButton;
     public delegate void DeleTimeScale(float timeScale);
@@ -157,7 +156,7 @@ public class UI_Battle : MonoBehaviour
 
     public TMPro.TMP_Text damageText;
     Queue<TMPro.TMP_Text> instDamage = new Queue<TMPro.TMP_Text>();
-    public AnimationCurve textAction;
+    public AnimationCurve textAction, textAlpha;
 
     public void DamageText(Vector3 _point, string _damage)
     {
@@ -173,14 +172,16 @@ public class UI_Battle : MonoBehaviour
         Vector3 targetPosition = UICamera.ScreenToWorldPoint(screenPosition);
         float unitSize = 0.5f;
         Vector3 randomPosition = (Random.insideUnitSphere * unitSize) + targetPosition;
-        //_text.color = Color.red;
+        //_text.transform.position = randomPosition;
+
         float normailze = 0f;
         while (normailze < 1f)
         {
             normailze += Time.deltaTime;
             float curve = textAction.Evaluate(normailze);
+            _text.transform.localScale = Vector3.one + Vector3.one * curve;
+            curve = textAlpha.Evaluate(normailze);
             _text.transform.position = Vector3.Lerp(randomPosition + Vector3.up, randomPosition, curve);
-            //_text.transform.localScale = Vector3.one + Vector3.one * scale;
             _text.alpha = curve;
             yield return null;
         }

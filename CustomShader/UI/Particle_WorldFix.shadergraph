@@ -657,7 +657,7 @@
         },
         "preventRotation": false
     },
-    "m_Path": "Shader Graphs",
+    "m_Path": "P01",
     "m_GraphPrecision": 1,
     "m_PreviewMode": 2,
     "m_OutputNode": {
@@ -678,7 +678,7 @@
     "m_Title": "Mask",
     "m_Position": {
         "x": -1065.0,
-        "y": 510.0
+        "y": 509.9999694824219
     }
 }
 

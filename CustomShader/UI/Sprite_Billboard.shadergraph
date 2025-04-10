@@ -1105,7 +1105,7 @@
         },
         "preventRotation": false
     },
-    "m_Path": "Shader Graphs",
+    "m_Path": "P01",
     "m_GraphPrecision": 1,
     "m_PreviewMode": 2,
     "m_OutputNode": {
@@ -3186,8 +3186,8 @@
     "m_ObjectId": "4c948806fb8f4bd7884e59a0b34e7e4e",
     "m_Title": "New Group",
     "m_Position": {
-        "x": -1868.0001220703125,
-        "y": -502.0000305175781
+        "x": -1868.0,
+        "y": -502.0
     }
 }
 
