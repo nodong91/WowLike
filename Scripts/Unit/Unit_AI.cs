@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class Unit_AI : MonoBehaviour
 {
-    public string unitID = "U10010";
+    public string unitID;
     public NavMeshAgent agent;
     //public NavMeshObstacle obstacle;
     [SerializeField] Unit_AI target;
@@ -106,6 +106,8 @@ public class Unit_AI : MonoBehaviour
     public void SetUnit(string _unitID, LayerMask _layerMask)// 첫세팅
     {
         unitID = _unitID;
+        if (unitID == null)
+            return;
         Debug.LogWarning("생성 : " + unitID);
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
@@ -196,546 +198,6 @@ public class Unit_AI : MonoBehaviour
         Handles.Label(transform.position, hp, fontStyle);
     }
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //void Rebirth()
-    //{
-    //    state = State.None;
-    //    StartCoroutine(DeadActing());
-    //}
-
-    ////public void CommendMoveing(Vector3 _point)
-    ////{
-    ////    target = null;
-    ////    StateMachine(State.None);
-    ////    Destination(_point);
-    ////}
-
-    //public void StateMachine(State _state)
-    //{
-    //    state = _state;
-    //    agent.avoidancePriority = (int)_state;
-
-    //    if (stateMachine != null)
-    //        StopCoroutine(stateMachine);
-
-    //    switch (state)
-    //    {
-    //        case State.None:
-
-    //            break;
-
-    //        case State.Idle:
-    //            stateMachine = StartCoroutine(IdleState());
-    //            break;
-
-    //        case State.Move:// �����Ұ� ���� �� ��ȸ
-    //            stateMachine = StartCoroutine(MoveState());
-    //            break;
-
-    //        case State.Chase:
-    //            stateMachine = StartCoroutine(ChaseState());
-    //            break;
-
-    //        case State.Escape:
-    //            stateMachine = StartCoroutine(EscapeState());
-    //            break;
-
-    //        case State.Attack:
-    //            Debug.LogError($"Hit Unit : adsffffffffffffffffffffffffffffffffffffffffffffaWef");
-    //            stateMachine = StartCoroutine(AttackState());
-    //            break;
-
-    //        case State.Damage:
-    //            stateMachine = StartCoroutine(DamageState());
-    //            break;
-
-    //        case State.Dead:
-    //            DeadState();
-    //            break;
-    //    }
-    //}
-
-    //IEnumerator IdleState()
-    //{
-    //    while (true)
-    //    {
-    //        if (target == null || target.state == State.Dead) // Ÿ���� ���� ���
-    //        {
-    //            float dist = float.MaxValue;
-    //            List<Unit_AI> units = gameObject.layer == LayerMask.NameToLayer("Player") ? monsterList() : playerList();
-    //            for (int i = 0; i < units.Count; i++)
-    //            {
-    //                Unit_AI unit = units[i];
-    //                distance = (unit.transform.position - transform.position).magnitude;
-    //                if (dist > distance)
-    //                {
-    //                    dist = distance;
-    //                    target = unit;
-    //                }
-    //            }
-    //        }
-    //        else if (readySkills?.Count > 0)// �غ�� ��ų�� �ִٸ�
-    //        {
-    //            currentSkill = SelectSkill();// ��ų ����
-    //            distance = (target.transform.position - transform.position).magnitude;
-    //            float unitAllSize = target.GetUnitSize + GetUnitSize;
-    //            if (distance + 0.1f < GetSkillRange.x + unitAllSize && escapeCooling == false)
-    //            {
-    //                // ����� ���� ����
-    //                float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-    //                targetPosition = GetBackPoint(target.transform.position, randomIndex);
-    //                Destination(targetPosition);
-
-    //                StartCoroutine(EscapeCooling());// ��� ������ ġ�� �Ѵ뵵 ������
-    //                StateMachine(State.Escape);
-    //            }
-    //            else
-    //            {
-    //                Debug.LogError($"Hit Unit : adsffffffffffffffffffffffffffffffffffffffffffffaWef");
-    //                // ����
-    //                StateMachine(State.Chase);
-    //            }
-    //        }
-    //        else// �غ�� ��ų�� ����
-    //        {
-    //            StateMachine(State.Move);// Ȥ�� ��ȸ ���⿡ ����??
-    //                                     //StateMachine(State.Escape);
-    //                                     // ��ų�� ��� ����
-    //            float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-    //            targetPosition = GetBackPoint(target.transform.position, randomIndex);
-    //            Destination(targetPosition);
-    //        }
-    //        yield return null;
-    //    }
-    //}
-
-    //SkillStruct SelectSkill()
-    //{
-    //    return readySkills[Random.Range(0, readySkills.Count)];
-    //}
-
-    //IEnumerator ChaseState()
-    //{
-    //    while (true)
-    //    {
-    //        // �ָ� ����
-    //        targetPosition = GetFrontPoint(target.transform.position, 0f);
-    //        Destination(targetPosition);
-    //        yield return null;
-
-    //        //float remainingDistance = agent.remainingDistance;
-    //        distance = (target.transform.position - transform.position).magnitude;
-    //        float unitAllSize = target.GetUnitSize + GetUnitSize;
-    //        if (distance < GetSkillRange.y + unitAllSize + 0.1f)// �����Ÿ� ������ ������
-    //        {
-    //            if (globalCooling == false)
-    //            {
-    //                StateMachine(State.Attack);
-    //            }
-    //            else
-    //            {
-    //                //StateMachine(State.Move);
-    //            }
-    //        }
-    //    }
-    //}
-
-    //IEnumerator MoveState()// ��ȸ
-    //{
-    //    float randomIndex = Random.Range(-1f, 1f) * randomValue * 0.5f;
-    //    targetPosition = GetFrontPoint(target.transform.position, randomIndex);
-    //    Destination(targetPosition);
-
-    //    float randomTime = Random.Range(1f, 3f);
-    //    yield return new WaitForSeconds(randomTime);
-    //    if (state == State.Move)
-    //    {
-    //        StateMachine(State.Idle);
-    //    }
-    //}
-
-    //IEnumerator EscapeState()
-    //{
-    //    while (true)
-    //    {
-    //        float remainingDistance = agent.remainingDistance;
-    //        Debug.LogWarning("remainingDistance : " + remainingDistance);
-    //        if (remainingDistance == 0f)
-    //        {
-    //            StateMachine(State.Idle);
-    //        }
-    //        yield return null;
-    //    }
-    //}
-
-    //Dictionary<string, Skill_Set> dictSkillSlot = new Dictionary<string, Skill_Set>();
-    //bool skillCastring;
-    //public Image image;
-    //IEnumerator SkillCasting(float _castingTime)
-    //{
-    //    Destination(transform.position);// ���ڸ��� ����
-
-    //    skillCastring = true;
-    //    image.CrossFadeAlpha(1f, 0.5f, false);
-    //    float casting = 0f;
-    //    while (skillCastring == true)
-    //    {
-    //        casting += Time.deltaTime;
-    //        image.material.SetFloat("_FillAmount", casting / _castingTime);// UI_Filled ���̴�
-    //        if (casting > _castingTime)
-    //        {
-    //            skillCastring = false;
-    //        }
-    //        yield return null;
-    //    }
-    //    image.CrossFadeAlpha(0f, 0.5f, false);
-    //}
-
-    //IEnumerator AttackState()
-    //{
-    //    float castingTime = currentSkill.skillStruct.castingTime;
-    //    yield return StartCoroutine(SkillCasting(castingTime));
-    //    // �۷ι� �� ����
-    //    StartCoroutine(GlobalCooling());// �۷ι� ��Ÿ��? 
-    //    if (state == State.Attack)
-    //    {
-    //        StateMachine(State.Idle);
-    //    }
-    //}
-
-    //void ActionSkill()
-    //{
-    //    unitAnimation.PlayAnimation(3);// �ִϸ��̼�
-    //    StartCoroutine(SkillCooling(currentSkill));// ��ų ��Ÿ�� ����
-
-    //    string skillID = currentSkill.skillStruct.ID;
-    //    if (dictSkillSlot.ContainsKey(skillID) == false)
-    //    {
-    //        Data_Manager.SkillStruct skill = Singleton_Data.INSTANCE.Dict_Skill[skillID];
-    //        Debug.LogWarningFormat(skill.skillSet);
-    //        Skill_Set slot = Singleton_Data.INSTANCE.Dict_SkillSet[skill.skillSet];
-    //        Skill_Set inst = Instantiate(slot, transform);
-    //        inst.gameObject.name = skillID;
-    //        inst.SetSkillSlot(this, currentSkill.skillStruct);
-    //        dictSkillSlot[skillID] = inst;
-    //    }
-    //    dictSkillSlot[skillID].SetAction(target);
-    //}
-
-    //IEnumerator SkillCooling(SkillStruct _skillStruct)
-    //{
-    //    readySkills.Remove(_skillStruct);
-    //    float coolTime = _skillStruct.skillStruct.coolingTime;
-    //    //Debug.LogWarning($"{_skillStruct.skillStruct.ID} : {coolTime}");
-    //    yield return new WaitForSeconds(coolTime);
-
-    //    readySkills.Add(_skillStruct);
-    //}
-
-    //IEnumerator DamageState()
-    //{
-    //    unitAnimation.PlayAnimation(5);// �ִϸ��̼�
-
-    //    yield return new WaitForSeconds(3f / 1f);// �ִϸ��̼� ����?
-    //    if (state == State.Damage)
-    //    {
-    //        StateMachine(State.Idle);
-    //    }
-    //}
-
-    //void DeadState()
-    //{
-    //    unitAnimation.PlayAnimation(7);// �ִϸ��̼�
-
-    //    deadUnit?.Invoke(this);
-    //    Destination(transform.position);
-    //    StartCoroutine(DeadActing());
-    //}
-
-    //Vector3 GetFrontPoint(Vector3 _from, float _random)
-    //{
-    //    float angle = GetAngle(_from, transform.position);
-    //    float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
-    //    Vector3 dirFromAngle = DirFromAngle(_random + angle, null);
-    //    Vector3 targetPosition = target.transform.position + dirFromAngle * setDistance;
-
-    //    NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, setDistance, -1);
-    //    {
-    //        return hit.position;
-    //    }
-    //}
-
-    //Vector3 GetBackPoint(Vector3 _from, float _random, float _dist = 0)
-    //{
-    //    float angle = GetAngle(_from, transform.position);
-    //    float setDistance = _dist > 0 ? _dist : target.GetUnitSize + GetUnitSize + GetSkillRange.x;
-    //    Vector3 dirFromAngle = DirFromAngle(_random + angle, null);
-    //    Vector3 targetPosition = transform.position + dirFromAngle * setDistance;
-
-    //    NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, setDistance, -1);
-    //    {
-    //        return hit.position;
-    //    }
-    //}
-
-    //IEnumerator GlobalCooling()
-    //{
-    //    globalCooling = true;
-    //    yield return new WaitForSeconds(globalTime);
-    //    globalCooling = false;
-    //}
-
-    //IEnumerator EscapeCooling()
-    //{
-    //    escapeCooling = true;
-    //    yield return new WaitForSeconds(escapeCoolTime);
-    //    escapeCooling = false;
-    //}
-
-    //float GetAngle(Vector3 from, Vector3 to)
-    //{
-    //    Vector3 v = to - from;
-    //    return Mathf.Atan2(v.x, v.z) * Mathf.Rad2Deg;
-    //}
-
-    //public void TakeDamage(Unit_AI _from, Vector3 _center, float _damage, Data_Manager.SkillStruct _skillStruct)
-    //{
-    //    // _from ���� ����
-    //    // _center ���� ����Ʈ
-    //    Debug.Log($"{_from.gameObject.name} : {_damage}");
-    //    Vector3 hitPoint = transform.position;
-    //    deleDamage?.Invoke(hitPoint, _damage.ToString());// ������ ��Ʈ
-    //    healthPoint -= _damage;
-    //    deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health);
-    //    if (healthPoint <= 0)
-    //    {
-    //        StateMachine(State.Dead);
-    //        return;
-    //    }
-
-    //    //StateMachine(State.Damage);
-    //    //float aggro = _damage * _skillStruct.aggro;
-    //    //target = AddAggro(_from, aggro);// ��׷� �߰� �� Ÿ�� ����
-
-    //    //if (takeDamage != null)
-    //    //    StopCoroutine(takeDamage);
-    //    //switch (_skillStruct.ccType)
-    //    //{
-    //    //    case Data_Manager.SkillStruct.CCType.Normal:
-    //    //        //takeDamage = StartCoroutine(CCDamage(_center, 0f));
-    //    //        break;
-
-    //    //    case Data_Manager.SkillStruct.CCType.KnockBack:
-    //    //        takeDamage = StartCoroutine(CCDamage(_center, 1f));
-    //    //        break;
-    //    //}
-
-
-    //}
-
-    //IEnumerator CCDamage(Vector3 _from, float _knockBack)
-    //{
-    //    if (_knockBack > 0)
-    //    {
-    //        if (skillCastring == true)// ĳ���� ���̰� �и��� ���
-    //            skillCastring = false;
-
-    //        Vector3 targetPoint = GetBackPoint(_from, 0f, _knockBack);
-    //        if (float.IsInfinity(targetPoint.x))
-    //            targetPoint = transform.position;
-
-    //        float normalize = 0f;
-    //        while (normalize < 1f)
-    //        {
-    //            normalize += Time.deltaTime * 3f;
-    //            SetRanderer_Damage(normalize);
-
-    //            Vector3 position = Vector3.Lerp(transform.position, targetPoint, normalize);
-    //            transform.position = position;
-    //            Destination(position);
-    //            yield return null;
-    //        }
-    //    }
-    //}
-
-    //IEnumerator TakeDamage()
-    //{
-    //    float normalize = 0f;
-    //    while (normalize < 1f)
-    //    {
-    //        normalize += Time.deltaTime * 3f;
-    //        SetRanderer_Damage(normalize);
-    //        yield return null;
-    //    }
-    //}
-
-    //void SetRanderer_Damage(float _normalize)
-    //{
-    //    for (int i = 0; i < renderers.Length; i++)
-    //    {
-    //        renderers[i].material.SetFloat("_Damage", 1f - _normalize);
-    //    }
-    //}
-
-    //void SetRanderer_Dead(float _targetAmount, float _normalize)
-    //{
-    //    for (int i = 0; i < renderers.Length; i++)
-    //    {
-    //        float deadAmount = Mathf.Lerp(1f - _targetAmount, _targetAmount, _normalize);
-    //        renderers[i].material.SetFloat("_BlackNWhite", deadAmount);
-    //    }
-    //}
-
-    //void Destination(Vector3 _point)
-    //{
-    //    //agent.ResetPath();
-    //    //agent.isStopped = true;
-    //    agent.SetDestination(_point);
-
-    //    //bool stop = (_point == transform.position);
-    //    //if(stop == true)
-    //    //{
-    //    //    //agent.SetDestination(_point);
-    //    //    agent.enabled = false;
-    //    //    obstacle.enabled = true;
-    //    //}
-    //    //else
-    //    //{
-    //    //    obstacle.enabled = false;
-    //    //    agent.enabled = true;
-    //    //    agent.SetDestination(_point);
-    //    //}
-    //}
-
-    //IEnumerator DeadActing()
-    //{
-    //    float targetAmount = state == State.Dead ? 1f : 0f;
-    //    float normalize = 0f;
-    //    while (normalize < 1f)
-    //    {
-    //        normalize += Time.deltaTime;
-    //        SetRanderer_Dead(targetAmount, normalize);
-    //        yield return null;
-    //    }
-    //}
-
-    //public Vector3 DirFromAngle(float _angleInDegrees, Transform _trans = null)
-    //{
-    //    if (_trans != null)
-    //    {
-    //        // ���� ����
-    //        _angleInDegrees += _trans.eulerAngles.y;
-    //    }
-    //    return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
-    //}
-
-    ////bool VisibleTarget(Transform _target)// ���̴��� Ȯ��
-    ////{
-    ////    Vector3 dirToTarget = (_target.position - transform.position).normalized;
-    ////    if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle * 0.5f)// �ޱ� �ȿ� ���� �Ǵ���
-    ////    {
-    ////        float dstToTarget = (transform.position - _target.position).magnitude;
-    ////        if (Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask) == false)
-    ////        {
-    ////            return true;
-    ////        }
-    ////    }
-    ////    return false;
-    ////}
-
-    //public float CheckDistance()
-    //{
-    //    if (target != null)
-    //    {
-    //        float targetDistance = Vector3.Distance(target.transform.position, transform.position);
-    //        return targetDistance;
-    //    }
-    //    return 0f;
-    //}
-
-    //public void BattleOver()
-    //{
-    //    Destination(transform.position);
-    //    StopAllCoroutines();
-    //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     Coroutine stateAction;
     public void StateMachineTest(State _state)
@@ -842,6 +304,8 @@ public class Unit_AI : MonoBehaviour
         {
             targetPosition = target.transform.position;
             Destination(targetPosition);
+            Vector3 offset = (targetPosition - transform.position).normalized;
+            transform.rotation = Quaternion.LookRotation(offset);
             yield return new WaitForSeconds(deleyTime);
 
             float distance = (target.transform.position - transform.position).magnitude;
@@ -1055,6 +519,7 @@ public class Unit_AI : MonoBehaviour
         healthPoint -= _damage;
         deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health, true);// 데미지 바
         deleDamage?.Invoke(hitPoint, _damage.ToString());// 데미지 폰트
+
         if (healthPoint <= 0)
         {
             // 죽음 액션
@@ -1066,10 +531,14 @@ public class Unit_AI : MonoBehaviour
         // 데미지 액션
         SetRanderer();
         float animTime = unitAnimation.PlayAnimation(5);// 애니메이션
-
+        //float animTime = 0.5f;
         if (holdAction != null)
             StopCoroutine(holdAction);
         holdAction = StartCoroutine(HoldAction(animTime));
+
+        if (shakeUnit != null)// 캐릭터 흔들기
+            StopCoroutine(shakeUnit);
+        shakeUnit = StartCoroutine(ShakeUnit());
 
         // 어그로
         float aggro = _damage * _skillStruct.aggro;
@@ -1089,12 +558,25 @@ public class Unit_AI : MonoBehaviour
                 break;
         }
     }
-    Coroutine holdAction;
+    Coroutine holdAction, shakeUnit;
     IEnumerator HoldAction(float _hold)
     {
         StateMachineTest(State.None);
         yield return new WaitForSeconds(_hold);
         StateMachineTest(State.Idle);
+    }
+
+    IEnumerator ShakeUnit()
+    {
+        float normalize = 0f;
+        while (normalize < 1f)
+        {
+            normalize += Time.deltaTime * 3f;
+            Vector3 randomPosition = Random.insideUnitSphere * (1f - normalize) * 0.3f;
+            unitAnimation.transform.localPosition = randomPosition;
+            yield return null;
+        }
+        unitAnimation.transform.localPosition = Vector3.zero;
     }
 
     void DeadState()
