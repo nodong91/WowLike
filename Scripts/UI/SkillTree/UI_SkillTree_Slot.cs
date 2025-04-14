@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
@@ -24,7 +23,7 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
     public int maxLevel;
     public int GetLevel { get { return currentLevel; } }
     public int requiredLevel;// 활성화 할 때 필요한 경험치레벨
-    public Image pipeImage;
+    public Transform pipeImage;
 
     public void SetSlot()
     {
@@ -32,28 +31,27 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
         levelIcon.rectTransform.sizeDelta = new Vector2(levelRange * maxLevel, levelIcon.rectTransform.sizeDelta.y);
         for (int i = 0; i < takeSlotList.Count; i++)
         {
-            Transform target = takeSlotList[i].transform;
-            float angle = Mathf.Atan2(target.position.y - pipeImage.transform.position.y, target.position.x - pipeImage.transform.position.x) * Mathf.Rad2Deg;
-            pipeImage.transform.rotation = Quaternion.Euler(new Vector3(0, 0f, angle + 90f));
-            //Vector3 offset = (takeSlotList[i].transform.position - transform.position).normalized;
-            //pipeImage.transform.rotation = Quaternion.LookRotation(offset);
-            takeSlotList[i].AddSlot(this);
+            pipeImage.gameObject.SetActive(true);
+            UI_SkillTree_Slot target = takeSlotList[i];
+            float angle = Mathf.Atan2(target.transform.position.y - pipeImage.position.y, target.transform.position.x - pipeImage.position.x) * Mathf.Rad2Deg;
+            pipeImage.rotation = Quaternion.Euler(new Vector3(0, 0f, angle + 90f));
+            target.AddSlot(this);
         }
         CheckActive();
     }
-   
-    private void Update()
-    {
-        for (int i = 0; i < takeSlotList.Count; i++)
-        {
-            Transform target = takeSlotList[i].transform;
-            float angle = Mathf.Atan2(target.position.y - pipeImage.transform.position.y, target.position.x - pipeImage.transform.position.x) * Mathf.Rad2Deg;
-            pipeImage.transform.rotation = Quaternion.Euler(new Vector3(0, 0f, angle + 90f));
-            //Vector3 offset = (takeSlotList[i].transform.position - transform.position).normalized;
-            //pipeImage.transform.rotation = Quaternion.LookRotation(offset);
-            takeSlotList[i].AddSlot(this);
-        }
-    }
+
+    //private void Update()
+    //{
+    //    for (int i = 0; i < takeSlotList.Count; i++)
+    //    {
+    //        Transform target = takeSlotList[i].transform;
+    //        float angle = Mathf.Atan2(target.position.y - pipeImage.position.y, target.position.x - pipeImage.position.x) * Mathf.Rad2Deg;
+    //        pipeImage.rotation = Quaternion.Euler(new Vector3(0, 0f, angle + 90f));
+    //        //Vector3 offset = (takeSlotList[i].transform.position - transform.position).normalized;
+    //        //pipeImage.transform.rotation = Quaternion.LookRotation(offset);
+    //        takeSlotList[i].AddSlot(this);
+    //    }
+    //}
 
     void AddSlot(UI_SkillTree_Slot _slot)
     {
@@ -118,7 +116,6 @@ public class UI_SkillTree_Slot : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.LogWarning("oihjoijf");
         if (slotType == TreeSlotType.Unenable)
             return;
 

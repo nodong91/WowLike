@@ -48,8 +48,8 @@ public class UI_SkillTree : MonoBehaviour
                     inst.takeSlotList.Add(slotClass[i - 1][randomIndex]);
                 }
                 inst.requiredLevel = i;
-                inst.SetSlot();
                 inst.deleSkillPoint += OverSkillPoint;
+                inst.SetSlot();
                 slotList.Add(inst);
 
                 instRect = inst.GetComponent<RectTransform>();
