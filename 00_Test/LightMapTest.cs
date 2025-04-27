@@ -47,53 +47,57 @@ public class LightMapTest : MonoBehaviour
         public float scaleInLightmap;
         public int lightmapIndex;
         public Vector4 lightmapScaleOffset;
+        public int realtimeLightmapIndex;
+        public Vector4 realtimeLightmapScaleOffset;
         public readonly void SetLightmap()
         {
             lightMeshRenderer.scaleInLightmap = scaleInLightmap;
             lightMeshRenderer.lightmapIndex = lightmapIndex;
             lightMeshRenderer.lightmapScaleOffset = lightmapScaleOffset;
+            lightMeshRenderer.realtimeLightmapIndex = realtimeLightmapIndex;
+            lightMeshRenderer.realtimeLightmapScaleOffset = realtimeLightmapScaleOffset;
         }
     }
     public List<LightMapMesh> lightMapMeshes = new List<LightMapMesh>();
     [System.Serializable]
-    public struct LightMapSetting
+    public struct LightmapTextures
     {
         public Texture2D lightmapColor;
         public Texture2D lightmapDir;
         public Texture2D shadowMask;
     }
-    public List<LightMapSetting> lightMapSettings;
+    public List<LightmapTextures> lightmapTextures = new List<LightmapTextures>();
 
     void SetLightMap()
     {
         lightmaps = LightmapSettings.lightmaps;
 
         lightMapMeshes = new List<LightMapMesh>();
-        //MeshFilter[] meshArray = setTest.GetComponentsInChildren<MeshFilter>();
         MeshRenderer[] meshRenderer = gameObject.GetComponentsInChildren<MeshRenderer>();
         for (int i = 0; i < meshRenderer.Length; i++)
         {
-            //Mesh tempMesh = meshArray[i].sharedMesh;
             LightMapMesh tempLightMap = new LightMapMesh
             {
                 lightMeshRenderer = meshRenderer[i],
                 scaleInLightmap = meshRenderer[i].scaleInLightmap,
                 lightmapIndex = meshRenderer[i].lightmapIndex,
                 lightmapScaleOffset = meshRenderer[i].lightmapScaleOffset,
+                realtimeLightmapIndex = meshRenderer[i].realtimeLightmapIndex,
+                realtimeLightmapScaleOffset = meshRenderer[i].realtimeLightmapScaleOffset,
             };
             lightMapMeshes.Add(tempLightMap);
         }
-        lightMapSettings = new List<LightMapSetting>();
+        lightmapTextures = new List<LightmapTextures>();
 
         for (int i = 0; i < lightmaps.Length; i++)
         {
-            LightMapSetting lightmapData = new LightMapSetting
+            LightmapTextures lightmapData = new LightmapTextures
             {
                 lightmapColor = lightmaps[i].lightmapColor,
                 lightmapDir = lightmaps[i].lightmapDir,
                 shadowMask = lightmaps[i].shadowMask,
             };
-            lightMapSettings.Add(lightmapData);
+            lightmapTextures.Add(lightmapData);
         }
     }
 
@@ -105,14 +109,14 @@ public class LightMapTest : MonoBehaviour
 
     public void Setting()
     {
-        lightmaps = new LightmapData[lightMapSettings.Count];
+        lightmaps = new LightmapData[lightmapTextures.Count];
         for (int i = 0; i < lightmaps.Length; i++)
         {
             LightmapData lightmapData = new LightmapData
             {
-                lightmapColor = lightMapSettings[i].lightmapColor,
-                lightmapDir = lightMapSettings[i].lightmapDir,
-                shadowMask = lightMapSettings[i].shadowMask,
+                lightmapColor = lightmapTextures[i].lightmapColor,
+                lightmapDir = lightmapTextures[i].lightmapDir,
+                shadowMask = lightmapTextures[i].shadowMask,
             };
             lightmaps[i] = lightmapData;
         }
@@ -126,14 +130,14 @@ public class LightMapTest : MonoBehaviour
 
     IEnumerator SettingLigntmap()
     {
-        lightmaps = new LightmapData[lightMapSettings.Count];
+        lightmaps = new LightmapData[lightmapTextures.Count];
         for (int i = 0; i < lightmaps.Length; i++)
         {
             LightmapData lightmapData = new LightmapData
             {
-                lightmapColor = lightMapSettings[i].lightmapColor,
-                lightmapDir = lightMapSettings[i].lightmapDir,
-                shadowMask = lightMapSettings[i].shadowMask,
+                lightmapColor = lightmapTextures[i].lightmapColor,
+                lightmapDir = lightmapTextures[i].lightmapDir,
+                shadowMask = lightmapTextures[i].shadowMask,
             };
             lightmaps[i] = lightmapData;
             yield return null;
@@ -145,5 +149,71 @@ public class LightMapTest : MonoBehaviour
             lightMapMeshes[i].SetLightmap();
             yield return null;
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    [System.Serializable]
+    public class LightmapSet
+    {
+        public Renderer renderer;
+        public int lightmapIndex;
+        public Vector4 lightmapScaleOffset;
+        public int realtimeLightmapIndex;
+        public Vector4 realtimeLightmapScaleOffset;
+        public LightmapSet(Renderer _renderer, int _lightmapIndex, Vector4 _lightmapScaleOffset, int _realtimeLightmapIndex, Vector4 _realtimeLightmapScaleOffset)
+        {
+            renderer = _renderer;
+            lightmapIndex = _lightmapIndex;
+            lightmapScaleOffset = _lightmapScaleOffset;
+            realtimeLightmapIndex = _realtimeLightmapIndex;
+            realtimeLightmapScaleOffset = _realtimeLightmapScaleOffset;
+        }
+    }
+    public List<LightmapSet> lightmapSetList;
+    public int arrayStartIndex;
+
+    // 라이트맵 세팅
+    void LightMapSetting()
+    {
+        for (int i = 0; i < lightmapSetList.Count; i++)
+        {
+            lightmapSetList[i].renderer.lightmapIndex = lightmapSetList[i].lightmapIndex + arrayStartIndex; ;
+            lightmapSetList[i].renderer.lightmapScaleOffset = lightmapSetList[i].lightmapScaleOffset;
+            lightmapSetList[i].renderer.realtimeLightmapIndex = lightmapSetList[i].realtimeLightmapIndex + arrayStartIndex;
+            lightmapSetList[i].renderer.realtimeLightmapScaleOffset = lightmapSetList[i].realtimeLightmapScaleOffset;
+        }
+    }
+
+    void LoadLightmapData()
+    {
+        LightmapData[] lightmaparray = new LightmapData[lightmapTextures.Count];
+        for (var i = 0; i < lightmaparray.Length; i++)
+        {
+            LightmapData mapdata = new LightmapData();
+            mapdata.lightmapDir = lightmapTextures[i].lightmapDir;
+            mapdata.lightmapColor = lightmapTextures[i].lightmapColor;
+            if (lightmapTextures[i].shadowMask != null)
+                mapdata.shadowMask = lightmapTextures[i].shadowMask;
+
+            lightmaparray[i] = mapdata;
+            Debug.LogWarning("LoadLightmapData");
+        }
+        LightmapSettings.lightmaps = lightmaparray;
     }
 }

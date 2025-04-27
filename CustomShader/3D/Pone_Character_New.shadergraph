@@ -944,9 +944,6 @@
             "m_Id": "10655411280547729fad254744e1e316"
         },
         {
-            "m_Id": "ad695ed72d644ba6959f68040a72d2f1"
-        },
-        {
             "m_Id": "684fef4cc3804a7eb93835b3a0c7b7bb"
         },
         {
@@ -1526,20 +1523,6 @@
                     "m_Id": "f446983c89fe4d11babb23c423200c51"
                 },
                 "m_SlotId": 1
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "16b28c8e3cff497a9f53c4744742de24"
-                },
-                "m_SlotId": 1
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "ad695ed72d644ba6959f68040a72d2f1"
-                },
-                "m_SlotId": 0
             }
         },
         {
@@ -6718,8 +6701,8 @@
     "m_ObjectId": "0ca15132dc0340ffb0874d13e780fd9e",
     "m_Title": "RimLight",
     "m_Position": {
-        "x": -3353.000244140625,
-        "y": -701.0000610351563
+        "x": -3352.999755859375,
+        "y": -700.9999389648438
     }
 }
 
@@ -9508,7 +9491,7 @@
     "m_Title": "ShadowColor",
     "m_Position": {
         "x": -4818.0,
-        "y": -543.0
+        "y": -542.9999389648438
     }
 }
 
@@ -10791,7 +10774,7 @@
     "m_Title": "Baked GI and Ambient contribution",
     "m_Position": {
         "x": -2135.0,
-        "y": 35.0
+        "y": 35.000003814697269
     }
 }
 
@@ -11682,7 +11665,7 @@
     "m_ObjectId": "38b49573eb9b4b1892df6ebaf55a1a65",
     "m_Title": "Outline Mask",
     "m_Position": {
-        "x": -3185.0,
+        "x": -3184.999755859375,
         "y": 351.0
     }
 }
@@ -11780,8 +11763,8 @@
     "m_ObjectId": "39e77a2a00134951a3d84abc885dc301",
     "m_Title": "MatCap2 Splat",
     "m_Position": {
-        "x": -3292.0,
-        "y": 1826.0
+        "x": -3291.999755859375,
+        "y": 1825.999755859375
     }
 }
 
@@ -12076,8 +12059,8 @@
     "m_ObjectId": "3cfec547edda4526afc51393de81a1f8",
     "m_Title": "Burn",
     "m_Position": {
-        "x": -3884.0,
-        "y": 2636.0
+        "x": -3883.999755859375,
+        "y": 2635.999755859375
     }
 }
 
@@ -12343,7 +12326,7 @@
     "m_Title": "Occlusion",
     "m_Position": {
         "x": -4867.0,
-        "y": -156.0
+        "y": -155.99998474121095
     }
 }
 
@@ -15098,30 +15081,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
-    "m_ObjectId": "52c5edfb7ace4f95a4c75608ff97899e",
-    "m_Id": 1,
-    "m_DisplayName": "Out",
-    "m_SlotType": 1,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "Out",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    }
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "532f0b22aff143d3884a3e01dd0ceb74",
     "m_Id": -967526467,
@@ -15392,30 +15351,6 @@
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
-    "m_ObjectId": "55d7e39c0fe04394a19676dd810e1c10",
-    "m_Id": 0,
-    "m_DisplayName": "In",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "In",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
-    }
 }
 
 {
@@ -18227,7 +18162,7 @@
     "m_Title": "Fresnel Portal",
     "m_Position": {
         "x": -2408.0,
-        "y": 1978.0
+        "y": 1977.999755859375
     }
 }
 
@@ -18434,8 +18369,8 @@
     "m_ObjectId": "704f342ddfc74e3c9998aa44c1fb3a52",
     "m_Title": "Realtime shadows on Baked geometry",
     "m_Position": {
-        "x": -2828.0,
-        "y": -398.0
+        "x": -2827.999755859375,
+        "y": -397.9999694824219
     }
 }
 
@@ -18871,7 +18806,7 @@
     "m_ObjectId": "74ad3a2a2217411ea50bf1812ac46664",
     "m_Title": "MultiLight",
     "m_Position": {
-        "x": -1867.0,
+        "x": -1866.9998779296875,
         "y": 775.0
     }
 }
@@ -19419,7 +19354,7 @@
     "m_Title": "BlackNWhite",
     "m_Position": {
         "x": -349.0,
-        "y": -186.0
+        "y": -185.99998474121095
     }
 }
 
@@ -20268,7 +20203,7 @@
     "m_ObjectId": "80d96100b22d4080a100efca49c564c6",
     "m_Title": "Specular",
     "m_Position": {
-        "x": -3459.0,
+        "x": -3458.999755859375,
         "y": -1613.0
     }
 }
@@ -21756,8 +21691,8 @@
     "m_ObjectId": "8d204fd278c245158491edb6bd6d070d",
     "m_Title": "Portal",
     "m_Position": {
-        "x": -1039.0,
-        "y": 1571.0
+        "x": -1038.9998779296875,
+        "y": 1570.9998779296875
     }
 }
 
@@ -21767,7 +21702,7 @@
     "m_ObjectId": "8d760856a95f44a7a852d8cb9cbbc489",
     "m_Title": "Texture",
     "m_Position": {
-        "x": -3036.0,
+        "x": -3035.999755859375,
         "y": 846.0
     }
 }
@@ -25383,44 +25318,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.PreviewNode",
-    "m_ObjectId": "ad695ed72d644ba6959f68040a72d2f1",
-    "m_Group": {
-        "m_Id": ""
-    },
-    "m_Name": "Preview",
-    "m_DrawState": {
-        "m_Expanded": true,
-        "m_Position": {
-            "serializedVersion": "2",
-            "x": -636.9999389648438,
-            "y": -597.9998779296875,
-            "width": 208.0,
-            "height": 277.9999694824219
-        }
-    },
-    "m_Slots": [
-        {
-            "m_Id": "55d7e39c0fe04394a19676dd810e1c10"
-        },
-        {
-            "m_Id": "52c5edfb7ace4f95a4c75608ff97899e"
-        }
-    ],
-    "synonyms": [],
-    "m_Precision": 0,
-    "m_PreviewExpanded": true,
-    "m_DismissedVersion": 0,
-    "m_PreviewMode": 0,
-    "m_CustomColors": {
-        "m_SerializableColors": []
-    },
-    "m_Width": 208.0,
-    "m_Height": 208.0
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "ae03d27f0f4e40e3bc530137961e9460",
     "m_Id": 2,
@@ -25446,8 +25343,8 @@
     "m_ObjectId": "ae16703d4f9c4c268a60a559e607e631",
     "m_Title": "MatCap",
     "m_Position": {
-        "x": -3300.0,
-        "y": 1498.0
+        "x": -3299.999755859375,
+        "y": 1497.999755859375
     }
 }
 
@@ -26087,8 +25984,8 @@
     "m_ObjectId": "b23c0235de294946b5b40ca3cee414ac",
     "m_Title": "Shadow",
     "m_Position": {
-        "x": -3998.0,
-        "y": -544.0
+        "x": -3997.999755859375,
+        "y": -543.9999389648438
     }
 }
 
@@ -26738,8 +26635,8 @@
     "m_ObjectId": "ba9f126b14804ffc9875bc336332692e",
     "m_Title": "MatCap Vector",
     "m_Position": {
-        "x": -5251.0,
-        "y": 1449.0
+        "x": -5250.99951171875,
+        "y": 1448.999755859375
     }
 }
 
@@ -30820,10 +30717,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1756.0001220703125,
-            "y": 468.0000305175781,
+            "x": -1724.0,
+            "y": 486.0000305175781,
             "width": 130.0,
-            "height": 117.99996948242188
+            "height": 118.00003051757813
         }
     },
     "m_Slots": [

@@ -59,6 +59,8 @@ public class Unit_Battle : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 30;
+
         Time.timeScale = timeScale;
         if (instMapGenerator == null)
             instMapGenerator = Instantiate(mapGenerator, transform);
