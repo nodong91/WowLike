@@ -106,7 +106,7 @@ public class Unit_AI : MonoBehaviour
     public void SetUnit(string _unitID, LayerMask _layerMask)// 첫세팅
     {
         unitID = _unitID;
-        if (unitID == null)
+        if (unitID == null || Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(unitID) == false)
             return;
         Debug.LogWarning("생성 : " + unitID);
         agent = GetComponent<NavMeshAgent>();
@@ -123,23 +123,27 @@ public class Unit_AI : MonoBehaviour
         //castingImage.material = Instantiate(castingImage.material);
         gameObject.layer = _layerMask;
 
-        SkillStruct skill_01 = new SkillStruct
-        {
-            skillID = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01].ID,
-            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill01]
-        };
-        readySkills.Add(skill_01);
-        SkillStruct skill_02 = new SkillStruct
-        {
-            skillID = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02].ID,
-            skillStruct = Singleton_Data.INSTANCE.Dict_Skill[unitStruct.defaultSkill02]
-        };
+        AddSkill(unitStruct.defaultSkill01);
+        AddSkill(unitStruct.defaultSkill02);
 
-        readySkills.Add(skill_02);
         healthPoint = unitAttributes.Health;
         deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health, false);// 세팅
 
         renderers = GetComponentsInChildren<Renderer>();
+    }
+
+    void AddSkill(string _key)
+    {
+        if (Singleton_Data.INSTANCE.Dict_Skill.ContainsKey(_key))
+        {
+            SkillStruct skill = new SkillStruct
+            {
+                skillID = Singleton_Data.INSTANCE.Dict_Skill[_key].ID,
+                startTime = 0,
+                skillStruct = Singleton_Data.INSTANCE.Dict_Skill[_key]
+            };
+            readySkills.Add(skill);
+        }
     }
 
     public void ResetUnit()// 첫소환 또는 부활 때 사용
@@ -306,7 +310,6 @@ public class Unit_AI : MonoBehaviour
             Destination(targetPosition);
             Vector3 offset = (targetPosition - transform.position).normalized;
             transform.rotation = Quaternion.LookRotation(offset);
-            yield return new WaitForSeconds(deleyTime);
 
             float distance = (target.transform.position - transform.position).magnitude;
             float setDistance = target.GetUnitSize + GetUnitSize + GetSkillRange.y;
@@ -315,6 +318,7 @@ public class Unit_AI : MonoBehaviour
                 moving = false;
                 StateMachineTest(State.Attack);
             }
+            yield return new WaitForSeconds(deleyTime);
         }
     }
 
