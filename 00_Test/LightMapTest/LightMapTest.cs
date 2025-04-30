@@ -22,11 +22,11 @@ public class LightMapTest_Editor : Editor
             EditorUtility.SetDirty(Inspector);
         }
 
-        if (GUILayout.Button("Load", fontStyle, GUILayout.Height(30f)))
-        {
-            Inspector.Setting();
-            EditorUtility.SetDirty(Inspector);
-        }
+        //if (GUILayout.Button("Load", fontStyle, GUILayout.Height(30f)))
+        //{
+        //    Inspector.Setting();
+        //    EditorUtility.SetDirty(Inspector);
+        //}
         GUILayout.Space(10f);
         base.OnInspectorGUI();
     }
@@ -35,24 +35,19 @@ public class LightMapTest_Editor : Editor
 public class LightMapTest : MonoBehaviour
 {
     public LightmapData[] lightmaps;
-
-    public void UpdateData()
-    {
-        SetLightMap();
-    }
     [System.Serializable]
     public struct LightMapMesh
     {
         public MeshRenderer lightMeshRenderer;
-        public float scaleInLightmap;
+        //public float scaleInLightmap;
         public int lightmapIndex;
         public Vector4 lightmapScaleOffset;
         public int realtimeLightmapIndex;
         public Vector4 realtimeLightmapScaleOffset;
-        public readonly void SetLightmap()
+        public readonly void SetLightmap(int _currentIndex)
         {
-            lightMeshRenderer.scaleInLightmap = scaleInLightmap;
-            lightMeshRenderer.lightmapIndex = lightmapIndex;
+            //lightMeshRenderer.scaleInLightmap = scaleInLightmap;
+            lightMeshRenderer.lightmapIndex = _currentIndex + lightmapIndex;
             lightMeshRenderer.lightmapScaleOffset = lightmapScaleOffset;
             lightMeshRenderer.realtimeLightmapIndex = realtimeLightmapIndex;
             lightMeshRenderer.realtimeLightmapScaleOffset = realtimeLightmapScaleOffset;
@@ -68,6 +63,11 @@ public class LightMapTest : MonoBehaviour
     }
     public List<LightmapTextures> lightmapTextures = new List<LightmapTextures>();
 
+    public void UpdateData()
+    {
+        SetLightMap();
+    }
+
     void SetLightMap()
     {
         lightmaps = LightmapSettings.lightmaps;
@@ -79,7 +79,7 @@ public class LightMapTest : MonoBehaviour
             LightMapMesh tempLightMap = new LightMapMesh
             {
                 lightMeshRenderer = meshRenderer[i],
-                scaleInLightmap = meshRenderer[i].scaleInLightmap,
+                //scaleInLightmap = meshRenderer[i].scaleInLightmap,
                 lightmapIndex = meshRenderer[i].lightmapIndex,
                 lightmapScaleOffset = meshRenderer[i].lightmapScaleOffset,
                 realtimeLightmapIndex = meshRenderer[i].realtimeLightmapIndex,
@@ -100,40 +100,42 @@ public class LightMapTest : MonoBehaviour
             lightmapTextures.Add(lightmapData);
         }
     }
-
+    public int currentCount;
     private void Start()
     {
-        //StartCoroutine(SettingLigntmap());
-        Setting();
+        StartCoroutine(SettingLigntmap());
+        //Setting();
     }
 
     public void Setting()
     {
         LightmapData[] currentLightmap = LightmapSettings.lightmaps;
-        int lightmapCount = currentLightmap.Length;
-        lightmaps = new LightmapData[lightmapTextures.Count + lightmapCount];
-        for (int i = 0; i < lightmaps.Length; i++)
+        currentCount = currentLightmap.Length;
+        LightmapData[] tempLightmaps = new LightmapData[lightmapTextures.Count + currentCount];
+        for (int i = 0; i < tempLightmaps.Length; i++)
         {
+            Debug.LogWarning($"{currentCount} > {i}");
             if (currentLightmap.Length > i)
             {
-                lightmaps[i] = currentLightmap[i];
+                tempLightmaps[i] = currentLightmap[i];
             }
             else
             {
+                int index = i - currentLightmap.Length;
                 LightmapData lightmapData = new LightmapData
                 {
-                    lightmapColor = lightmapTextures[i].lightmapColor,
-                    lightmapDir = lightmapTextures[i].lightmapDir,
-                    shadowMask = lightmapTextures[i].shadowMask,
+                    lightmapColor = lightmapTextures[index].lightmapColor,
+                    lightmapDir = lightmapTextures[index].lightmapDir,
+                    shadowMask = lightmapTextures[index].shadowMask,
                 };
-                lightmaps[i] = lightmapData;
+                tempLightmaps[i] = lightmapData;
             }
         }
-        LightmapSettings.lightmaps = lightmaps;
+        LightmapSettings.lightmaps = tempLightmaps;
 
         for (int i = 0; i < lightMapMeshes.Count; i++)
         {
-            lightMapMeshes[i].SetLightmap();
+            lightMapMeshes[i].SetLightmap(currentCount);
         }
     }
 
@@ -155,7 +157,7 @@ public class LightMapTest : MonoBehaviour
 
         for (int i = 0; i < lightMapMeshes.Count; i++)
         {
-            lightMapMeshes[i].SetLightmap();
+            lightMapMeshes[i].SetLightmap(currentCount);
             yield return null;
         }
     }
@@ -177,52 +179,52 @@ public class LightMapTest : MonoBehaviour
 
 
 
-    [System.Serializable]
-    public class LightmapSet
-    {
-        public Renderer renderer;
-        public int lightmapIndex;
-        public Vector4 lightmapScaleOffset;
-        public int realtimeLightmapIndex;
-        public Vector4 realtimeLightmapScaleOffset;
-        public LightmapSet(Renderer _renderer, int _lightmapIndex, Vector4 _lightmapScaleOffset, int _realtimeLightmapIndex, Vector4 _realtimeLightmapScaleOffset)
-        {
-            renderer = _renderer;
-            lightmapIndex = _lightmapIndex;
-            lightmapScaleOffset = _lightmapScaleOffset;
-            realtimeLightmapIndex = _realtimeLightmapIndex;
-            realtimeLightmapScaleOffset = _realtimeLightmapScaleOffset;
-        }
-    }
-    public List<LightmapSet> lightmapSetList;
-    public int lightmapCount;
+    //[System.Serializable]
+    //public class LightmapSet
+    //{
+    //    public Renderer renderer;
+    //    public int lightmapIndex;
+    //    public Vector4 lightmapScaleOffset;
+    //    public int realtimeLightmapIndex;
+    //    public Vector4 realtimeLightmapScaleOffset;
+    //    public LightmapSet(Renderer _renderer, int _lightmapIndex, Vector4 _lightmapScaleOffset, int _realtimeLightmapIndex, Vector4 _realtimeLightmapScaleOffset)
+    //    {
+    //        renderer = _renderer;
+    //        lightmapIndex = _lightmapIndex;
+    //        lightmapScaleOffset = _lightmapScaleOffset;
+    //        realtimeLightmapIndex = _realtimeLightmapIndex;
+    //        realtimeLightmapScaleOffset = _realtimeLightmapScaleOffset;
+    //    }
+    //}
+    //public List<LightmapSet> lightmapSetList;
+    //public int lightmapCount;
 
-    // 라이트맵 세팅
-    void LightMapSetting()
-    {
-        for (int i = 0; i < lightmapSetList.Count; i++)
-        {
-            lightmapSetList[i].renderer.lightmapIndex = lightmapSetList[i].lightmapIndex + lightmapCount;
-            lightmapSetList[i].renderer.lightmapScaleOffset = lightmapSetList[i].lightmapScaleOffset;
-            lightmapSetList[i].renderer.realtimeLightmapIndex = lightmapSetList[i].realtimeLightmapIndex + lightmapCount;
-            lightmapSetList[i].renderer.realtimeLightmapScaleOffset = lightmapSetList[i].realtimeLightmapScaleOffset;
-        }
-    }
+    //// 라이트맵 세팅
+    //void LightMapSetting()
+    //{
+    //    for (int i = 0; i < lightmapSetList.Count; i++)
+    //    {
+    //        lightmapSetList[i].renderer.lightmapIndex = lightmapSetList[i].lightmapIndex + lightmapCount;
+    //        lightmapSetList[i].renderer.lightmapScaleOffset = lightmapSetList[i].lightmapScaleOffset;
+    //        lightmapSetList[i].renderer.realtimeLightmapIndex = lightmapSetList[i].realtimeLightmapIndex + lightmapCount;
+    //        lightmapSetList[i].renderer.realtimeLightmapScaleOffset = lightmapSetList[i].realtimeLightmapScaleOffset;
+    //    }
+    //}
 
-    void LoadLightmapData()
-    {
-        LightmapData[] lightmaparray = new LightmapData[lightmapTextures.Count];
-        for (var i = 0; i < lightmaparray.Length; i++)
-        {
-            LightmapData mapdata = new LightmapData();
-            mapdata.lightmapDir = lightmapTextures[i].lightmapDir;
-            mapdata.lightmapColor = lightmapTextures[i].lightmapColor;
-            if (lightmapTextures[i].shadowMask != null)
-                mapdata.shadowMask = lightmapTextures[i].shadowMask;
+    //void LoadLightmapData()
+    //{
+    //    LightmapData[] lightmaparray = new LightmapData[lightmapTextures.Count];
+    //    for (var i = 0; i < lightmaparray.Length; i++)
+    //    {
+    //        LightmapData mapdata = new LightmapData();
+    //        mapdata.lightmapDir = lightmapTextures[i].lightmapDir;
+    //        mapdata.lightmapColor = lightmapTextures[i].lightmapColor;
+    //        if (lightmapTextures[i].shadowMask != null)
+    //            mapdata.shadowMask = lightmapTextures[i].shadowMask;
 
-            lightmaparray[i] = mapdata;
-            Debug.LogWarning("LoadLightmapData");
-        }
-        LightmapSettings.lightmaps = lightmaparray;
-    }
+    //        lightmaparray[i] = mapdata;
+    //        Debug.LogWarning("LoadLightmapData");
+    //    }
+    //    LightmapSettings.lightmaps = lightmaparray;
+    //}
 }
