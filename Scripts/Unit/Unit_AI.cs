@@ -108,7 +108,7 @@ public class Unit_AI : MonoBehaviour
         unitID = _unitID;
         if (unitID == null || Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(unitID) == false)
             return;
-        Debug.LogWarning("생성 : " + unitID);
+        Debug.Log("유닛 생성 : " + unitID);
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
 

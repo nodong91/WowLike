@@ -14,6 +14,7 @@ public class CameraManager : MonoBehaviour
     Vector2 currentInput;
     float currentX, currentY;
     const float rotateSpeed = 0.1f;
+    public Vector2 zoomLimit = new Vector2(2.0f, 5.0f);
 
     Coroutine stoping, zooming, shaking;
     Coroutine onRotate;
@@ -58,7 +59,7 @@ public class CameraManager : MonoBehaviour
 
     void SetDefault()
     {
-        Vector2 zoomLimit = new Vector2(2.0f, 5.0f);
+        //zoomLimit = new Vector2(2.0f, 5.0f);
         orbitalFollow.RadialAxis.Range = zoomLimit;
         orbitalFollow.RadialAxis.Value = (zoomLimit.x + zoomLimit.y) * 0.5f;
         orbitalFollow.OrbitStyle = CinemachineOrbitalFollow.OrbitStyles.ThreeRing;
