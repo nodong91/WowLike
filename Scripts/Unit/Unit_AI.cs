@@ -39,7 +39,12 @@ public class Unit_AI : MonoBehaviour
     public State state = State.None;
     float distance;
     Renderer[] renderers;
-    Coroutine stateMachine, takeDamage, setRanderer;
+    public string[] lootings;
+    Coroutine takeDamage, setRanderer;
+    Coroutine aggroCoroutine;
+    Coroutine stateAction;
+    Coroutine coolingSkill;
+    Coroutine holdAction, shakeUnit;
 
     [Header(" [ Status ]")]
     Vector3 targetPosition;
@@ -58,7 +63,6 @@ public class Unit_AI : MonoBehaviour
     float escapeCoolTime = 3f;
     public bool escapeCooling = false;
 
-    Coroutine aggroCoroutine;
     public LayerMask targetMask, obstacleMask;
 
     public delegate void DeadUnit(Unit_AI _unit);
@@ -108,11 +112,17 @@ public class Unit_AI : MonoBehaviour
         unitID = _unitID;
         if (unitID == null || Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(unitID) == false)
             return;
+
+        Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[unitID].unitProp;
+        unitAnimation = Instantiate(unit, this.transform);
+        unitAnimation.SetAnimator();
+        unitAnimation.attackEvent = Event_Attack;// 애니메이션 이벤트 받아올
+        lootings = unitAnimation.GetComponent<Unit_Looting>().GetLooting(3);// 루팅 아이템
+
         Debug.Log("유닛 생성 : " + unitID);
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
 
-        unitAnimation.attackEvent = Event_Attack;// 애니메이션 이벤트 받아올
         //obstacle = GetComponentInChildren<NavMeshObstacle>();
         //obstacle.enabled = false;
 
@@ -203,18 +213,20 @@ public class Unit_AI : MonoBehaviour
     }
 #endif
 
-    Coroutine stateAction;
-    public void StateMachineTest(State _state)
+    public void SetStart()
     {
-        if (dummy == true || _state == State.End)
+        StateMachine(State.Idle);
+    }
+
+    void StateMachine(State _state)
+    {
+        if (dummy == true || state == State.Dead)
             return;
 
         if (stateAction != null)
             StopCoroutine(stateAction);
 
         state = _state;
-        agent.avoidancePriority = (int)_state;
-
         switch (state)
         {
             case State.None:
@@ -249,6 +261,8 @@ public class Unit_AI : MonoBehaviour
                 DeadState();
                 break;
         }
+        if (agent != null)
+            agent.avoidancePriority = (int)state;
     }
 
     void State_Idle()
@@ -281,11 +295,11 @@ public class Unit_AI : MonoBehaviour
         if (readySkills?.Count > 0)// 준비된 스킬이 있다면
         {
             currentSkill = SelectSkill();// 스킬 선택
-            StateMachineTest(State.Move);
+            StateMachine(State.Move);
         }
         else
         {
-            StateMachineTest(State.Patrol);
+            StateMachine(State.Patrol);
         }
     }
 
@@ -316,7 +330,7 @@ public class Unit_AI : MonoBehaviour
             if (distance < setDistance)
             {
                 moving = false;
-                StateMachineTest(State.Attack);
+                StateMachine(State.Attack);
             }
             yield return new WaitForSeconds(deleyTime);
         }
@@ -343,12 +357,13 @@ public class Unit_AI : MonoBehaviour
 
             // 시간이 지나면 다시 스킬 찾기
             moving = false;
-            StateMachineTest(State.Idle);
+            StateMachine(State.Idle);
         }
     }
 
     void Destination(Vector3 _point)
     {
+        //if (agent.enabled == true)
         agent.SetDestination(_point);
     }
 
@@ -423,7 +438,7 @@ public class Unit_AI : MonoBehaviour
                 float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
                 yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
             }
-            StateMachineTest(State.Idle);
+            StateMachine(State.Idle);
         }
     }
 
@@ -468,7 +483,6 @@ public class Unit_AI : MonoBehaviour
 
         StartCoroutine(GlobalCooling());
     }
-    Coroutine collingSkill;
 
     IEnumerator GlobalCooling()
     {
@@ -483,9 +497,9 @@ public class Unit_AI : MonoBehaviour
 
     void CoolingSkill()
     {
-        if (collingSkill != null)
-            StopCoroutine(collingSkill);
-        collingSkill = StartCoroutine(CoolingSkilling());
+        if (coolingSkill != null)
+            StopCoroutine(coolingSkill);
+        coolingSkill = StartCoroutine(CoolingSkilling());
     }
 
     IEnumerator CoolingSkilling()
@@ -513,7 +527,6 @@ public class Unit_AI : MonoBehaviour
         if (state == State.Dead)
             return;
 
-        //StopAllCoroutines();
         Destination(transform.position);
         // _from 때린 유닛
         // _center 맞은 포인트
@@ -527,15 +540,16 @@ public class Unit_AI : MonoBehaviour
         if (healthPoint <= 0)
         {
             // 죽음 액션
-            StateMachineTest(State.Dead);
+            StateMachine(State.Dead);
             SetRanderer();
+            Debug.LogWarning("죽음 : " + gameObject.name);
             return;
         }
 
         // 데미지 액션
         SetRanderer();
         float animTime = unitAnimation.PlayAnimation(5);// 애니메이션
-        //float animTime = 0.5f;
+
         if (holdAction != null)
             StopCoroutine(holdAction);
         holdAction = StartCoroutine(HoldAction(animTime));
@@ -562,12 +576,13 @@ public class Unit_AI : MonoBehaviour
                 break;
         }
     }
-    Coroutine holdAction, shakeUnit;
+
     IEnumerator HoldAction(float _hold)
     {
-        StateMachineTest(State.None);
+        StateMachine(State.None);
         yield return new WaitForSeconds(_hold);
-        StateMachineTest(State.Idle);
+        if (state != State.Dead)
+            StateMachine(State.Idle);
     }
 
     IEnumerator ShakeUnit()
@@ -586,25 +601,22 @@ public class Unit_AI : MonoBehaviour
     void DeadState()
     {
         unitAnimation.PlayAnimation(7);// 애니메이션
-
         deadUnit?.Invoke(this);
-        StopAllCoroutines();
-
-        agent.enabled = false;
+        //agent.enabled = false;
     }
 
     void SetRanderer()
     {
-        if (setRanderer != null)
-            StopCoroutine(setRanderer);
-
         switch (state)
         {
             case State.Dead:
-                setRanderer = StartCoroutine(SetRenderer("_BlackNWhite", 1f));
+                StartCoroutine(SetRenderer("_BlackNWhite", 1f));
+                //setRanderer = StartCoroutine(SetRenderer("_BlackNWhite", 1f));
                 break;
 
             default:
+                if (setRanderer != null)
+                    StopCoroutine(setRanderer);
                 setRanderer = StartCoroutine(SetRenderer("_Damage", 3f));
                 break;
         }
@@ -626,39 +638,7 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
-    public void BattleOver()
-    {
-        if (state == State.Dead)
-            return;
-
-        StopAllCoroutines();
-        StateMachineTest(State.End);
-        Destination(transform.position);
-
-        // 승리 포즈
-        unitAnimation.PlayAnimation(4);// 애니메이션
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // 어그로
     Unit_AI AddAggro(Unit_AI _unit, float _aggro)
     {
         if (aggroDict.ContainsKey(_unit) == true)
@@ -773,5 +753,15 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
+    public void BattleOver()
+    {
+        if (state == State.Dead)
+            return;
 
+        StateMachine(State.End);
+        Destination(transform.position);// 제자리에 정지
+
+        // 승리 포즈
+        unitAnimation.PlayAnimation(4);// 애니메이션
+    }
 }

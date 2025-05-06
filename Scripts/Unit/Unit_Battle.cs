@@ -7,6 +7,8 @@ public class Unit_Battle : MonoBehaviour
 {
     [SerializeField] UI_Battle uiBattle;
     UI_Battle instUIBattle;
+    [SerializeField] Map_Generator mapGenerator;
+    Map_Generator instMapGenerator;
     public enum SpawnType
     {
         Normal,
@@ -20,9 +22,8 @@ public class Unit_Battle : MonoBehaviour
     }
     public CurrentMode currentMode;
 
-    [SerializeField] Map_Generator mapGenerator;
-    Map_Generator instMapGenerator;
     public float timeScale = 1f;
+    public int targetFrameRate = 60;
 
     private List<Unit_AI> players, monsters;
 
@@ -30,6 +31,7 @@ public class Unit_Battle : MonoBehaviour
     {
         return players;
     }
+
     public List<Unit_AI> MonsterList()
     {
         return monsters;
@@ -49,18 +51,18 @@ public class Unit_Battle : MonoBehaviour
 
     Coroutine cameraInput;
 
-    public static Unit_Battle INSTANCE;
+    public static Unit_Battle current;
 
     private void Awake()
     {
-        INSTANCE = this;
+        current = this;
     }
 
     private void Start()
     {
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = targetFrameRate;
 
-        Time.timeScale = timeScale;
+        SetTimeScale(timeScale);
         if (instMapGenerator == null)
             instMapGenerator = Instantiate(mapGenerator, transform);
         instMapGenerator.SetMapGrid(spawnData);
@@ -89,21 +91,18 @@ public class Unit_Battle : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-
+            if (timeScale > 0)
+                SetTimeScale(0f);
+            else
+                SetTimeScale(1f);
         }
 
         if (Input.GetMouseButtonDown(0))
         {
-            //if (cameraInput != null)
-            //    StopCoroutine(cameraInput);
-            //cameraInput = StartCoroutine(MouseLeftDrag(true));
             InputBegin();
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            //if (cameraInput != null)
-            //    StopCoroutine(cameraInput);
-            //cameraInput = StartCoroutine(MouseLeftDrag(false));
             InputEnd();
         }
         if (Input.GetMouseButton(0))
@@ -111,16 +110,6 @@ public class Unit_Battle : MonoBehaviour
             InputIng();
             instUIBattle.ShakingUI(asdfadsf);
         }
-
-
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    RayCasting(true);
-        //}
-        //else if (Input.GetMouseButtonUp(1))
-        //{
-        //    RayCasting(false);
-        //}
     }
 
     public void SetTimeScale(float _timeScale)
@@ -147,7 +136,7 @@ public class Unit_Battle : MonoBehaviour
         }
     }
 
-    void AmbushSpawn()
+    void AmbushSpawn()// 매복
     {
         // 매복당했을 때 막 섞여서 나오게
         randomNodes = instMapGenerator.RandomNodes();
@@ -183,8 +172,8 @@ public class Unit_Battle : MonoBehaviour
         if (Singleton_Data.INSTANCE.Dict_Unit.ContainsKey(_unitID) == false)
             return;
 
-        Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
-        Unit_AI inst = InstnaceUnit(_node, unit);
+        Unit_AI inst = InstnaceUnit(_node);
+        inst.gameObject.name = $"{_layer} : {_node.grid}";
 
         Color teamColor = Color.white;
         switch (_layer)
@@ -210,7 +199,7 @@ public class Unit_Battle : MonoBehaviour
         inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
     }
 
-    Unit_AI InstnaceUnit(Node _node, Unit_Animation _unit)
+    Unit_AI InstnaceUnit(Node _node)
     {
         Unit_AI inst = Instantiate(unitBase, transform);
         inst.transform.position = _node.worldPosition;
@@ -218,12 +207,6 @@ public class Unit_Battle : MonoBehaviour
         inst.playerList = PlayerList;// 타겟을 찾기 위해
         inst.monsterList = MonsterList;// 타겟을 찾기 위해
         inst.tryPoint = TryUnitPoint;// 타겟 포인트에 갈 수 있는지 체크
-
-        //Unit_AI unit = Singleton_Data.INSTANCE.Dict_Unit[_unitID].unitProp;
-        Unit_Animation instUnit = Instantiate(_unit, inst.transform);
-        inst.unitAnimation = instUnit;
-        inst.gameObject.name = instUnit.gameObject.name = $"{_node.grid}";
-        instUnit.SetAnimator();
 
         allUnitDict[inst.gameObject] = inst;
         _node.UnitOnNode(inst.gameObject);
@@ -243,7 +226,7 @@ public class Unit_Battle : MonoBehaviour
                 currentMode = CurrentMode.Game;
                 foreach (var child in allUnitDict)
                 {
-                    child.Value.StateMachineTest(Unit_AI.State.Idle);
+                    child.Value.SetStart();// 유닛 전투 시작
                 }
                 instMapGenerator.OnTileCanvas(false);// 맵아래 캔버스 제거
                 break;
@@ -259,8 +242,13 @@ public class Unit_Battle : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject() == true)
             return;
-
-        Node node = RayCasting(true);
+        Node node = null;
+        if (RayCasting(out Vector3 hitPoint) != null)
+        {
+            node = instMapGenerator.GetNodeFromPosition(hitPoint);
+            instMapGenerator.ClickNode(node);// 테스트용
+        }
+        //Node node = RayCasting(true);
         selectedNode = node;
     }
 
@@ -271,8 +259,13 @@ public class Unit_Battle : MonoBehaviour
 
         dragSlot = instUIBattle.GetInventory.GetDragSlot;
         bool moveUnit = (dragSlot?.itemType == UI_InvenSlot.ItemType.Unit) || (selectedNode?.onObject != null);
-
-        Node node = RayCasting(true);
+        Node node = null;
+        if (RayCasting(out Vector3 hitPoint) != null)
+        {
+            node = instMapGenerator.GetNodeFromPosition(hitPoint);
+            instMapGenerator.ClickNode(node);// 테스트용
+        }
+        //Node node = RayCasting(true);
         if (node != null)
         {
             asdfadsf.gameObject.SetActive(moveUnit);
@@ -282,7 +275,17 @@ public class Unit_Battle : MonoBehaviour
 
     void InputEnd()
     {
-        Node node = RayCasting(false);
+        Node node = null;
+        if (RayCasting(out Vector3 hitPoint) != null)
+        {
+            node = instMapGenerator.GetNodeFromPosition(hitPoint);
+            //if (_input == true)
+            //{
+            //    instMapGenerator.ClickNode(node);// 테스트용
+            //}
+        }
+
+        //Node node = RayCasting(false);
         asdfadsf.gameObject.SetActive(false);
 
         if (EventSystem.current.IsPointerOverGameObject() == true || node == null)
@@ -329,6 +332,37 @@ public class Unit_Battle : MonoBehaviour
         selectedNode = default;
     }
 
+    Node RayCasting(bool _input)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        int layerMask = 1 << 0;
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
+        {
+            Node node = instMapGenerator.GetNodeFromPosition(hit.point);
+            if (_input == true)
+            {
+                instMapGenerator.ClickNode(node);// 테스트용
+            }
+            Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);
+            Debug.LogWarning(hit.transform.name);
+            return node;
+        }
+        return null;
+    }
+
+    Transform RayCasting(out Vector3 _vector3)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        int layerMask = 1 << 0;
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
+        {
+            _vector3 = hit.point;
+            return hit.transform;
+        }
+        _vector3 = default;
+        return null;
+    }
+
     void UnitRemove(Node _node)
     {
         UI_InvenSlot emptySlot = instUIBattle.GetInventory.TryEmptySlot();
@@ -344,7 +378,8 @@ public class Unit_Battle : MonoBehaviour
         allUnitDict.Remove(unit.gameObject);
         _node.UnitOnNode(null);
         // 인벤토리에 생성
-        emptySlot.SetUnitSlot(unit.GetUnitStruct);
+        //emptySlot.SetUnitSlot(unit.GetUnitStruct);
+        emptySlot.SetSlot(unit.GetUnitStruct.ID);
 
         Destroy(unit.gameObject);
     }
@@ -372,29 +407,12 @@ public class Unit_Battle : MonoBehaviour
             SpawnPlayer(_node, unitID);
             // 인벤토리에서 제거
 
-            dragSlot.SetEmptySlot();
+            dragSlot.SetSlot(null);
         }
         else// 빈칸이 아니면 못놓게
         {
             Debug.LogWarning("놓을 수 없음!!!");
         }
-    }
-
-    Node RayCasting(bool _input)
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        int layerMask = 1 << 0;
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
-        {
-            Node node = instMapGenerator.GetNodeFromPosition(hit.point);
-            if (_input == true)
-            {
-                instMapGenerator.ClickNode(node);// 테스트용
-            }
-            Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);
-            return node;
-        }
-        return null;
     }
 
     bool TryUnitPoint(Vector3 _target, float _unitSize)
@@ -419,9 +437,15 @@ public class Unit_Battle : MonoBehaviour
             GameOver(false);
         }
     }
-
+    public List<string> resultItems = new List<string>();
     void DeadMonster(Unit_AI _unit)
     {
+        for (int i = 0; i < _unit.lootings.Length; i++)
+        {
+            // 보상 세팅
+            resultItems.Add(_unit.lootings[i]);
+        }
+
         monsters.Remove(_unit);
         if (monsters.Count == 0)
         {
@@ -434,6 +458,7 @@ public class Unit_Battle : MonoBehaviour
 
     void GameOver(bool _win)
     {
+        SetTimeScale(1f);
         battleOver();
         if (_win)
             Reward();
@@ -441,68 +466,6 @@ public class Unit_Battle : MonoBehaviour
 
     void Reward()
     {
-        string[] lootingItems = new string[3];
-        for (int i = 0; i < lootingItems.Length; i++)
-        {
-            lootingItems[i] = "U10012";// 보상
-        }
-        instUIBattle.GetInventory.AddLooting(lootingItems);
+        instUIBattle.GetInventory.AddLooting(resultItems);
     }
-
-
-
-
-
-
-
-
-
-    //public enum RotateType
-    //{
-    //    Normal,
-    //    Focus
-    //}
-    //[SerializeField] private RotateType rotateType;
-    //public bool clickLeft, isLeftDrag, inputMouseRight;
-    //public Vector2 clickPosition;
-
-    //IEnumerator MouseLeftDrag(bool _input)
-    //{
-    //    rotateType = RotateType.Normal;
-    //    CameraManager.instance.InputRotate(_input);
-    //    if (_input == true)
-    //    {
-    //        isLeftDrag = false;
-    //        while (isLeftDrag == false)
-    //        {
-    //            Vector2 tempPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-    //            float dist = (tempPosition - clickPosition).magnitude;
-    //            if (dist > 0.01f)
-    //            {
-    //                isLeftDrag = true;
-    //            }
-    //            yield return null;
-    //        }
-    //    }
-    //}
-
-    //void InputMouseRight(bool _input)
-    //{
-    //    inputMouseRight = _input;
-    //    if (_input == true)
-    //    {
-    //        rotateType = RotateType.Focus;
-    //    }
-    //    //else if (inputDir != 0)
-    //    //{
-    //    //    rotateType = RotateType.Normal;
-    //    //}
-    //    CameraManager.instance.InputRotate(_input);
-    //}
-
-    //void InputMouseWheel(bool _input)
-    //{
-    //    float input = _input ? 0.1f : -0.1f;
-    //    CameraManager.instance.delegateInputScroll(input);
-    //}
 }

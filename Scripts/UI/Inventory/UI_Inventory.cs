@@ -55,24 +55,21 @@ public class UI_Inventory : MonoBehaviour
             {
                 case 0:
                     string id = skillIDs[Random.Range(0, skillIDs.Count)];
-                    Data_Manager.SkillStruct skillSlot = Singleton_Data.INSTANCE.Dict_Skill[id];
-                    inst.SetSkillSlot(skillSlot);
+                    inst.SetSlot(id);
                     break;
 
                 case 1:
                     id = itemIDs[Random.Range(0, itemIDs.Count)];
-                    Data_Manager.ItemStruct itemSlot = Singleton_Data.INSTANCE.Dict_Item[id];
-                    inst.SetItemSlot(itemSlot);
+                    inst.SetSlot(id);
                     break;
 
                 case 2:
                     id = unitIDs[Random.Range(0, unitIDs.Count)];
-                    Data_Manager.UnitStruct unitSlot = Singleton_Data.INSTANCE.Dict_Unit[id];
-                    inst.SetUnitSlot(unitSlot);
+                    inst.SetSlot(id);
                     break;
 
                 case 3:
-                    inst.SetEmptySlot();
+                    inst.SetSlot(null);
                     break;
             }
         }
@@ -100,7 +97,7 @@ public class UI_Inventory : MonoBehaviour
 
                 emptySlot.LootingItem(_slot);
                 Debug.LogWarning(_slot.itemType);
-                _slot.SetEmptySlot();// 기존 슬롯 비우기
+                _slot.SetSlot(null);// 기존 슬롯 비우기
                 break;
 
             case UI_InvenSlot.SlotType.Quick:
@@ -191,7 +188,7 @@ public class UI_Inventory : MonoBehaviour
         {
             UI_InvenSlot inst = Instantiate(baseSlot, lootingParent.transform);
             inst.SetSlot(UI_InvenSlot.SlotType.Looting);
-            inst.SetEmptySlot();
+            inst.SetSlot(null);
             inst.onBeginDrag += OnBeginDrag;
             inst.onDrag += OnDrag;
             inst.onEndDrag += OnEndDrag;
@@ -203,37 +200,38 @@ public class UI_Inventory : MonoBehaviour
         AddLooting(null);
     }
 
-    public void AddLooting(string[] _ids)
+    public void AddLooting(List<string> _ids)
     {
         if (_ids != null)
         {
             lootingParent.OpenCanvas();
             for (int i = 0; i < lootingSlots.Length; i++)
             {
-                if (i < _ids.Length)
+                if (i < _ids.Count)
                 {
                     string id = _ids[i];
-                    switch (id[0].ToString().ToUpper())// 소문자로 변경
-                    {
-                        case "S":
-                            Data_Manager.SkillStruct skillSlot = Singleton_Data.INSTANCE.Dict_Skill[id];
-                            lootingSlots[i].SetSkillSlot(skillSlot);
-                            break;
+                    lootingSlots[i].SetSlot(id);
+                    //switch (id[0].ToString().ToUpper())// 대문자로 변경
+                    //{
+                    //    case "S":
+                    //        Data_Manager.SkillStruct skillSlot = Singleton_Data.INSTANCE.Dict_Skill[id];
+                    //        lootingSlots[i].SetSkillSlot(skillSlot);
+                    //        break;
 
-                        case "T":
-                            Data_Manager.ItemStruct itemSlot = Singleton_Data.INSTANCE.Dict_Item[id];
-                            lootingSlots[i].SetItemSlot(itemSlot);
-                            break;
+                    //    case "T":
+                    //        Data_Manager.ItemStruct itemSlot = Singleton_Data.INSTANCE.Dict_Item[id];
+                    //        lootingSlots[i].SetItemSlot(itemSlot);
+                    //        break;
 
-                        case "U":
-                            Data_Manager.UnitStruct unitSlot = Singleton_Data.INSTANCE.Dict_Unit[id];
-                            lootingSlots[i].SetUnitSlot(unitSlot);
-                            break;
-                    }
+                    //    case "U":
+                    //        Data_Manager.UnitStruct unitSlot = Singleton_Data.INSTANCE.Dict_Unit[id];
+                    //        lootingSlots[i].SetUnitSlot(unitSlot);
+                    //        break;
+                    //}
                 }
                 else
                 {
-                    lootingSlots[i].SetEmptySlot();
+                    lootingSlots[i].SetSlot(null);
                 }
             }
         }
@@ -260,7 +258,7 @@ public class UI_Inventory : MonoBehaviour
             inst.deleClockAction += SlotClick;
 
             int index = i;
-            inst.quickSlotAction = delegate { Game_Manager.instance?.InputSlot(index); };
+            //inst.quickSlotAction = delegate { Game_Manager.instance?.InputSlot(index); };
             quickSlots[index] = inst;
         }
     }

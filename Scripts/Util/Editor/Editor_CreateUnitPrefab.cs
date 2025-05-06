@@ -47,6 +47,12 @@ namespace P01.Editor
                 alignment = TextAnchor.MiddleCenter
             };
 
+            EditorGUILayout.LabelField("FBX를 프리팹으로 만들어주는 툴");
+            EditorGUILayout.LabelField("1. 해당 유닛 ID 입력");
+            EditorGUILayout.LabelField("2. FBX가 들어있는 폴더 추가");
+            EditorGUILayout.LabelField("3. Find File 클릭");
+            EditorGUILayout.LabelField("4. 내용 확인 후 저장 클릭");
+
             GUILayout.BeginHorizontal("box");
             unitID = EditorGUILayout.TextField("Unit ID", unitID);
             GUILayout.EndHorizontal();

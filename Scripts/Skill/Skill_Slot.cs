@@ -96,7 +96,7 @@ public class Skill_Set : MonoBehaviour
 
     void SplashArea(Transform _lastProjcetile)
     {
-        foreach (var child in Unit_Battle.INSTANCE.GetUnitDict)
+        foreach (var child in Unit_Battle.current.GetUnitDict)
         {
             Unit_AI target = child.Value;
             if (VisibleTarget(_lastProjcetile, target) == true)

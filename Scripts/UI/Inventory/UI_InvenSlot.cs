@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 using static UI_InvenSlot;
+using static Data_Manager;
+using static Unit_AI;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -104,7 +106,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public void SetQuickIndex(string _quick)
     {
         quickIndex.text = _quick;
-        SetEmptySlot();
+        SetSlot(null);
         quickIndex.gameObject.SetActive(true);
     }
 
@@ -116,15 +118,15 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         switch (_slot.itemType)
         {
             case ItemType.Item:
-                SetItemSlot(_slot.itemStruct);
+                SetSlot(_slot.itemStruct.ID);
                 break;
 
             case ItemType.Skill:
-                SetSkillSlot(_slot.skillStruct);
+                SetSlot(_slot.skillStruct.ID);
                 break;
 
             case ItemType.Unit:
-                SetUnitSlot(_slot.unitStruct);
+                SetSlot(_slot.unitStruct.ID);
                 break;
         }
     }
@@ -159,25 +161,25 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         {
             case ItemType.Empty:
                 _enterSlot.TakeSlot(this);
-                SetEmptySlot();
+                SetSlot(null);
                 break;
 
             case ItemType.Item:
                 Data_Manager.ItemStruct itemSkill = _enterSlot.itemStruct;// ¹Ì¸® ÀúÀå
                 _enterSlot.TakeSlot(this);
-                SetItemSlot(itemSkill);
+                SetSlot(itemSkill.ID);
                 break;
 
             case ItemType.Skill:
                 Data_Manager.SkillStruct slotSkill = _enterSlot.skillStruct;// ¹Ì¸® ÀúÀå
                 _enterSlot.TakeSlot(this);// °¡Á®¿Â ½½·Ô ¹Ù²Þ
-                SetSkillSlot(slotSkill);// ³» ½½·Ô ¹Ù²Þ
+                SetSlot(slotSkill.ID);// ³» ½½·Ô ¹Ù²Þ
                 break;
 
             case ItemType.Unit:
                 Data_Manager.UnitStruct unitSlot = _enterSlot.unitStruct;
                 _enterSlot.TakeSlot(this);// °¡Á®¿Â ½½·Ô ¹Ù²Þ
-                SetUnitSlot(unitSlot);// ³» ½½·Ô ¹Ù²Þ
+                SetSlot(unitSlot.ID);// ³» ½½·Ô ¹Ù²Þ
                 break;
         }
     }
@@ -187,65 +189,62 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         switch (_dragSlot.itemType)
         {
             case ItemType.Empty:
-                SetEmptySlot();
+                SetSlot(null);
                 break;
 
             case ItemType.Item:
-                SetItemSlot(_dragSlot.itemStruct);
+                SetSlot(_dragSlot.itemStruct.ID);
                 break;
 
             case ItemType.Skill:
-                SetSkillSlot(_dragSlot.skillStruct);
+                SetSlot(_dragSlot.skillStruct.ID);
                 break;
 
             case ItemType.Unit:
-                SetUnitSlot(_dragSlot.unitStruct);
+                SetSlot(_dragSlot.unitStruct.ID);
                 break;
         }
-        Game_Manager.instance?.checkDistance();// Äü½½·Ô ½ºÅ³ °Å¸® ÃøÁ¤¿ë
+        //Game_Manager.instance?.checkDistance();// Äü½½·Ô ½ºÅ³ °Å¸® ÃøÁ¤¿ë
     }
 
-    public void SetEmptySlot()
+    public void SetSlot(string _id)
     {
-        itemType = ItemType.Empty;
-        icon.sprite = null;
+        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);// Äü½½·Ô ¹øÈ£ È®ÀÎ
 
-        icon.gameObject.SetActive(false);
-        itemIndex.gameObject.SetActive(false);
-        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
-    }
+        if (_id == null)
+        {
+            itemType = ItemType.Empty;
+            icon.sprite = null;
 
-    public void SetSkillSlot(Data_Manager.SkillStruct _skillStruct)
-    {
-        itemType = ItemType.Skill;
-        skillStruct = _skillStruct;
-        icon.sprite = _skillStruct.icon;
+            icon.gameObject.SetActive(false);
+            itemIndex.gameObject.SetActive(false);
+            return;
+        }
 
-        icon.gameObject.SetActive(true);
-        itemIndex.gameObject.SetActive(false);
-        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
-    }
+        icon.gameObject.SetActive(true);// ¾ÆÀÌÄÜ ÀÌ¹ÌÁö È°¼ºÈ­
+        switch (_id[0].ToString().ToUpper())// ´ë¹®ÀÚ·Î º¯°æ
+        {
+            case "S":
+                itemType = ItemType.Skill;
+                skillStruct = Singleton_Data.INSTANCE.Dict_Skill[_id];
+                icon.sprite = skillStruct.icon;
+                itemIndex.gameObject.SetActive(false);
+                break;
 
-    public void SetItemSlot(Data_Manager.ItemStruct _itemStruct)
-    {
-        itemType = ItemType.Item;
-        itemStruct = _itemStruct;
-        icon.sprite = _itemStruct.itemIcon;
+            case "T":
+                itemType = ItemType.Item;
+                itemStruct = Singleton_Data.INSTANCE.Dict_Item[_id];
+                icon.sprite = itemStruct.itemIcon;
+                itemIndex.gameObject.SetActive(true);
+                break;
 
-        icon.gameObject.SetActive(true);
-        itemIndex.gameObject.SetActive(true);
-        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
-    }
-
-    public void SetUnitSlot(Data_Manager.UnitStruct _unitStruct)
-    {
-        itemType = ItemType.Unit;
-        unitStruct = _unitStruct;
-        icon.sprite = _unitStruct.unitIcon;
-
-        icon.gameObject.SetActive(true);
-        itemIndex.gameObject.SetActive(false);
-        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);
+            case "U":
+                itemType = ItemType.Unit;
+                unitStruct = Singleton_Data.INSTANCE.Dict_Unit[_id];
+                icon.sprite = unitStruct.unitIcon;
+                itemIndex.gameObject.SetActive(false);
+                break;
+        }
     }
 
 

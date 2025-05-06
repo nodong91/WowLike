@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(Unit_Looting))]
 public class Unit_Animation : MonoBehaviour
 {
     public string ID;
