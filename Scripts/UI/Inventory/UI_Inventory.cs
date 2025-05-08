@@ -17,7 +17,12 @@ public class UI_Inventory : MonoBehaviour
 
     public Vector2Int inventorySize;
     //public UI_InvenSlot[,] inventorySlots;
-    public Dictionary<Vector2Int, UI_InvenSlot> inventorySlots = new Dictionary<Vector2Int, UI_InvenSlot>();
+    //public Dictionary<Vector2Int, UI_InvenSlot> inventorySlots = new Dictionary<Vector2Int, UI_InvenSlot>();
+    public class SlotSynergy
+    {
+        public UI_InvenSlot slot;
+    }
+    public UI_InvenSlot[,] inventorySlots;
 
     public void SetInventory()
     {
@@ -84,6 +89,7 @@ public class UI_Inventory : MonoBehaviour
 
     void InventorySetting()
     {
+        inventorySlots = new UI_InvenSlot[inventorySize.x, inventorySize.y];
         for (int x = 0; x < inventorySize.x; x++)
         {
             for (int y = 0; y < inventorySize.y; y++)
@@ -100,47 +106,8 @@ public class UI_Inventory : MonoBehaviour
                 Vector2Int inventoryNum = new Vector2Int(x, y);
                 inst.name = inventoryNum.ToString();
                 inst.InventoryNum = inventoryNum;
-                inventorySlots[inventoryNum] = inst;
-
-                //// 테스트 세팅
-                //List<string> skillIDs = new List<string>();
-                //List<string> itemIDs = new List<string>();
-                //List<string> unitIDs = new List<string>();
-
-                //foreach (var child in Singleton_Data.INSTANCE.Dict_Skill)
-                //{
-                //    skillIDs.Add(child.Key);
-                //}
-                //foreach (var child in Singleton_Data.INSTANCE.Dict_Item)
-                //{
-                //    itemIDs.Add(child.Key);
-                //}
-                //foreach (var child in Singleton_Data.INSTANCE.Dict_Unit)
-                //{
-                //    unitIDs.Add(child.Key);
-                //}
-                //int randomType = Random.Range(0, 4);
-                //switch (randomType)
-                //{
-                //    case 0:
-                //        string id = skillIDs[Random.Range(0, skillIDs.Count)];
-                //        inst.SetSlot(id);
-                //        break;
-
-                //    case 1:
-                //        id = itemIDs[Random.Range(0, itemIDs.Count)];
-                //        inst.SetSlot(id);
-                //        break;
-
-                //    case 2:
-                //        id = unitIDs[Random.Range(0, unitIDs.Count)];
-                //        inst.SetSlot(id);
-                //        break;
-
-                //    case 3:
-                //        inst.SetSlot(null);
-                //        break;
-                //}
+                
+                inventorySlots[x, y] = inst;
             }
         }
     }
@@ -370,9 +337,8 @@ public class UI_Inventory : MonoBehaviour
 
 
 
-
     // 시너지
-    public void CheckSynergy(UI_InvenSlot _slot)
+    void CheckSynergy(UI_InvenSlot _slot)
     {
         Vector2Int slotNum = _slot.InventoryNum;
         // 아이템 시너지 칸이 1인경우
@@ -391,10 +357,10 @@ public class UI_Inventory : MonoBehaviour
                     int synergyY = slotNum.y + y;
 
                     Vector2Int key = new Vector2Int(synergyX, synergyY);
-                    if ((x == 0 && y == 0) || inventorySlots.ContainsKey(key) == false)
+                    if ((x == 0 && y == 0) || synergyX < 0 || synergyY < 0 || synergyX >= inventorySize.x || synergyY >= inventorySize.y)
                         continue;
 
-                    UI_InvenSlot temp = inventorySlots[key];
+                    UI_InvenSlot temp = inventorySlots[synergyX, synergyY];
                     Debug.LogWarning($"클릭 : {slotNum} >> 시너지 슬롯 : {temp.InventoryNum}");
                 }
             }

@@ -16,8 +16,8 @@ public class Map_Generator : Map_Tile
 
     Data_Spawn spawnData;
     public Data_Spawn GetSpawnData { get { return spawnData; } }
-    public List<Node> allNodes;
-    public GameObject instParent;
+    private List<Node> allNodes;
+    private GameObject instParent;
     public UnityEngine.UI.Image baseTile;
     public CanvasGroup tileParent;
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -95,8 +96,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
 
 
-    private Vector2Int inventoryNum;
-    public Vector2Int InventoryNum { get => inventoryNum; set => inventoryNum = value; }
 
     public Data_Manager.ItemStruct itemStruct;
     public Data_Manager.SkillStruct skillStruct;
@@ -299,4 +298,32 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         isActive = (inDist == true && cooling == false);
         quickIndex.color = isActive == true ? enabledColor : disabledColor;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private Vector2Int inventoryNum;
+    public Vector2Int InventoryNum { get => inventoryNum; set => inventoryNum = value; }
+    [System.Serializable]
+    public class SynergyType
+    {
+        public enum ItemType
+        {
+            Item,// 전체 유닛의 공격력, 방어력등 스탯 향상
+            Unit,// 유닛 자체의 레벨 향상
+            Artifact,// 유물 - 아이템등의 레벨을 올리는 형태의 아이템
+        }
+        public ItemType itemType;
+        public int addLevel;
+    }
+    public List<SynergyType> synergyType = new List<SynergyType>();
 }
