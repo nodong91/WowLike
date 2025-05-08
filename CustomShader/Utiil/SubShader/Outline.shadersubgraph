@@ -465,11 +465,25 @@
                 "m_Node": {
                     "m_Id": "fe29d10d3b2d9e839600d098c6c3f237"
                 },
-                "m_SlotId": 1
+                "m_SlotId": 0
             },
             "m_InputSlot": {
                 "m_Node": {
                     "m_Id": "8ab15267716c0b81814f860a0bd0bd19"
+                },
+                "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "fe29d10d3b2d9e839600d098c6c3f237"
+                },
+                "m_SlotId": 1
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "58e8ef83aabb3c8e9a5938f52a3624ed"
                 },
                 "m_SlotId": 1
             }
@@ -1430,7 +1444,7 @@
     "m_ObjectId": "64b8ade23cb7410c9cbfedc26450010a",
     "m_Title": "Anti-Aliasing",
     "m_Position": {
-        "x": -842.0,
+        "x": -842.0001220703125,
         "y": 45.0
     }
 }
@@ -1582,8 +1596,8 @@
     "m_ObjectId": "711c48c30d074a7394aa22beed93e2fb",
     "m_Title": "Screen Resolution Adjustment",
     "m_Position": {
-        "x": -1854.0,
-        "y": 242.0
+        "x": -1853.9998779296875,
+        "y": 242.00001525878907
     }
 }
 
@@ -2844,8 +2858,8 @@
     "m_ObjectId": "ef0b3d468f464859981715fec563da03",
     "m_Title": "Distance Fading",
     "m_Position": {
-        "x": -2035.0,
-        "y": 542.0
+        "x": -2035.000244140625,
+        "y": 542.0000610351563
     }
 }
 
@@ -3069,7 +3083,7 @@
     },
     "m_Name": "Screen",
     "m_DrawState": {
-        "m_Expanded": false,
+        "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
             "x": -1754.0,
