@@ -15,70 +15,140 @@ public class UI_Inventory : MonoBehaviour
 
     public UI_SlotInfo slotInfo;
 
+    public Vector2Int inventorySize;
+    //public UI_InvenSlot[,] inventorySlots;
+    public Dictionary<Vector2Int, UI_InvenSlot> inventorySlots = new Dictionary<Vector2Int, UI_InvenSlot>();
+
     public void SetInventory()
     {
         inventoryParent.SetCanvas();
         lootingParent.SetCanvas();
         quickParent.SetCanvas();
 
-        List<string> skillIDs = new List<string>();
-        List<string> itemIDs = new List<string>();
-        List<string> unitIDs = new List<string>();
+        //List<string> skillIDs = new List<string>();
+        //List<string> itemIDs = new List<string>();
+        //List<string> unitIDs = new List<string>();
 
-        foreach (var child in Singleton_Data.INSTANCE.Dict_Skill)
-        {
-            skillIDs.Add(child.Key);
-        }
-        foreach (var child in Singleton_Data.INSTANCE.Dict_Item)
-        {
-            itemIDs.Add(child.Key);
-        }
-        foreach (var child in Singleton_Data.INSTANCE.Dict_Unit)
-        {
-            unitIDs.Add(child.Key);
-        }
-        invenSlots = new UI_InvenSlot[inventoryAmount];
-        for (int i = 0; i < invenSlots.Length; i++)
-        {
-            UI_InvenSlot inst = Instantiate(baseSlot, inventoryParent.transform);
-            inst.SetSlot(UI_InvenSlot.SlotType.Inventory);
-            inst.onBeginDrag += OnBeginDrag;
-            inst.onDrag += OnDrag;
-            inst.onEndDrag += OnEndDrag;
-            inst.onPointerEnter += OnPointerEnter;
-            inst.deleClockAction += SlotClick;
-            invenSlots[i] = inst;
+        //foreach (var child in Singleton_Data.INSTANCE.Dict_Skill)
+        //{
+        //    skillIDs.Add(child.Key);
+        //}
+        //foreach (var child in Singleton_Data.INSTANCE.Dict_Item)
+        //{
+        //    itemIDs.Add(child.Key);
+        //}
+        //foreach (var child in Singleton_Data.INSTANCE.Dict_Unit)
+        //{
+        //    unitIDs.Add(child.Key);
+        //}
+        //invenSlots = new UI_InvenSlot[inventoryAmount];
+        //for (int i = 0; i < invenSlots.Length; i++)
+        //{
+        //    UI_InvenSlot inst = Instantiate(baseSlot, inventoryParent.transform);
+        //    inst.SetSlot(UI_InvenSlot.SlotType.Inventory);
+        //    inst.onBeginDrag += OnBeginDrag;
+        //    inst.onDrag += OnDrag;
+        //    inst.onEndDrag += OnEndDrag;
+        //    inst.onPointerEnter += OnPointerEnter;
+        //    inst.deleClockAction += SlotClick;
+        //    invenSlots[i] = inst;
 
-            // 테스트 세팅
-            int randomType = Random.Range(0, 4);
-            switch (randomType)
-            {
-                case 0:
-                    string id = skillIDs[Random.Range(0, skillIDs.Count)];
-                    inst.SetSlot(id);
-                    break;
+        //    // 테스트 세팅
+        //    int randomType = Random.Range(0, 4);
+        //    switch (randomType)
+        //    {
+        //        case 0:
+        //            string id = skillIDs[Random.Range(0, skillIDs.Count)];
+        //            inst.SetSlot(id);
+        //            break;
 
-                case 1:
-                    id = itemIDs[Random.Range(0, itemIDs.Count)];
-                    inst.SetSlot(id);
-                    break;
+        //        case 1:
+        //            id = itemIDs[Random.Range(0, itemIDs.Count)];
+        //            inst.SetSlot(id);
+        //            break;
 
-                case 2:
-                    id = unitIDs[Random.Range(0, unitIDs.Count)];
-                    inst.SetSlot(id);
-                    break;
+        //        case 2:
+        //            id = unitIDs[Random.Range(0, unitIDs.Count)];
+        //            inst.SetSlot(id);
+        //            break;
 
-                case 3:
-                    inst.SetSlot(null);
-                    break;
-            }
-        }
+        //        case 3:
+        //            inst.SetSlot(null);
+        //            break;
+        //    }
+        //}
+        InventorySetting();
         SetQuickSlot();
         SetLooting();
     }
 
+    void InventorySetting()
+    {
+        for (int x = 0; x < inventorySize.x; x++)
+        {
+            for (int y = 0; y < inventorySize.y; y++)
+            {
+                UI_InvenSlot inst = Instantiate(baseSlot, inventoryParent.transform);
+                inst.SetSlot(UI_InvenSlot.SlotType.Inventory);
+                inst.onBeginDrag += OnBeginDrag;
+                inst.onDrag += OnDrag;
+                inst.onEndDrag += OnEndDrag;
+                inst.onPointerEnter += OnPointerEnter;
+                inst.deleClockAction += SlotClick;
+                inst.SetSlot(null);
+
+                Vector2Int inventoryNum = new Vector2Int(x, y);
+                inst.name = inventoryNum.ToString();
+                inst.InventoryNum = inventoryNum;
+                inventorySlots[inventoryNum] = inst;
+
+                //// 테스트 세팅
+                //List<string> skillIDs = new List<string>();
+                //List<string> itemIDs = new List<string>();
+                //List<string> unitIDs = new List<string>();
+
+                //foreach (var child in Singleton_Data.INSTANCE.Dict_Skill)
+                //{
+                //    skillIDs.Add(child.Key);
+                //}
+                //foreach (var child in Singleton_Data.INSTANCE.Dict_Item)
+                //{
+                //    itemIDs.Add(child.Key);
+                //}
+                //foreach (var child in Singleton_Data.INSTANCE.Dict_Unit)
+                //{
+                //    unitIDs.Add(child.Key);
+                //}
+                //int randomType = Random.Range(0, 4);
+                //switch (randomType)
+                //{
+                //    case 0:
+                //        string id = skillIDs[Random.Range(0, skillIDs.Count)];
+                //        inst.SetSlot(id);
+                //        break;
+
+                //    case 1:
+                //        id = itemIDs[Random.Range(0, itemIDs.Count)];
+                //        inst.SetSlot(id);
+                //        break;
+
+                //    case 2:
+                //        id = unitIDs[Random.Range(0, unitIDs.Count)];
+                //        inst.SetSlot(id);
+                //        break;
+
+                //    case 3:
+                //        inst.SetSlot(null);
+                //        break;
+                //}
+            }
+        }
+    }
+
     void SlotClick(UI_InvenSlot _slot)
     {
+        CheckSynergy(_slot);// 시너지 테스트
+
         switch (_slot.slotType)
         {
             case UI_InvenSlot.SlotType.Inventory:
@@ -211,23 +281,6 @@ public class UI_Inventory : MonoBehaviour
                 {
                     string id = _ids[i];
                     lootingSlots[i].SetSlot(id);
-                    //switch (id[0].ToString().ToUpper())// 대문자로 변경
-                    //{
-                    //    case "S":
-                    //        Data_Manager.SkillStruct skillSlot = Singleton_Data.INSTANCE.Dict_Skill[id];
-                    //        lootingSlots[i].SetSkillSlot(skillSlot);
-                    //        break;
-
-                    //    case "T":
-                    //        Data_Manager.ItemStruct itemSlot = Singleton_Data.INSTANCE.Dict_Item[id];
-                    //        lootingSlots[i].SetItemSlot(itemSlot);
-                    //        break;
-
-                    //    case "U":
-                    //        Data_Manager.UnitStruct unitSlot = Singleton_Data.INSTANCE.Dict_Unit[id];
-                    //        lootingSlots[i].SetUnitSlot(unitSlot);
-                    //        break;
-                    //}
                 }
                 else
                 {
@@ -302,5 +355,49 @@ public class UI_Inventory : MonoBehaviour
     public void OpenQuick()
     {
         quickParent.TryOpenCanvas();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 시너지
+    public void CheckSynergy(UI_InvenSlot _slot)
+    {
+        Vector2Int slotNum = _slot.InventoryNum;
+        // 아이템 시너지 칸이 1인경우
+        int synergyNum = 1;
+        for (int x = -synergyNum; x <= synergyNum; x++)
+        {
+            for (int y = -synergyNum; y <= synergyNum; y++)
+            {
+                // 시너지 가능한 아이템
+                // 주변 확인
+                // 시너지 있는 아이템 혹은 소환수에 버프
+                // 모든 버프는 소환수 기본 스탯에서 추가 (버프된 상태에서 버프를 받으면 곱하기나 나누기는 사용할 수 없음)
+                if (x == 0 || y == 0)
+                {
+                    int synergyX = slotNum.x + x;
+                    int synergyY = slotNum.y + y;
+
+                    Vector2Int key = new Vector2Int(synergyX, synergyY);
+                    if ((x == 0 && y == 0) || inventorySlots.ContainsKey(key) == false)
+                        continue;
+
+                    UI_InvenSlot temp = inventorySlots[key];
+                    Debug.LogWarning($"클릭 : {slotNum} >> 시너지 슬롯 : {temp.InventoryNum}");
+                }
+            }
+        }
     }
 }

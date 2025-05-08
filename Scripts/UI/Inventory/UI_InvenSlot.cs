@@ -2,9 +2,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
-using static UI_InvenSlot;
-using static Data_Manager;
-using static Unit_AI;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -89,6 +86,17 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
 
 
+
+
+
+
+
+
+
+
+
+    private Vector2Int inventoryNum;
+    public Vector2Int InventoryNum { get => inventoryNum; set => inventoryNum = value; }
 
     public Data_Manager.ItemStruct itemStruct;
     public Data_Manager.SkillStruct skillStruct;
@@ -285,6 +293,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     public TMPro.TMP_Text itemIndex, quickIndex;
     public Color enabledColor, disabledColor;
+
     void CheckActive()
     {
         isActive = (inDist == true && cooling == false);
