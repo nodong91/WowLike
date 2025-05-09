@@ -43,6 +43,8 @@ public class UI_Battle : MonoBehaviour
 
         instInventory = Instantiate(inventory, overlayCanvas);
         instInventory.SetInventory();
+
+        instDamageFont = Instantiate(baseDamage, cameraCanvas);
     }
 
     void SetUICamera()
@@ -154,47 +156,48 @@ public class UI_Battle : MonoBehaviour
         followManager.ShakingUI(_target);
     }
 
-    public TMPro.TMP_Text damageText;
-    Queue<TMPro.TMP_Text> instDamage = new Queue<TMPro.TMP_Text>();
-    public AnimationCurve textAction, textAlpha;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    void Update()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            int index = Random.Range(0, 1500);
+            instDamageFont.DisplayDamage(index);
+        }
+    }
+
+    public DamageFont baseDamage;
+    DamageFont instDamageFont;
 
     public void DamageText(Vector3 _point, string _damage)
     {
-        TMPro.TMP_Text instText = TryDamageText();
-        instText.text = _damage;
-
-        StartCoroutine(DamageTextAction(instText, _point));
-    }
-
-    IEnumerator DamageTextAction(TMPro.TMP_Text _text, Vector3 _point)
-    {
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_point);
-        Vector3 targetPosition = UICamera.ScreenToWorldPoint(screenPosition);
-        float unitSize = 0.5f;
-        Vector3 randomPosition = (Random.insideUnitSphere * unitSize) + targetPosition;
-        //_text.transform.position = randomPosition;
-
-        float normailze = 0f;
-        while (normailze < 1f)
-        {
-            normailze += Time.deltaTime;
-            float curve = textAction.Evaluate(normailze);
-            _text.transform.localScale = Vector3.one + Vector3.one * curve;
-            curve = textAlpha.Evaluate(normailze);
-            _text.transform.position = Vector3.Lerp(randomPosition + Vector3.up, randomPosition, curve);
-            _text.alpha = curve;
-            yield return null;
-        }
-        instDamage.Enqueue(_text);
-    }
-
-    TMPro.TMP_Text TryDamageText()
-    {
-        if (instDamage.Count > 0)
-        {
-            return instDamage.Dequeue();
-        }
-        TMPro.TMP_Text inst = Instantiate(damageText, cameraCanvas);
-        return inst;
+        instDamageFont.DisplayDamage(_point, _damage);
     }
 }

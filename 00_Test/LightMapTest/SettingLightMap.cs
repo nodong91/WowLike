@@ -2,37 +2,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
+//#if UNITY_EDITOR
+//using UnityEditor;
 
-#if UNITY_EDITOR
-using UnityEditor;
+//[CustomEditor(typeof(LightMapTest))]
+//public class LightMapTest_Editor : Editor
+//{
+//    public override void OnInspectorGUI()
+//    {
+//        GUIStyle fontStyle = new GUIStyle(GUI.skin.button);
+//        fontStyle.fontSize = 15;
+//        fontStyle.normal.textColor = Color.yellow;
 
-[CustomEditor(typeof(LightMapTest))]
-public class LightMapTest_Editor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        GUIStyle fontStyle = new GUIStyle(GUI.skin.button);
-        fontStyle.fontSize = 15;
-        fontStyle.normal.textColor = Color.yellow;
-
-        LightMapTest Inspector = target as LightMapTest;
-        if (GUILayout.Button("Save", fontStyle, GUILayout.Height(30f)))
-        {
-            Inspector.UpdateData();
-            EditorUtility.SetDirty(Inspector);
-        }
-
-        //if (GUILayout.Button("Load", fontStyle, GUILayout.Height(30f)))
-        //{
-        //    Inspector.Setting();
-        //    EditorUtility.SetDirty(Inspector);
-        //}
-        GUILayout.Space(10f);
-        base.OnInspectorGUI();
-    }
-}
-#endif
-public class LightMapTest : MonoBehaviour
+//        LightMapTest Inspector = target as LightMapTest;
+//        if (GUILayout.Button("Save", fontStyle, GUILayout.Height(30f)))
+//        {
+//            Inspector.UpdateData();
+//            EditorUtility.SetDirty(Inspector);
+//        }
+//        GUILayout.Space(10f);
+//        base.OnInspectorGUI();
+//    }
+//}
+//#endif
+public class SettingLightMap : MonoBehaviour
 {
     public LightmapData[] lightmaps;
     [System.Serializable]
@@ -62,7 +55,7 @@ public class LightMapTest : MonoBehaviour
         public Texture2D shadowMask;
     }
     public List<LightmapTextures> lightmapTextures = new List<LightmapTextures>();
-
+    [ContextMenu("Save Lightmap")]
     public void UpdateData()
     {
         SetLightMap();

@@ -1,12 +1,9 @@
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.UI;
 
-public class DamageFontTest : MonoBehaviour
+public class DamageFont : MonoBehaviour
 {
     public Camera uiCamera;
     private Vector2 centerPosition;
@@ -54,32 +51,42 @@ public class DamageFontTest : MonoBehaviour
     }
     public Queue<TextPooling> textPoolingQueue;
     public int targetFrameRate = 60;
+    public Material normalMaterial, criticalMaterial;
 
 
     void Start()
     {
-        centerPosition = uiCamera.ViewportToScreenPoint(Vector3.one * 0.5f);
+        //uiCamera.fieldOfView = Camera.main.fieldOfView;
+        centerPosition = uiCamera.ViewportToScreenPoint(Vector2.one * 0.5f);
     }
 
-    void Update()
-    {
-        Application.targetFrameRate = targetFrameRate;
-        if (Input.GetMouseButtonUp(0))
-        {
-            int index = Random.Range(0, 1500);
-            DisplayDamage(index);
-        }
-    }
-    public Material normalMaterial, criticalMaterial;
-    void DisplayDamage(int _damage)
+    TextPooling instTexttest;
+    Vector3 localScale;
+
+    public void DisplayDamage(int _damage)
     {
         TextPooling instText = TryInstanceText();
-        float alpha = (_damage > 1000) ? 1f : 0f;
+        bool critical = (_damage > 1000);
+        float alpha = critical ? 1f : 0f;
         instText.critical.CrossFadeAlpha(alpha, 0f, false);
-        instText.damageText.fontMaterial = (_damage > 1000) ? criticalMaterial : normalMaterial;
+        instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
+        localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
         instText.damageText.text = _damage.ToString();
         StartCoroutine(DamageTextAction(instText));
-        FollowUI(instText);
+        FollowUI(instText, Input.mousePosition);
+    }
+
+    public void DisplayDamage(Vector3 _point, string _damage)
+    {
+        TextPooling instText = TryInstanceText();
+        bool critical = Random.Range(0, 10) > 7;
+        float alpha = critical ? 1f : 0f;
+        instText.critical.CrossFadeAlpha(alpha, 0f, false);
+        instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
+        localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
+        instText.damageText.text = _damage.ToString();
+        StartCoroutine(DamageTextAction(instText));
+        FollowWorld(instText, _point);
     }
 
     TextPooling TryInstanceText()
@@ -91,6 +98,7 @@ public class DamageFontTest : MonoBehaviour
         {
             return textPoolingQueue.Dequeue();
         }
+        // »ý¼º
         RectTransform instFollowUI = Instantiate(followUI, this.transform);
         CanvasGroup instCanvasGroup = instFollowUI.GetComponent<CanvasGroup>();
         TMPro.TMP_Text instDamageText = Instantiate(damageText, instFollowUI.transform);
@@ -107,22 +115,28 @@ public class DamageFontTest : MonoBehaviour
         return inst;
     }
 
-    void FollowUI(TextPooling _instText)
+    void FollowUI(TextPooling _instText, Vector3 _point)
     {
-        Vector2 screenPosition = uiCamera.ViewportToScreenPoint(Input.mousePosition);
+        Vector2 randomCircle = Random.insideUnitCircle * hitRadius;
+        Vector2 screenPosition = uiCamera.ViewportToScreenPoint(_point);
         Vector2 followPosition = uiCamera.ScreenToViewportPoint(screenPosition);
         followPosition -= centerPosition;
 
-        Vector2 randomCircle = Random.insideUnitCircle * hitRadius;
-        Vector2 randomPos = new Vector3(randomCircle.x, randomCircle.y);
+        _instText.followUI.anchoredPosition = followPosition + randomCircle;
+    }
 
-        _instText.followUI.anchoredPosition = followPosition + randomPos;
+    void FollowWorld(TextPooling _instText, Vector3 _point)
+    {
+        Vector3 randomCircle = Random.insideUnitCircle * hitRadius;
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_point);
+        Vector3 followPosition = uiCamera.ScreenToWorldPoint(screenPosition);
+        _instText.followUI.transform.position = followPosition + randomCircle;
     }
 
     IEnumerator DamageTextAction(TextPooling _instText)
     {
         _instText.canvasGroup.alpha = 1f;
-        _instText.followUI.localScale = Vector3.one;
+        _instText.followUI.localScale = Vector3.one + localScale;
 
         float normalize = 0f;
         while (normalize < 1f)
@@ -130,7 +144,7 @@ public class DamageFontTest : MonoBehaviour
             normalize += Time.deltaTime / shakeDuration;
 
             float curveTime = sizeCurve.Evaluate(normalize);
-            _instText.damageText.rectTransform.localScale = Vector3.Lerp(prevSize, nextSize, curveTime);
+            _instText.damageText.rectTransform.localScale = Vector3.Lerp(prevSize, nextSize, curveTime) + localScale;
 
             float curveColor = colorCurve.Evaluate(normalize);
             _instText.damageText.color = Color.Lerp(prevColor, nextColor, curveColor);
@@ -153,7 +167,6 @@ public class DamageFontTest : MonoBehaviour
             yield return null;
         }
         _instText.damageText.rectTransform.anchoredPosition = Vector3.zero;
-
         yield return new WaitForSeconds(holdTime);
 
         normalize = 0f;
@@ -173,7 +186,7 @@ public class DamageFontTest : MonoBehaviour
                     break;
 
                 case EndType.LastScale:
-                    _instText.followUI.localScale = Vector3.Lerp(_instText.followUI.localScale, lastScale, normalize);
+                    _instText.followUI.localScale = Vector3.Lerp(_instText.followUI.localScale, lastScale + localScale, normalize);
                     _instText.canvasGroup.alpha = Mathf.Lerp(1f, 0f, normalize);
                     break;
 

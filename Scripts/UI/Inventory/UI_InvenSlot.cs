@@ -316,6 +316,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     [System.Serializable]
     public class SynergyType
     {
+        // 주변 아이템이 공격 아이템인 경우 공격 향상 (예시)
+        // 기본 방어력 * 주변의 빈칸 개수만큼 향상
         public enum ItemType
         {
             Item,// 전체 유닛의 공격력, 방어력등 스탯 향상

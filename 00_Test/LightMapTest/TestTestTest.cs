@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class TestTestTest : MonoBehaviour
 {
-    public LightMapTest instance;
-    LightMapTest test;
+    public SettingLightMap instance;
+    SettingLightMap test;
     void Update()
     {
         if (Input.GetMouseButtonUp(0))
