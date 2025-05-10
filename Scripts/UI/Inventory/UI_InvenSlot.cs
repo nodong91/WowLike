@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -22,7 +23,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     }
     public SlotType slotType;
 
-    public Image icon;
+    public Image icon, selected;
     public delegate void OnDragHandler(Vector3 _position);
     public OnDragHandler onDrag;
     public delegate void OnSlotHandler(UI_InvenSlot _slot);
@@ -104,6 +105,16 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public delegate void DelegateAction();
     public DelegateAction quickSlotAction;// 퀵슬롯 액션용
 
+    public delegate void DeleClickAction(UI_InvenSlot _slot);
+    public DeleClickAction deleClockAction;
+
+    public TMPro.TMP_Text itemIndex, quickIndex;
+    public Color enabledColor, disabledColor;
+
+
+    bool inDist, cooling, isActive;
+    public bool GetIsActive { get { return isActive; } }
+
     public void SetSlot(SlotType _slotType)
     {
         slotType = _slotType;
@@ -116,9 +127,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         SetSlot(null);
         quickIndex.gameObject.SetActive(true);
     }
-
-    public delegate void DeleClickAction(UI_InvenSlot _slot);
-    public DeleClickAction deleClockAction;
 
     public void LootingItem(UI_InvenSlot _slot)
     {
@@ -225,6 +233,8 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
             icon.gameObject.SetActive(false);
             itemIndex.gameObject.SetActive(false);
+            selected.gameObject.SetActive(false);
+            synergySlots = default;
             return;
         }
 
@@ -236,6 +246,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
                 skillStruct = Singleton_Data.INSTANCE.Dict_Skill[_id];
                 icon.sprite = skillStruct.icon;
                 itemIndex.gameObject.SetActive(false);
+                synergySlots = skillStruct.synergy;// 시너지 슬롯
                 break;
 
             case "T":
@@ -243,6 +254,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
                 itemStruct = Singleton_Data.INSTANCE.Dict_Item[_id];
                 icon.sprite = itemStruct.itemIcon;
                 itemIndex.gameObject.SetActive(true);
+                synergySlots = itemStruct.synergy;// 시너지 슬롯
                 break;
 
             case "U":
@@ -250,13 +262,10 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
                 unitStruct = Singleton_Data.INSTANCE.Dict_Unit[_id];
                 icon.sprite = unitStruct.unitIcon;
                 itemIndex.gameObject.SetActive(false);
+                synergySlots = unitStruct.synergy;// 시너지 슬롯
                 break;
         }
     }
-
-
-    bool inDist, cooling, isActive;
-    public bool GetIsActive { get { return isActive; } }
 
     public void InDistance(bool _inDist)
     {
@@ -290,9 +299,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         icon.material.SetFloat("_FillAmount", _value);
     }
 
-    public TMPro.TMP_Text itemIndex, quickIndex;
-    public Color enabledColor, disabledColor;
-
     void CheckActive()
     {
         isActive = (inDist == true && cooling == false);
@@ -321,11 +327,21 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         public enum ItemType
         {
             Item,// 전체 유닛의 공격력, 방어력등 스탯 향상
-            Unit,// 유닛 자체의 레벨 향상
+            Unit,// 유닛
+            Skill,// 스킬
             Artifact,// 유물 - 아이템등의 레벨을 올리는 형태의 아이템
         }
         public ItemType itemType;
         public int addLevel;
     }
+
+    // 유닛 슬롯에 영향지역을 만들어서 그 안에 들어 있는 아이템과 스킬이 유닛에게 효과
+    // 액티브 스킬의 경우 유닛이 사용 가능하게
     public List<SynergyType> synergyType = new List<SynergyType>();
+    public Vector2Int[] synergySlots;
+
+    public void SynergySelected(bool _active)
+    {
+        selected.gameObject.SetActive(_active);
+    }
 }

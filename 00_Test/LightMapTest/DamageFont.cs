@@ -72,21 +72,21 @@ public class DamageFont : MonoBehaviour
         instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
         localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
         instText.damageText.text = _damage.ToString();
-        StartCoroutine(DamageTextAction(instText));
+        StartCoroutine(DamageTextAction(instText, null));
         FollowUI(instText, Input.mousePosition);
     }
 
-    public void DisplayDamage(Vector3 _point, string _damage)
+    public void DisplayDamage(Transform _target, string _damage)
     {
         TextPooling instText = TryInstanceText();
         bool critical = Random.Range(0, 10) > 7;
         float alpha = critical ? 1f : 0f;
-        instText.critical.CrossFadeAlpha(alpha, 0f, false);
+        instText.critical.CrossFadeAlpha(alpha, 0f, false);// 크리티컬 이미지
         instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
         localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
         instText.damageText.text = _damage.ToString();
-        StartCoroutine(DamageTextAction(instText));
-        FollowWorld(instText, _point);
+        StartCoroutine(DamageTextAction(instText, _target));
+        FollowWorld(instText, _target);
     }
 
     TextPooling TryInstanceText()
@@ -125,15 +125,15 @@ public class DamageFont : MonoBehaviour
         _instText.followUI.anchoredPosition = followPosition + randomCircle;
     }
 
-    void FollowWorld(TextPooling _instText, Vector3 _point)
+    void FollowWorld(TextPooling _instText, Transform _target)
     {
         Vector3 randomCircle = Random.insideUnitCircle * hitRadius;
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_point);
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_target.position);
         Vector3 followPosition = uiCamera.ScreenToWorldPoint(screenPosition);
         _instText.followUI.transform.position = followPosition + randomCircle;
     }
 
-    IEnumerator DamageTextAction(TextPooling _instText)
+    IEnumerator DamageTextAction(TextPooling _instText, Transform _target)
     {
         _instText.canvasGroup.alpha = 1f;
         _instText.followUI.localScale = Vector3.one + localScale;

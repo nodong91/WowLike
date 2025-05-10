@@ -180,6 +180,7 @@ public class Data_Manager : Data_Parse
                 itemName = elements[1].Trim(),
                 itemDescription = elements[2].Trim(),
                 itemIcon = FindSprite(elements[3].Trim()),
+                synergy = Parse_Vector2Int(elements[4].Trim()),
             };
             itemStruct.Add(tempData);
         }
@@ -243,6 +244,7 @@ public class Data_Manager : Data_Parse
         public Unit_Animation.AnimationType animationType;
         public Sprite icon;
         public int level;
+        public Vector2Int[] synergy;
         public enum SkillType
         {
             Damage,
@@ -291,6 +293,7 @@ public class Data_Manager : Data_Parse
         [TextArea]
         public string itemDescription;
         public Sprite itemIcon;
+        public Vector2Int[] synergy;
     }
     public List<ItemStruct> itemStruct = new List<ItemStruct>();
 
@@ -305,6 +308,8 @@ public class Data_Manager : Data_Parse
         public float unitSize;
         public string defaultSkill01;
         public string defaultSkill02;
+        public Vector2Int[] synergy;
+
         //General
         public float strength;
         public float agility;

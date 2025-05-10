@@ -184,6 +184,9 @@ public class UI_Battle : MonoBehaviour
 
 
 
+    public DamageFont baseDamage;
+    DamageFont instDamageFont;
+
     void Update()
     {
         if (Input.GetMouseButtonUp(0))
@@ -193,11 +196,8 @@ public class UI_Battle : MonoBehaviour
         }
     }
 
-    public DamageFont baseDamage;
-    DamageFont instDamageFont;
-
-    public void DamageText(Vector3 _point, string _damage)
+    public void DamageText(Transform _target, string _damage)
     {
-        instDamageFont.DisplayDamage(_point, _damage);
+        instDamageFont.DisplayDamage(_target, _damage);
     }
 }

@@ -187,6 +187,26 @@ public class Data_Parse : MonoBehaviour
     //    }
     //    return null;
     //}
+
+    public Vector2Int[] Parse_Vector2Int(string _str)
+    {
+        //string temp = "-1;0/0;0/1;0/0;0";
+        string[] sub1strings = _str.Split('/');
+        Vector2Int[] vectorArray = new Vector2Int[sub1strings.Length];
+        for (int i = 0; i < sub1strings.Length; i++)
+        {
+            string[] sub2strings = sub1strings[i].Split(';');
+            int[] subInt = new int[sub2strings.Length];
+            for (int j = 0; j < sub2strings.Length; j++)
+            {
+                int index = int.Parse(sub2strings[j]);
+                subInt[j] = index;
+            }
+            Vector2Int vector = new Vector2Int(subInt[0], subInt[1]);
+            vectorArray[i] = vector;
+        }
+        return vectorArray;
+    }
 #endif
 
     [Header(" [ Resource ] ")]

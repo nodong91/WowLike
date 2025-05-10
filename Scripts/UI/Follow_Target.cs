@@ -64,7 +64,7 @@ public class Follow_Target : MonoBehaviour
     public virtual void SetFollow()
     {
         followType = FollowType.Camera;
-        followOffset = new Vector3(0f, 1.5f, 0f);
+        //followOffset = new Vector3(0f, 1.5f, 0f);
         canvasRect = shakeCanvas.GetComponent<RectTransform>();
     }
 

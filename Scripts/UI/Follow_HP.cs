@@ -7,7 +7,7 @@ public class Follow_HP : Follow_Target
 {
     [SerializeField] Unit_AI unit;
     public Unit_AI SetUnit { set { unit = value; } }
-    public TMPro.TMP_Text m_Text;
+    //public TMPro.TMP_Text m_Text;
 
     public Slider hpSlider, actionSlider;
     CanvasGroup actionGroup;
@@ -29,7 +29,7 @@ public class Follow_HP : Follow_Target
     public void SetHP(float _current, float _max, bool _shake)
     {
         hpSlider.value = _current / _max;
-        m_Text.text = ((int)Mathf.Clamp(_current, 0, _max)).ToString();
+        //m_Text.text = ((int)Mathf.Clamp(_current, 0, _max)).ToString();
         if (_shake == true)
             ShakeStart();
     }

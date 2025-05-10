@@ -88,7 +88,7 @@ public class Unit_AI : MonoBehaviour
     public delegate void DeleUpdateAction(float _value);
     public DeleUpdateAction deleUpdateAction;
 
-    public delegate void DeleDamage(Vector3 _point, string _damage);
+    public delegate void DeleDamage(Transform _target, string _damage);
     public DeleDamage deleDamage;
 
     public float GetDamage
@@ -532,10 +532,10 @@ public class Unit_AI : MonoBehaviour
         // _center 맞은 포인트
 
         Debug.Log($"{_from.gameObject.name} : {_damage}");
-        Vector3 hitPoint = transform.position;
+        //Vector3 hitPoint = transform.position;
         healthPoint -= _damage;
         deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health, true);// 데미지 바
-        deleDamage?.Invoke(hitPoint, _damage.ToString());// 데미지 폰트
+        deleDamage?.Invoke(this.transform, _damage.ToString());// 데미지 폰트
 
         if (healthPoint <= 0)
         {
