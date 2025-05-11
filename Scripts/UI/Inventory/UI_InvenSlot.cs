@@ -3,7 +3,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -26,10 +25,14 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public Image icon, selected;
     public delegate void OnDragHandler(Vector3 _position);
     public OnDragHandler onDrag;
+
     public delegate void OnSlotHandler(UI_InvenSlot _slot);
     public OnSlotHandler onBeginDrag;
     public OnSlotHandler onEndDrag;
     public OnSlotHandler onPointerEnter;
+
+    public delegate void OnCheck();
+    public OnCheck onCheck;
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -225,7 +228,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public void SetSlot(string _id)
     {
         quickIndex.gameObject.SetActive(slotType == SlotType.Quick);// 퀵슬롯 번호 확인
-
         if (_id == null)
         {
             itemType = ItemType.Empty;
@@ -239,32 +241,33 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         }
 
         icon.gameObject.SetActive(true);// 아이콘 이미지 활성화
-        switch (_id[0].ToString().ToUpper())// 대문자로 변경
+        switch (_id[0].ToString().ToUpper())// 첫번째 글자 대문자로 변경
         {
             case "S":
                 itemType = ItemType.Skill;
                 skillStruct = Singleton_Data.INSTANCE.Dict_Skill[_id];
                 icon.sprite = skillStruct.icon;
-                itemIndex.gameObject.SetActive(false);
                 synergySlots = skillStruct.synergy;// 시너지 슬롯
+                itemIndex.gameObject.SetActive(false);
                 break;
 
             case "T":
                 itemType = ItemType.Item;
                 itemStruct = Singleton_Data.INSTANCE.Dict_Item[_id];
                 icon.sprite = itemStruct.itemIcon;
-                itemIndex.gameObject.SetActive(true);
                 synergySlots = itemStruct.synergy;// 시너지 슬롯
+                itemIndex.gameObject.SetActive(true);
                 break;
 
             case "U":
                 itemType = ItemType.Unit;
                 unitStruct = Singleton_Data.INSTANCE.Dict_Unit[_id];
                 icon.sprite = unitStruct.unitIcon;
-                itemIndex.gameObject.SetActive(false);
                 synergySlots = unitStruct.synergy;// 시너지 슬롯
+                itemIndex.gameObject.SetActive(false);
                 break;
         }
+        onCheck?.Invoke();// 슬롯 위치가 바꼈으니까 인벤토리 다시 체크
     }
 
     public void InDistance(bool _inDist)
@@ -319,29 +322,48 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     private Vector2Int inventoryNum;
     public Vector2Int InventoryNum { get => inventoryNum; set => inventoryNum = value; }
-    [System.Serializable]
-    public class SynergyType
+    public Vector2Int[] synergySlots;
+    public List<UI_InvenSlot> addSynergy = new List<UI_InvenSlot>();
+
+    public void AddSynergy(List<UI_InvenSlot> _addSynergy)
     {
-        // 주변 아이템이 공격 아이템인 경우 공격 향상 (예시)
-        // 기본 방어력 * 주변의 빈칸 개수만큼 향상
-        public enum ItemType
+        addSynergy = _addSynergy;
+        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
         {
-            Item,// 전체 유닛의 공격력, 방어력등 스탯 향상
-            Unit,// 유닛
-            Skill,// 스킬
-            Artifact,// 유물 - 아이템등의 레벨을 올리는 형태의 아이템
+            switch (addSynergy[i].itemType)
+            {
+                case ItemType.Empty:
+                    // 빈칸도 시너지에 영향을 줄수도 있다.
+                    break;
+
+                case ItemType.Item:
+
+                    break;
+
+                case ItemType.Skill:
+
+                    break;
+
+                case ItemType.Unit:
+
+                    break;
+            }
         }
-        public ItemType itemType;
-        public int addLevel;
     }
 
-    // 유닛 슬롯에 영향지역을 만들어서 그 안에 들어 있는 아이템과 스킬이 유닛에게 효과
-    // 액티브 스킬의 경우 유닛이 사용 가능하게
-    public List<SynergyType> synergyType = new List<SynergyType>();
-    public Vector2Int[] synergySlots;
-
-    public void SynergySelected(bool _active)
+    public void AddSynergy()
     {
-        selected.gameObject.SetActive(_active);
+        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
+        {
+            addSynergy[i].selected.gameObject.SetActive(true);
+        }
+    }
+
+    public void RemoveSynergy()
+    {
+        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
+        {
+            addSynergy[i].selected.gameObject.SetActive(false);
+        }
     }
 }

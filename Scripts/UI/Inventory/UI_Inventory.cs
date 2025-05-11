@@ -48,6 +48,7 @@ public class UI_Inventory : MonoBehaviour
                 inst.onEndDrag += OnEndDrag;
                 inst.onPointerEnter += OnPointerEnter;
                 inst.deleClockAction += SlotClick;
+                inst.onCheck += CheckAllSlot;
                 inst.SetSlot(null);
 
                 Vector2Int inventoryNum = new Vector2Int(x, y);
@@ -61,7 +62,6 @@ public class UI_Inventory : MonoBehaviour
 
     void TestSetting()
     {
-
         // 테스트 세팅
         List<string> skillIDs = new List<string>();
         List<string> itemIDs = new List<string>();
@@ -105,6 +105,8 @@ public class UI_Inventory : MonoBehaviour
                     break;
             }
         }
+
+        CheckAllSlot();
     }
 
     void SlotClick(UI_InvenSlot _slot)
@@ -335,61 +337,44 @@ public class UI_Inventory : MonoBehaviour
 
 
 
-
-    // 시너지
-    //void CheckSynergy(UI_InvenSlot _slot)
-    //{
-    //    Vector2Int slotNum = _slot.InventoryNum;
-    //    // 아이템 시너지 칸이 1인경우
-    //    int synergyNum = 1;
-    //    for (int x = -synergyNum; x <= synergyNum; x++)
-    //    {
-    //        for (int y = -synergyNum; y <= synergyNum; y++)
-    //        {
-    //            // 시너지 가능한 아이템
-    //            // 주변 확인
-    //            // 시너지 있는 아이템 혹은 소환수에 버프
-    //            // 모든 버프는 소환수 기본 스탯에서 추가 (버프된 상태에서 버프를 받으면 곱하기나 나누기는 사용할 수 없음)
-    //            if (x == 0 || y == 0)
-    //            {
-    //                int synergyX = slotNum.x + x;
-    //                int synergyY = slotNum.y + y;
-
-    //                if ((x == 0 && y == 0) || synergyX < 0 || synergyY < 0 || synergyX >= inventorySize.x || synergyY >= inventorySize.y)
-    //                    continue;
-
-    //                UI_InvenSlot temp = inventorySlots[synergyX, synergyY];
-    //                Debug.LogWarning($"클릭 : {slotNum} >> 시너지 슬롯 : {temp.InventoryNum}");
-    //            }
-    //        }
-    //    }
-    //}
     // 시너지 체크
     void CheckSynergy(UI_InvenSlot _slot, bool _enter)
     {
         if (_slot == null || _slot.synergySlots == null)
             return;
 
-        Vector2Int slotNum = _slot.InventoryNum;
-        for (int i = 0; i < _slot.synergySlots.Length; i++)
+        if (_enter == true)
         {
-            int synergyX = slotNum.x + _slot.synergySlots[i].x;
-            int synergyY = slotNum.y + _slot.synergySlots[i].y;
+            _slot.AddSynergy();
+        }
+        else
+        {
+            _slot.RemoveSynergy();
+        }
+    }
 
-            if (synergyX < 0 || synergyY < 0 || synergyX >= inventorySize.x || synergyY >= inventorySize.y)
+    public void CheckAllSlot()
+    {
+        foreach(UI_InvenSlot child in inventorySlots)
+        {
+            List<UI_InvenSlot> addSynergy = new List<UI_InvenSlot>();
+            Vector2Int slotNum = child.InventoryNum;
+            if (child.synergySlots == null)// 빈슬롯
                 continue;
 
-            //Debug.LogWarning($"클릭 : {slotNum} >> 시너지 슬롯 : {temp.InventoryNum}");
-            UI_InvenSlot temp = inventorySlots[synergyX, synergyY];
-            temp.SynergySelected(_enter);
-            if(enterSlot == true)
+            for (int i = 0; i < child.synergySlots.Length; i++)// 에어리어 안의 슬롯
             {
-                // 시너지 추가
+                int synergyX = slotNum.x + child.synergySlots[i].x;
+                int synergyY = slotNum.y + child.synergySlots[i].y;
+
+                if (synergyX < 0 || synergyY < 0 || synergyX >= inventorySize.x || synergyY >= inventorySize.y)
+                    continue;
+
+                //Debug.LogWarning($"클릭 : {slotNum} >> 시너지 슬롯 : {temp.InventoryNum}");
+                UI_InvenSlot synergySlot = inventorySlots[synergyX, synergyY];
+                addSynergy.Add(synergySlot);
             }
-            else
-            {
-                // 시너지 제거
-            }
+            child.AddSynergy(addSynergy);
         }
     }
 }
