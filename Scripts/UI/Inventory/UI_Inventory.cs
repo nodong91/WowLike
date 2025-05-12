@@ -343,19 +343,12 @@ public class UI_Inventory : MonoBehaviour
         if (_slot == null || _slot.synergySlots == null)
             return;
 
-        if (_enter == true)
-        {
-            _slot.AddSynergy();
-        }
-        else
-        {
-            _slot.RemoveSynergy();
-        }
+        _slot.SynergySelect(_enter);
     }
 
     public void CheckAllSlot()
     {
-        foreach(UI_InvenSlot child in inventorySlots)
+        foreach (UI_InvenSlot child in inventorySlots)
         {
             List<UI_InvenSlot> addSynergy = new List<UI_InvenSlot>();
             Vector2Int slotNum = child.InventoryNum;

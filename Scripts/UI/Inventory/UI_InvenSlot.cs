@@ -351,19 +351,11 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
         }
     }
 
-    public void AddSynergy()
+    public void SynergySelect(bool _active)
     {
         for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
         {
-            addSynergy[i].selected.gameObject.SetActive(true);
-        }
-    }
-
-    public void RemoveSynergy()
-    {
-        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
-        {
-            addSynergy[i].selected.gameObject.SetActive(false);
+            addSynergy[i].selected.gameObject.SetActive(_active);
         }
     }
 }
