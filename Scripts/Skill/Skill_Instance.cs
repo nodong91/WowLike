@@ -144,7 +144,7 @@ public class Skill_Instance : MonoBehaviour
         hitEffect.transform.rotation = Quaternion.LookRotation(offset);
         hitEffect.transform.position = _target + offset * targetSize;
 
-        CameraManager.instance.InputShake();
+        Camera_Manager.instance.InputShake();
 
         StartCoroutine(HitEffectCorutine(endDeadTime));
     }

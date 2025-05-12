@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -324,9 +325,10 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public Vector2Int InventoryNum { get => inventoryNum; set => inventoryNum = value; }
     public Vector2Int[] synergySlots;
     public List<UI_InvenSlot> addSynergy = new List<UI_InvenSlot>();
-
+    public int empty, item, skill, unit;
     public void AddSynergy(List<UI_InvenSlot> _addSynergy)
     {
+        empty = 0; item = 0; skill = 0; unit = 0;
         addSynergy = _addSynergy;
         for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
         {
@@ -334,18 +336,19 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
             {
                 case ItemType.Empty:
                     // 빈칸도 시너지에 영향을 줄수도 있다.
+                    empty++;
                     break;
 
                 case ItemType.Item:
-
+                    item++;
                     break;
 
                 case ItemType.Skill:
-
+                    skill++;
                     break;
 
                 case ItemType.Unit:
-
+                    unit++;
                     break;
             }
         }

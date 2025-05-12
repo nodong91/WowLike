@@ -67,17 +67,17 @@ public class Dialog_Manager : MonoBehaviour
         if (target == null)
             return;
 
-        UI_Manager.FollowStruct followStruct = new UI_Manager.FollowStruct
-        {
-            followTarget = target,
-            followOffset = offset,
-        };
-        UI_Manager.instance.AddFollowUI(transform, followStruct);
+        //UI_Manager.FollowStruct followStruct = new UI_Manager.FollowStruct
+        //{
+        //    followTarget = target,
+        //    followOffset = offset,
+        //};
+        //UI_Manager.instance.AddFollowUI(transform, followStruct);
     }
 
     void RemoveFollow()
     {
-        UI_Manager.instance.RemoveFollowUI(transform);
+        //UI_Manager.instance.RemoveFollowUI(transform);
     }
 
 

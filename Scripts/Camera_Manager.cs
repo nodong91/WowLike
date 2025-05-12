@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using System.Collections;
 
-public class CameraManager : MonoBehaviour
+public class Camera_Manager : MonoBehaviour
 {
     public CinemachineCamera cinemachineCamera;
     public Vector3 offset;
@@ -31,7 +31,7 @@ public class CameraManager : MonoBehaviour
 
     CinemachineBrain brain;
 
-    public static CameraManager instance;
+    public static Camera_Manager instance;
 
     private void Awake()
     {

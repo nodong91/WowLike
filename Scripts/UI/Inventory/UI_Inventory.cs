@@ -146,7 +146,7 @@ public class UI_Inventory : MonoBehaviour
             dragIcon.sprite = _slot.icon.sprite;
             dragIcon.gameObject.SetActive(true);
         }
-        CameraManager.instance.enabled = false;
+        Camera_Manager.instance.enabled = false;
     }
 
     private void OnDrag(Vector3 _position)
@@ -167,7 +167,7 @@ public class UI_Inventory : MonoBehaviour
         dragSlot.ChangeSlot(enterSlot);
         dragSlot = null;
         dragIcon.gameObject.SetActive(false);
-        CameraManager.instance.enabled = true;
+        Camera_Manager.instance.enabled = true;
     }
 
     public void OnEndDrag_Quick(UI_InvenSlot _slot)

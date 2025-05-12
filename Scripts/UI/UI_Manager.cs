@@ -1,99 +1,159 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class UI_Manager : MonoBehaviour
 {
-    [Header("[ Manager ]")]
-    [SerializeField] private UI_Option uiOption;
-    private UI_Option instUIOption;
-    [SerializeField] Dialog_Manager dialog;
-    private Dialog_Manager instDialog;
-    [SerializeField] UI_Inventory inventory;
-    private UI_Inventory instInventory;
+    public Camera UICamera;
+    public Button[] timeScaleButtons;
+    public Button battleStart, invenButton, quickButton, allButton, lootingButton;
+    public delegate void DeleTimeScale(float timeScale);
+    public DeleTimeScale deleTimeScale;
+    public Transform overlayCanvas, cameraCanvas;
+    public UI_Inventory inventory;
+    UI_Inventory instInventory;
     public UI_Inventory GetInventory { get { return instInventory; } }
-    public Transform managerParent;
 
-    [Header("[ Button ]")]
-    public Button openButton, exitButton;
-    public CanvasGroup canvas;
-    bool open;
-    [Header("[ Instance ]")]
-    public Transform instanceParent;
-    public TMPro.TMP_Text testText;
-    public Dictionary<Transform, FollowStruct> dictFollow = new Dictionary<Transform, FollowStruct>();
-    Coroutine followUI;
-    public UI_HP uiHP;
+    public Follow_Target followTarget;
+    public Follow_HP followHP;
+    public RectTransform followParent;
+    public Follow_Manager followManager;
+    private Queue<Follow_HP> followHPQueue = new Queue<Follow_HP>();
+    private Queue<Follow_Target> followQueue = new Queue<Follow_Target>();
 
-    public Skill_Set slot;
-    public Transform slotParent;
-    //public Skill_Slot[] slotArray;
-    public delegate void DelegateAction(int index);
+    public delegate void DeleBattleStart();
+    public DeleBattleStart deleBattleStart;
 
-    public CanvasGroup castingCanvas;
-    public Image castingBar;
-    public TMPro.TMP_Text warningText;
-    Coroutine warningCoroutine;
-
-    public static UI_Manager instance;
-
-    private void Awake()
+    void Start()
     {
-        instance = this;
-    }
+        SetUICamera();
 
-    public void SetUIManager()
-    {
-        InstanceManager();
-        canvas.gameObject.SetActive(open);
-        openButton.onClick.AddListener(OpenCanvas);
-        exitButton.onClick.AddListener(QuitGame);
-    }
+        timeScaleButtons[0].onClick.AddListener(delegate { SetTimeScale(0f); });
+        timeScaleButtons[1].onClick.AddListener(delegate { SetTimeScale(1f); });
+        timeScaleButtons[2].onClick.AddListener(delegate { SetTimeScale(3f); });
+        timeScaleButtons[3].onClick.AddListener(delegate { SetTimeScale(5f); });
 
-    void InstanceManager()
-    {
-        instUIOption = Instantiate(uiOption, managerParent);
-        instUIOption.SetAudioManager();
-        instDialog = Instantiate(dialog, managerParent);
-        instDialog.SetDialogManager();
-        instInventory = Instantiate(inventory, managerParent);
+        battleStart.onClick.AddListener(BattleStart);
+        invenButton.onClick.AddListener(OpenInventory);
+        quickButton.onClick.AddListener(OpenQuick);
+        allButton.onClick.AddListener(CloseAll);
+        lootingButton.onClick.AddListener(OpenLooting);
+
+        instInventory = Instantiate(inventory, overlayCanvas);
         instInventory.SetInventory();
+
+        instDamageFont = Instantiate(baseDamage, cameraCanvas);
     }
 
-    void OpenCanvas()
+    void SetUICamera()
     {
-        open = !open;
-        canvas.gameObject.SetActive(open);
-    }
-
-    void QuitGame()
-    {
-        if (Application.isEditor == true)
+        Camera mainCamera = Camera.main;
+        var cameraData = mainCamera.GetUniversalAdditionalCameraData();
+        if (cameraData.cameraStack.Contains(UICamera) == false)
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        }
-        else
-        {
-            Application.Quit();
+            UICamera.fieldOfView = mainCamera.fieldOfView;
+            cameraData.cameraStack.Add(UICamera);
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-    public void SkillText(string _text)
+    void SetTimeScale(float _timeScale)
     {
-        testText.text = _text;
+        deleTimeScale(_timeScale);
+    }
+
+    void BattleStart()
+    {
+        deleBattleStart();
+        CloseAll();
+    }
+
+    void OpenInventory()
+    {
+        instInventory.OpenInventory();
+    }
+
+    void OpenQuick()
+    {
+        instInventory.OpenQuick();
+    }
+
+    void OpenLooting()
+    {
+        instInventory.OpenLooting();
+    }
+
+    void OpenAll()
+    {
+        instInventory.OpenAllCanvas();
+    }
+
+    void CloseAll()
+    {
+        instInventory.CloseAllCanvas();
+    }
+
+    public Follow_HP AddFollow_Unit(Unit_AI _unit)
+    {
+        Follow_HP instHP = TryFollowHPTarget();
+        instHP.SetFollowUnit(_unit);
+
+        followManager.AddFollowUI(_unit.gameObject, instHP);
+
+        return instHP;
+    }
+
+    Follow_HP TryFollowHPTarget()
+    {
+        if (followHPQueue.Count > 0)
+        {
+            Follow_HP follow = followHPQueue.Dequeue();
+            follow.gameObject.SetActive(true);
+            return follow;
+        }
+        Follow_HP instTarget = Instantiate(followHP, followParent);
+        return instTarget;
+    }
+
+    public void RemoveFollowHP(GameObject _target)
+    {
+        Follow_HP instTarget = followManager.RemoveFollowHP(_target);
+        instTarget.gameObject.SetActive(false);
+        followHPQueue.Enqueue(instTarget);
+    }
+
+    public void AddFollow(GameObject _target)
+    {
+        Follow_Target instTarget = TryFollowTarget();
+        followManager = GetComponent<Follow_Manager>();
+        followManager.AddFollowUI(_target.gameObject, instTarget);
+    }
+
+    Follow_Target TryFollowTarget()
+    {
+        if (followQueue.Count > 0)
+        {
+            Follow_Target follow = followQueue.Dequeue();
+            follow.gameObject.SetActive(true);
+            return follow;
+        }
+        Follow_Target instTarget = Instantiate(followTarget, followParent);
+        instTarget.SetFollow();
+
+        return instTarget;
+    }
+
+    public void RemoveFollow(GameObject _target)
+    {
+        Follow_Target instTarget = followManager.RemoveFollowUI(_target);
+        instTarget.gameObject.SetActive(false);
+        followQueue.Enqueue(instTarget);
+    }
+
+    public void ShakingUI(GameObject _target)
+    {
+        followManager.ShakingUI(_target);
     }
 
 
@@ -109,179 +169,35 @@ public class UI_Manager : MonoBehaviour
 
 
 
-    public struct FollowStruct
-    {
-        public Transform followTarget;
-        public Vector3 followOffset;
 
-        public FollowStruct(Transform _target, Vector3 _offset)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public DamageFont baseDamage;
+    DamageFont instDamageFont;
+
+    void Update()
+    {
+        if (Input.GetMouseButtonUp(0))
         {
-            followTarget = _target;
-            followOffset = _offset;
+            int index = Random.Range(0, 1500);
+            instDamageFont.DisplayDamage(index);
         }
     }
 
-    public void AddFollowUI(Transform _addFollow, FollowStruct _addStruct)
+    public void DamageText(Transform _target, string _damage)
     {
-        if (dictFollow.ContainsKey(_addFollow) == false)
-        {
-            dictFollow.Add(_addFollow, _addStruct);
-            StartFollowing();
-        }
-    }
-
-    public void RemoveFollowUI(Transform _addFollow)
-    {
-        dictFollow.Remove(_addFollow);
-    }
-
-    public void AddHPUI(Transform _target)
-    {
-        if (_target == null)
-            return;
-        FollowStruct followStruct = new FollowStruct
-        {
-            followTarget = _target,
-            followOffset = Vector3.up,
-        };
-        UI_HP inst = Instantiate(uiHP, instanceParent);
-        AddFollowUI(inst.transform, followStruct);
-    }
-
-    void StartFollowing()
-    {
-        if (followUI != null)
-            StopCoroutine(followUI);
-        followUI = StartCoroutine(StartFollowing(dictFollow));
-    }
-
-    IEnumerator StartFollowing(Dictionary<Transform, FollowStruct> _follows)
-    {
-        while (dictFollow.Count > 0)
-        {
-            foreach (var child in _follows)
-            {
-                Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value.followTarget.position + child.Value.followOffset);
-                child.Key.position = screenPosition;
-            }
-            yield return null;
-        }
-    }
-
-    public void AddFollowUI_UICamera(Transform _addFollow, FollowStruct _addStruct, Camera _uiCam)
-    {
-        if (dictFollow.ContainsKey(_addFollow) == false)
-        {
-            dictFollow.Add(_addFollow, _addStruct);
-            StartFollowing_UICamera(_uiCam);
-        }
-    }
-
-    void StartFollowing_UICamera(Camera _uiCam)
-    {
-        if (followUI != null)
-            StopCoroutine(followUI);
-        followUI = StartCoroutine(StartFollowing_UICamera(dictFollow, _uiCam));
-    }
-
-    IEnumerator StartFollowing_UICamera(Dictionary<Transform, FollowStruct> _follows, Camera _uiCam)
-    {
-        while (dictFollow.Count > 0)
-        {
-            foreach (var child in _follows)
-            {
-                Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value.followTarget.position + child.Value.followOffset);
-                Vector3 followPosition = _uiCam.ScreenToWorldPoint(screenPosition);
-                child.Key.position = followPosition;
-            }
-            yield return null;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-    public void SkillCasting(float _value)
-    {
-        castingBar.fillAmount = _value;
-        float alpha = _value > 0 ? 1f : 0f;
-        castingCanvas.alpha = alpha;
-    }
-
-    public void SetWarning(int _type, string _text)
-    {
-        _text = SetText(_type, _text);
-
-        if (warningCoroutine != null)
-            StopCoroutine(warningCoroutine);
-        warningCoroutine = StartCoroutine(WarningText(_text));
-    }
-
-    string SetText(int _type, string _text, string _color = "FFFFFF")
-    {
-        switch (_type)
-        {
-            case 0:
-                return $"<b><color=#FF0000>{_text}</color></b>";
-
-            case 1:
-                return $"<b><color=#00FF00>{_text}</color></b>";
-
-            case 2:
-                return $"<b><color=#0000FF>{_text}</color></b>";
-
-            case 3:
-                return $"<b><color=#FFFF00>{_text}</color></b>";
-        }
-        return _text;
-    }
-
-
-    IEnumerator WarningText(string _text)
-    {
-        warningText.text = _text;
-        warningText.alpha = 1f;
-        yield return new WaitForSeconds(1f);
-
-        float normalize = 0f;
-        while (normalize < 1f)
-        {
-            normalize += Time.deltaTime * 3f;
-            warningText.alpha = 1f - normalize;
-            yield return null;
-        }
-        warningText.alpha = 0f;
-    }
-
-
-
-
-
-
-
-
-
-
-
-    public void CheckDistance(float _distance)
-    {
-        UI_InvenSlot[] quickSlots = instInventory.GetQuickSlot;
-        for (int i = 0; i < quickSlots.Length; i++)
-        {
-            //Skill_Slot[] slotArray = UI_Manager.instance.slotArray;
-            quickSlots[i].InDistance(quickSlots[i].skillStruct.range.y > _distance);
-        }
-    }
-
-    public UI_InvenSlot GetQuickSlot(int _index)
-    {
-        return instInventory.GetQuickSlot[_index];
+        instDamageFont.DisplayDamage(_target, _damage);
     }
 }

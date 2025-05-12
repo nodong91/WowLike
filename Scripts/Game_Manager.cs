@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Unit_Battle : MonoBehaviour
+public class Game_Manager : MonoBehaviour
 {
-    [SerializeField] UI_Battle uiBattle;
-    UI_Battle instUIBattle;
+    [SerializeField] UI_Manager uiManager;
+    UI_Manager instUIManager;
     [SerializeField] Map_Generator mapGenerator;
     Map_Generator instMapGenerator;
     public enum SpawnType
@@ -51,13 +51,13 @@ public class Unit_Battle : MonoBehaviour
 
     Coroutine cameraInput;
 
-    public static Unit_Battle current;
+    public static Game_Manager current;
 
     private void Awake()
     {
         current = this;
     }
-
+    GameObject unitParent;
     private void Start()
     {
         Application.targetFrameRate = targetFrameRate;
@@ -67,12 +67,15 @@ public class Unit_Battle : MonoBehaviour
             instMapGenerator = Instantiate(mapGenerator, transform);
         instMapGenerator.SetMapGrid(spawnData);
 
-        if (instUIBattle == null)
-            instUIBattle = Instantiate(uiBattle, transform);
-        instUIBattle.deleTimeScale = SetTimeScale;
-        instUIBattle.deleBattleStart = StartBattle;
-        instUIBattle.AddFollow(asdfadsf);// 임시 테스트
+        if (instUIManager == null)
+            instUIManager = Instantiate(uiManager, transform);
+        instUIManager.deleTimeScale = SetTimeScale;
+        instUIManager.deleBattleStart = StartBattle;
+        instUIManager.AddFollow(asdfadsf);// 임시 테스트
 
+        if (unitParent != null)
+            Destroy(unitParent);
+        unitParent = new GameObject("[ Unit Parnet ]");
         players = new List<Unit_AI>();
         monsters = new List<Unit_AI>();
         switch (spawnType)
@@ -108,7 +111,7 @@ public class Unit_Battle : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             InputIng();
-            instUIBattle.ShakingUI(asdfadsf);
+            instUIManager.ShakingUI(asdfadsf);
         }
     }
 
@@ -191,17 +194,17 @@ public class Unit_Battle : MonoBehaviour
                 break;
         }
         // 유아이 세팅
-        Follow_HP hp = instUIBattle.AddFollow_Unit(inst);
+        Follow_HP hp = instUIManager.AddFollow_Unit(inst);
         hp.sliderImage.color = teamColor;
         inst.deleUpdateHP = hp.SetHP;// 체력 바
         inst.deleUpdateAction = hp.SetAction;// 액션 바
-        inst.deleDamage = instUIBattle.DamageText;// 데미지
+        inst.deleDamage = instUIManager.DamageText;// 데미지
         inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
     }
 
     Unit_AI InstnaceUnit(Node _node)
     {
-        Unit_AI inst = Instantiate(unitBase, transform);
+        Unit_AI inst = Instantiate(unitBase, unitParent.transform);
         inst.transform.position = _node.worldPosition;
         inst.transform.rotation = Quaternion.Euler(_node.worldPosition);
         inst.playerList = PlayerList;// 타겟을 찾기 위해
@@ -257,7 +260,7 @@ public class Unit_Battle : MonoBehaviour
         if (EventSystem.current.IsPointerOverGameObject() == true)
             return;
 
-        dragSlot = instUIBattle.GetInventory.GetDragSlot;
+        dragSlot = instUIManager.GetInventory.GetDragSlot;
         bool moveUnit = (dragSlot?.itemType == UI_InvenSlot.ItemType.Unit) || (selectedNode?.onObject != null);
         Node node = null;
         if (RayCasting(out Vector3 hitPoint) != null)
@@ -365,14 +368,14 @@ public class Unit_Battle : MonoBehaviour
 
     void UnitRemove(Node _node)
     {
-        UI_InvenSlot emptySlot = instUIBattle.GetInventory.TryEmptySlot();
+        UI_InvenSlot emptySlot = instUIManager.GetInventory.TryEmptySlot();
         if (emptySlot == null)// 빈슬롯 확인
         {
             return;
         }
         // 제거
         Unit_AI unit = allUnitDict[_node.onObject];
-        instUIBattle.RemoveFollowHP(unit.gameObject);
+        instUIManager.RemoveFollowHP(unit.gameObject);
         unit.deadUnit -= DeadPlayer;// 죽음 카운트
         players.Remove(unit);
         allUnitDict.Remove(unit.gameObject);
@@ -466,6 +469,6 @@ public class Unit_Battle : MonoBehaviour
 
     void Reward()
     {
-        instUIBattle.GetInventory.AddLooting(resultItems);
+        instUIManager.GetInventory.AddLooting(resultItems);
     }
 }
