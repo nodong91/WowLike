@@ -122,9 +122,6 @@
         },
         {
             "m_Id": "2734614d745f4081ae2fb56a8715f707"
-        },
-        {
-            "m_Id": "eac901cdba304038a43a54f07c147ac9"
         }
     ],
     "m_Keywords": [
@@ -10988,9 +10985,6 @@
             "m_Id": "bf32595687f8404eb7ac3f80a8f35a3a"
         },
         {
-            "m_Id": "eac901cdba304038a43a54f07c147ac9"
-        },
-        {
             "m_Id": "848ca65834b34db4bdde3dee4c8883d3"
         },
         {
@@ -16090,7 +16084,7 @@
     "m_AdditionalMotionVectorMode": 0,
     "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
-    "m_CustomEditorGUI": "ShaderEditor",
+    "m_CustomEditorGUI": "",
     "m_SupportVFX": false
 }
 
@@ -29746,34 +29740,6 @@
         "y": 0.0,
         "z": 0.0,
         "w": 0.0
-    }
-}
-
-{
-    "m_SGVersion": 1,
-    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
-    "m_ObjectId": "eac901cdba304038a43a54f07c147ac9",
-    "m_Guid": {
-        "m_GuidSerialized": "bc8871cf-4d92-4cf2-b725-40d99e695e28"
-    },
-    "m_Name": "TestFloat",
-    "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "TestFloat",
-    "m_DefaultReferenceName": "_TestFloat",
-    "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
-    "m_UseCustomSlotLabel": false,
-    "m_CustomSlotLabel": "",
-    "m_DismissedVersion": 0,
-    "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
-    "m_Hidden": false,
-    "m_Value": 0.0,
-    "m_FloatType": 0,
-    "m_RangeValues": {
-        "x": 0.0,
-        "y": 1.0
     }
 }
 

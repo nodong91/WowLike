@@ -5038,7 +5038,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "46b914e177f1444c9033cb0abc9ae986",
     "m_Id": 0,
-    "m_DisplayName": "Float",
+    "m_DisplayName": "BurnAmount",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -6014,10 +6014,10 @@
     "m_Guid": {
         "m_GuidSerialized": "635fb85c-1ca2-42df-b6cd-329efb8fd8b6"
     },
-    "m_Name": "Color",
+    "m_Name": "BurnColor",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Color",
-    "m_DefaultReferenceName": "_Color",
+    "m_RefNameGeneratedByDisplayName": "BurnColor",
+    "m_DefaultReferenceName": "_BurnColor",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -6632,10 +6632,10 @@
     "m_Guid": {
         "m_GuidSerialized": "91b5cdc2-fe01-4f9a-9061-73c571d8c8fa"
     },
-    "m_Name": "Float (1)",
+    "m_Name": "BurnNoise",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Float (1)",
-    "m_DefaultReferenceName": "_Float_1",
+    "m_RefNameGeneratedByDisplayName": "BurnNoise",
+    "m_DefaultReferenceName": "_BurnNoise",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -8338,10 +8338,10 @@
     "m_Guid": {
         "m_GuidSerialized": "8fea4b6f-fd7c-4585-9dcf-82425c129e5d"
     },
-    "m_Name": "Float",
+    "m_Name": "BurnAmount",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Float",
-    "m_DefaultReferenceName": "_Float",
+    "m_RefNameGeneratedByDisplayName": "BurnAmount",
+    "m_DefaultReferenceName": "_BurnAmount",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -8532,7 +8532,7 @@
     "m_AdditionalMotionVectorMode": 0,
     "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
-    "m_CustomEditorGUI": "TMPro.EditorUtilities.TMP_SDFShaderGUI",
+    "m_CustomEditorGUI": "P01.Editor.Editor_Tmp_Burn",
     "m_SupportVFX": false
 }
 
@@ -8639,7 +8639,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "96ee2c88953543d89b5d5ea56afb78e8",
     "m_Id": 0,
-    "m_DisplayName": "Color",
+    "m_DisplayName": "BurnColor",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -8681,10 +8681,10 @@
     "m_Guid": {
         "m_GuidSerialized": "196c2e1e-1ab7-42ff-9c60-4fbf0dca8588"
     },
-    "m_Name": "Float (2)",
+    "m_Name": "BurnPoint",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Float (2)",
-    "m_DefaultReferenceName": "_Float_2",
+    "m_RefNameGeneratedByDisplayName": "BurnPoint",
+    "m_DefaultReferenceName": "_BurnPoint",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -9948,7 +9948,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "b12c29ee418c405d92b8ea95339fd896",
     "m_Id": 0,
-    "m_DisplayName": "Float (2)",
+    "m_DisplayName": "BurnPoint",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -11734,7 +11734,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "e1745831b7744a4c9b7cca1ae10cb758",
     "m_Id": 0,
-    "m_DisplayName": "Float (1)",
+    "m_DisplayName": "BurnNoise",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -12123,8 +12123,8 @@
     "m_ObjectId": "ecf16c34d46f4502ac601f0c38c7576b",
     "m_Title": "Vertex Color",
     "m_Position": {
-        "x": -3557.000244140625,
-        "y": -3525.000244140625
+        "x": -3557.0,
+        "y": -3525.0
     }
 }
 

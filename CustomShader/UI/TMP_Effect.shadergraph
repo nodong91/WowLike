@@ -3906,7 +3906,7 @@
     "m_DefaultRefNameVersion": 0,
     "m_RefNameGeneratedByDisplayName": "",
     "m_DefaultReferenceName": "Vector4_1A08AD4A",
-    "m_OverrideReferenceName": "_FaceText_ST",
+    "m_OverrideReferenceName": "_FaceTex_ST",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -4935,22 +4935,22 @@
             "m_Id": "22b7f3c2bb7b48c0a7fdeb50e33e7d5e"
         },
         {
-            "m_Id": "53073e5ea924459fa6681a4943e9f947"
-        },
-        {
-            "m_Id": "7a046f410ce64aa88438b0bfd412c045"
+            "m_Id": "46fbf3eeb0ea4470869cba7443249295"
         },
         {
             "m_Id": "636180f6e0504f2baaa5cc086980cb47"
         },
         {
+            "m_Id": "53073e5ea924459fa6681a4943e9f947"
+        },
+        {
             "m_Id": "74b41464cbed4e9e8e23af5ab9be40cf"
         },
         {
-            "m_Id": "8ed907a2cc7949b68a283ae243ea1977"
+            "m_Id": "7a046f410ce64aa88438b0bfd412c045"
         },
         {
-            "m_Id": "46fbf3eeb0ea4470869cba7443249295"
+            "m_Id": "8ed907a2cc7949b68a283ae243ea1977"
         },
         {
             "m_Id": "ec79eb447dfd47a9b3380344c6a60f43"
@@ -15816,7 +15816,7 @@
     "m_AdditionalMotionVectorMode": 0,
     "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
-    "m_CustomEditorGUI": "",
+    "m_CustomEditorGUI": "P01.Editor.Editor_Tmp_Test",
     "m_SupportVFX": false
 }
 
