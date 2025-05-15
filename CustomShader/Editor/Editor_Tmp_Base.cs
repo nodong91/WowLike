@@ -150,15 +150,15 @@ namespace P01.Editor
             materialEditor.TextureProperty(OutlineTex, "OutlineTex", true);
 
             OutlineColor1 = FindProperty(TmpProperty.OutlineColor1, properties);
-            materialEditor.VectorProperty(OutlineColor1, "OutlineColor1");
+            materialEditor.ColorProperty(OutlineColor1, "OutlineColor1");
             OutlineOffset1 = FindProperty(TmpProperty.OutlineOffset1, properties);
             materialEditor.ShaderProperty(OutlineOffset1, new GUIContent("OutlineOffset1"));
             OutlineColor2 = FindProperty(TmpProperty.OutlineColor2, properties);
-            materialEditor.VectorProperty(OutlineColor2, "OutlineColor2");
+            materialEditor.ColorProperty(OutlineColor2, "OutlineColor2");
             OutlineOffset2 = FindProperty(TmpProperty.OutlineOffset2, properties);
             materialEditor.ShaderProperty(OutlineOffset2, new GUIContent("OutlineOffset2"));
             OutlineColor3 = FindProperty(TmpProperty.OutlineColor3, properties);
-            materialEditor.VectorProperty(OutlineColor3, "OutlineColor3");
+            materialEditor.ColorProperty(OutlineColor3, "OutlineColor3");
             OutlineOffset3 = FindProperty(TmpProperty.OutlineOffset3, properties);
             materialEditor.ShaderProperty(OutlineOffset3, new GUIContent("OutlineOffset3"));
 
