@@ -190,6 +190,9 @@ public class Data_Parse : MonoBehaviour
 
     public Vector2Int[] Parse_Vector2Int(string _str)
     {
+        if (_str.Length == 0)
+            return null;
+
         //string temp = "-1;0/0;0/1;0/0;0";
         string[] sub1strings = _str.Split('/');
         Vector2Int[] vectorArray = new Vector2Int[sub1strings.Length];
@@ -206,6 +209,32 @@ public class Data_Parse : MonoBehaviour
             vectorArray[i] = vector;
         }
         return vectorArray;
+    }
+
+    public Vector2 Parse_Vector2(string _str)
+    {
+        //string temp = "-1;0/0;0/1;0/0;0";
+        string[] subStrings = _str.Split(';');
+        float[] subInt = new float[subStrings.Length];
+        for (int i = 0; i < subStrings.Length; i++)
+        {
+            float index = float.Parse(subStrings[i]);
+            subInt[i] = index;
+        }
+        return new Vector2(subInt[0], subInt[1]);
+    }
+
+    public Vector3 Parse_Vector3(string _str)
+    {
+        //string temp = "-1;0/0;0/1;0/0;0";
+        string[] subStrings = _str.Split(';');
+        float[] subInt = new float[subStrings.Length];
+        for (int i = 0; i < subStrings.Length; i++)
+        {
+            float index = float.Parse(subStrings[i]);
+            subInt[i] = index;
+        }
+        return new Vector3(subInt[0], subInt[1], subInt[2]);
     }
 #endif
 

@@ -119,20 +119,23 @@ public class Data_Manager : Data_Parse
                 skillDescription = elements[2],
                 animationType = (Unit_Animation.AnimationType)Enum.Parse(typeof(Unit_Animation.AnimationType), elements[3]),
                 icon = FindSprite(elements[4].Trim()),
-                level = IntTryParse(elements[5]),
-                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[6]),// 기본 데미지의 몇%
-                ccType = (SkillStruct.CCType)Enum.Parse(typeof(SkillStruct.CCType), elements[7]),// 기본 데미지의 몇%
-                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[8]),// 기본 에너지의 몇%
-                energyAmount = FloatTryParse(elements[9]),
-                castingTime = FloatTryParse(elements[10]),// 0일 경우 즉시시전
-                coolingTime = FloatTryParse(elements[11]),
-                range = new Vector2(FloatTryParse(elements[12]), FloatTryParse(elements[13])),
-                influence = new Vector3(FloatTryParse(elements[14]), FloatTryParse(elements[15]), FloatTryParse(elements[16])),
-                aggro = FloatTryParse(elements[17]),
-                skillSet = elements[18].Trim(),
-                splashRange = FloatTryParse(elements[19]),
-                splashAngle = FloatTryParse(elements[20]),
-                projectileSpeed = FloatTryParse(elements[21]),
+                synergy = Parse_Vector2Int(elements[5].Trim()),
+                level = IntTryParse(elements[6]),
+                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[7]),// 기본 데미지의 몇%
+                ccType = (SkillStruct.CCType)Enum.Parse(typeof(SkillStruct.CCType), elements[8]),// 기본 데미지의 몇%
+                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[9]),// 기본 에너지의 몇%
+                energyAmount = FloatTryParse(elements[10]),
+                castingTime = FloatTryParse(elements[11]),// 0일 경우 즉시시전
+                coolingTime = FloatTryParse(elements[12]),
+                range = Parse_Vector2(elements[13]),
+                //range = new Vector2(FloatTryParse(elements[13]), FloatTryParse(elements[14])),
+                influence = Parse_Vector3(elements[14]),
+                //influence = new Vector3(FloatTryParse(elements[14]), FloatTryParse(elements[16]), FloatTryParse(elements[17])),
+                aggro = FloatTryParse(elements[15]),
+                skillSet = elements[16].Trim(),
+                splashRange = FloatTryParse(elements[17]),
+                splashAngle = FloatTryParse(elements[18]),
+                projectileSpeed = FloatTryParse(elements[19]),
             };
             skillStruct.Add(tempData);
         }
@@ -152,15 +155,16 @@ public class Data_Manager : Data_Parse
                 unitName = elements[1].Trim(),
                 unitDescription = elements[2].Trim(),
                 unitIcon = FindSprite(elements[3].Trim()),
+                synergy = Parse_Vector2Int(elements[4].Trim()),
                 unitProp = FindUnit(elements[0].Trim()),
-                unitSize = FloatTryParse(elements[4].Trim()),
-                defaultSkill01 = elements[5].Trim(),
-                defaultSkill02 = elements[6].Trim(),
-
-                strength = FloatTryParse(elements[7]),
-                agility = FloatTryParse(elements[8]),
-                intelligence = FloatTryParse(elements[9]),
-                constitution = FloatTryParse(elements[10]),
+                unitSize = FloatTryParse(elements[5].Trim()),
+                defaultSkill01 = elements[6].Trim(),
+                defaultSkill02 = elements[7].Trim(),
+                // 능력치
+                strength = FloatTryParse(elements[8]),
+                agility = FloatTryParse(elements[9]),
+                intelligence = FloatTryParse(elements[10]),
+                constitution = FloatTryParse(elements[11]),
             };
             unitStruct.Add(tempData);
         }

@@ -357,8 +357,8 @@ public class UI_Inventory : MonoBehaviour
 
             for (int i = 0; i < child.synergySlots.Length; i++)// 에어리어 안의 슬롯
             {
-                int synergyX = slotNum.x + child.synergySlots[i].x;
-                int synergyY = slotNum.y + child.synergySlots[i].y;
+                int synergyX = slotNum.x + (int)child.synergySlots[i].x;
+                int synergyY = slotNum.y + (int)child.synergySlots[i].y;
 
                 if (synergyX < 0 || synergyY < 0 || synergyX >= inventorySize.x || synergyY >= inventorySize.y)
                     continue;

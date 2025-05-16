@@ -1,8 +1,5 @@
 using System.Collections;
-using Unity.Android.Gradle.Manifest;
-using Unity.VisualScripting;
 using UnityEngine;
-using static RewardMaterial;
 
 public class RewardMaterial : MonoBehaviour
 {
@@ -10,14 +7,16 @@ public class RewardMaterial : MonoBehaviour
     public TMPro.TMP_Text rewardText;
 
     public AnimationCurve animationCurve;
-    public GameObject target;
+    private GameObject target;
     public float delayTime;
 
-    public delegate void MovingOver(RewardMaterial reward);
+    public delegate void MovingOver(RewardMaterial reward, int index);
     public MovingOver movingOver;
+    int index;
 
-    public void Reward_Train(Vector3 _prevPoint, GameObject _target)
+    public void Reward_Train(Vector3 _prevPoint, GameObject _target, int _num)
     {
+        index = _num;
         target = _target;
         rewardText.gameObject.SetActive(false);
         StartCoroutine(RewardMoving(_prevPoint, target.transform.position));
@@ -37,11 +36,12 @@ public class RewardMaterial : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = 0f;
-        movingOver?.Invoke(this);
+        movingOver?.Invoke(this, index);
     }
 
     public void Reward_Up(Vector3 _prevPoint, int _num)
     {
+        index = _num;
         Vector3 targetPoint = _prevPoint + Vector3.up * 100f;
         rewardText.gameObject.SetActive(true);
         rewardText.text = "+" + _num.ToString();
@@ -50,6 +50,7 @@ public class RewardMaterial : MonoBehaviour
 
     public void Reward_Num(Vector3 _prevPoint, int _num)
     {
+        index = _num;
         rewardText.gameObject.SetActive(true);
         StartCoroutine(RewardNum(_prevPoint, _num));
     }
@@ -75,11 +76,12 @@ public class RewardMaterial : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = 0f;
-        movingOver?.Invoke(this);
+        movingOver?.Invoke(this, index);
     }
 
-    public void Reward_Boom(Vector3 _prevPoint, GameObject _target)
+    public void Reward_Boom(Vector3 _prevPoint, GameObject _target, int _num)
     {
+        index = _num;
         target = _target;
         rewardText.gameObject.SetActive(false);
         StartCoroutine(RewardBoom(_prevPoint));
@@ -98,51 +100,86 @@ public class RewardMaterial : MonoBehaviour
             canvasGroup.transform.position = Vector3.Lerp(_prevPoint, _prevPoint + randomCircle, curve);
             yield return null;
         }
-        Reward_Train(canvasGroup.transform.position, target);
+        Reward_Train(canvasGroup.transform.position, target, index);
     }
-    public void Reward_Parabola(Vector3 _prevPoint, GameObject _target, float _speed, float _firingAngle)
+    //public void Reward_Parabola(Vector3 _prevPoint, GameObject _target, float _speed, float _firingAngle)
+    //{
+    //    target = _target;
+    //    rewardText.gameObject.SetActive(false);
+    //    StartCoroutine(RewardParabola(_prevPoint, _speed, _firingAngle));
+    //}
+
+    //public IEnumerator RewardParabola(Vector3 _prevPoint, float _speed, float _firingAngle)
+    //{
+    //    transform.position = _prevPoint;
+    //    canvasGroup.alpha = 1f;
+
+    //    Vector3 offset = (_prevPoint - target.transform.position).normalized;
+    //    Vector3 targetPoint = target.transform.position + offset;
+
+    //    // 시작점과 목표점 사이의 거리 계산
+    //    float target_Distance = (_prevPoint - targetPoint).magnitude;
+
+    //    // 초기 속도 계산
+    //    float projectile_Velocity = target_Distance / (Mathf.Sin(2 * _firingAngle * Mathf.Deg2Rad) / _speed);
+
+    //    // XZ 평면에서의 속도 계산
+    //    float Vx = Mathf.Sqrt(projectile_Velocity) * Mathf.Cos(_firingAngle * Mathf.Deg2Rad);
+    //    float Vy = Mathf.Sqrt(projectile_Velocity) * Mathf.Sin(_firingAngle * Mathf.Deg2Rad);
+
+    //    // 비행 시간 계산
+    //    float flightDuration = target_Distance / Vx;
+
+    //    // 발사 방향 설정
+    //    //transform.rotation = Quaternion.LookRotation(_targetPoint - transform.position);
+
+    //    // 비행 시간 동안 이동
+    //    float elapse_time = 0;
+    //    while (elapse_time < flightDuration)
+    //    {
+    //        elapse_time += Time.deltaTime;
+    //        float x = Vx * Time.deltaTime;
+    //        float y = (Vy - (_speed * elapse_time)) * Time.deltaTime;
+    //        float z = 0f;
+    //        transform.Translate(x, y, z);
+    //        yield return null;
+    //    }
+    //    //canvasGroup.alpha = 0f;
+    //    //movingOver?.Invoke(this);
+    //}
+    public void Reward_Scale(Vector3 _prevPoint, GameObject _target, int _num)
     {
-        target = _target;
-        rewardText.gameObject.SetActive(false);
-        StartCoroutine(RewardParabola(_prevPoint, _speed, _firingAngle));
-        //StartCoroutine(RewardParabola(_prevPoint));
+        index = _num;
+        canvasGroup.transform.position = _prevPoint;
+        rewardText.gameObject.SetActive(true);
+        rewardText.text = "+" + _num.ToString();
+        //StartCoroutine(RewardParabola(_prevPoint, _speed, _firingAngle));
+        StartCoroutine(RewardScale(_prevPoint, _target));
     }
 
-    public IEnumerator RewardParabola(Vector3 _prevPoint, float _speed, float _firingAngle)
+    public AnimationCurve scaleXCurve, scaleYCurve;
+
+    public IEnumerator RewardScale(Vector3 _prevPoint, GameObject _target)
     {
-        transform.position = _prevPoint;
         canvasGroup.alpha = 1f;
-
-        Vector3 offset = (_prevPoint - target.transform.position).normalized;
-        Vector3 targetPoint = target.transform.position + offset;
-
-        // 시작점과 목표점 사이의 거리 계산
-        float target_Distance = (_prevPoint - targetPoint).magnitude;
-
-        // 초기 속도 계산
-        float projectile_Velocity = target_Distance / (Mathf.Sin(2 * _firingAngle * Mathf.Deg2Rad) / _speed);
-
-        // XZ 평면에서의 속도 계산
-        float Vx = Mathf.Sqrt(projectile_Velocity) * Mathf.Cos(_firingAngle * Mathf.Deg2Rad);
-        float Vy = Mathf.Sqrt(projectile_Velocity) * Mathf.Sin(_firingAngle * Mathf.Deg2Rad);
-
-        // 비행 시간 계산
-        float flightDuration = target_Distance / Vx;
-
-        // 발사 방향 설정
-        //transform.rotation = Quaternion.LookRotation(_targetPoint - transform.position);
-
-        // 비행 시간 동안 이동
-        float elapse_time = 0;
-        while (elapse_time < flightDuration)
+        float normalize = 0f;
+        while (normalize < 1f)
         {
-            elapse_time += Time.deltaTime;
-            float x = Vx * Time.deltaTime;
-            float y = (Vy - (_speed * elapse_time)) * Time.deltaTime;
-            float z = 0f;
-            transform.Translate(x, y, z);
+            normalize += Time.deltaTime / delayTime;
+            float curveX = scaleXCurve.Evaluate(normalize);
+            float curveY = scaleYCurve.Evaluate(normalize);
+            transform.localScale = new Vector3(curveX, curveY, 1f);
+            //transform.localScale = Vector3.Lerp(prevScale, _nextScale, curve);
             yield return null;
         }
+        Reward_Train(_prevPoint, _target, index);
+        //normalize = 0f;
+        //while (normalize < 1f)
+        //{
+        //    normalize += Time.deltaTime / delayTime;
+        //    canvasGroup.alpha = 1f - normalize;
+        //    yield return null;
+        //}
         //canvasGroup.alpha = 0f;
         //movingOver?.Invoke(this);
     }

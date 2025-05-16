@@ -1,5 +1,5 @@
-ID,Name,Description,Icon,UnitSize,Skill01,Skill02,Strength,Agility,Intelligence,Constitution
-U10010,U10010,U10010,animal_arrow,0.5,S10010,S10011,3,4,1,20
-U10011,U10011,U10011,btn_back,0.5,S10012,S10013,5,2,1,12
-U10012,U10012,U10012,btn_close_2,0.5,S10010,S10011,7,2,1,4
-U10013,U10013,U10013,category_gold,0.5,S10012,S10013,9,4,1,7
+ID,Name,Description,Icon,Synergy,UnitSize,Skill01,Skill02,Strength,Agility,Intelligence,Constitution
+U10010,U10010,U10010,animal_arrow,,0.5,S10010,S10011,3,4,1,20
+U10011,U10011,U10011,btn_back,,0.5,S10012,S10013,5,2,1,12
+U10012,U10012,U10012,btn_close_2,,0.5,S10010,S10011,7,2,1,4
+U10013,U10013,U10013,category_gold,,0.5,S10012,S10013,9,4,1,7
