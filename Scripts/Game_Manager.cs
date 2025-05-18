@@ -261,7 +261,7 @@ public class Game_Manager : MonoBehaviour
             return;
 
         dragSlot = instUIManager.GetInventory.GetDragSlot;
-        bool moveUnit = (dragSlot?.itemType == UI_InvenSlot.ItemType.Unit) || (selectedNode?.onObject != null);
+        bool moveUnit = (dragSlot?.itemType == ItemType.Unit) || (selectedNode?.onObject != null);
         Node node = null;
         if (RayCasting(out Vector3 hitPoint) != null)
         {
@@ -322,7 +322,7 @@ public class Game_Manager : MonoBehaviour
         else if (dragSlot != null)// 인벤토리에서 꺼내고
         {
             // 생성
-            if (node.nodeType == Node.NodeType.Player && dragSlot.itemType == UI_InvenSlot.ItemType.Unit)// 플레이어 놓을 수 있는 곳이 아니면
+            if (node.nodeType == Node.NodeType.Player && dragSlot.itemType == ItemType.Unit)// 플레이어 놓을 수 있는 곳이 아니면
             {
                 UnitInstance(node);
                 dragSlot = null;

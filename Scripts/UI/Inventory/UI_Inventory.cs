@@ -140,7 +140,7 @@ public class UI_Inventory : MonoBehaviour
 
     public void OnBeginDrag(UI_InvenSlot _slot)
     {
-        dragSlot = _slot.itemType == UI_InvenSlot.ItemType.Empty ? null : _slot;
+        dragSlot = _slot.itemType == ItemType.Empty ? null : _slot;
         if (dragSlot != null)
         {
             dragIcon.sprite = _slot.icon.sprite;
@@ -201,7 +201,7 @@ public class UI_Inventory : MonoBehaviour
         for (int i = 0; i < invenSlots.Length; i++)
         {
             UI_InvenSlot slot = invenSlots[i];
-            if (slot.itemType == UI_InvenSlot.ItemType.Empty)
+            if (slot.itemType == ItemType.Empty)
             {
                 return slot;
             }

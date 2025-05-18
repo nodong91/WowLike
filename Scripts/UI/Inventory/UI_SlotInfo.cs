@@ -22,7 +22,7 @@ public class UI_SlotInfo : MonoBehaviour, IPointerClickHandler
         if (showInfo != null)
             StopCoroutine(showInfo);
 
-        if (_slot == null || _slot.itemType == UI_InvenSlot.ItemType.Empty)
+        if (_slot == null || _slot.itemType == ItemType.Empty)
         {
             showInfo = StartCoroutine(OffInfomation());
             return;
@@ -38,17 +38,17 @@ public class UI_SlotInfo : MonoBehaviour, IPointerClickHandler
         Sprite sprite = null;
         switch (_slot.itemType)
         {
-            case UI_InvenSlot.ItemType.Item:
+            case ItemType.Item:
                 nameString = Singleton_Data.INSTANCE.TryTranslation(1, _slot.itemStruct.itemName);
                 sprite = _slot.itemStruct.itemIcon;
                 break;
 
-            case UI_InvenSlot.ItemType.Skill:
+            case ItemType.Skill:
                 nameString = Singleton_Data.INSTANCE.TryTranslation(1, _slot.skillStruct.skillName);
                 sprite = _slot.skillStruct.icon;
                 break;
 
-            case UI_InvenSlot.ItemType.Unit:
+            case ItemType.Unit:
                 nameString = Singleton_Data.INSTANCE.TryTranslation(1, _slot.unitStruct.unitName);
                 sprite = _slot.unitStruct.unitIcon;
                 break;

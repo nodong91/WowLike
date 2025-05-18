@@ -249,11 +249,13 @@ public class Data_Manager : Data_Parse
         public Sprite icon;
         public int level;
         public Vector2Int[] synergy;
+        public SynergyType synergyType;
+
         public enum SkillType
         {
-            Damage,
+            Attack,
+            Defense,
             Heal,
-
         }
         public SkillType skillType;
         public enum CCType
@@ -288,7 +290,6 @@ public class Data_Manager : Data_Parse
     }
     [Header(" [ Data ]")]
     public List<SkillStruct> skillStruct = new List<SkillStruct>();
-
     [System.Serializable]
     public struct ItemStruct
     {
@@ -298,6 +299,7 @@ public class Data_Manager : Data_Parse
         public string itemDescription;
         public Sprite itemIcon;
         public Vector2Int[] synergy;
+        public SynergyType synergyType;
     }
     public List<ItemStruct> itemStruct = new List<ItemStruct>();
 
@@ -361,4 +363,24 @@ public class Data_Manager : Data_Parse
         Singleton_Data.INSTANCE.SetDictionary_Audio(audioClip);
         Singleton_Data.INSTANCE.SetSkillSet(skillSet);
     }
+}
+
+public enum ItemType
+{
+    Empty,
+    Item,
+    Skill,
+    Unit
+}
+[System.Serializable]
+public class SynergyType
+{
+    public ItemType itemType;
+    // 스탯 변경 (공격력, 공격 속도, 방어력 등등)
+    // 스킬 속성 변경? 단일 공격에서 광역 공격으로?
+    // 아이템 이름에 특수한 단어가 들어갈 경우 효과 적용 (Axe, Potion)
+    // 스킬 속성은 유닛 속성을 따라 간다
+    public float helthPoint;// 체력 추가 %
+    public string keyCode;// 단어가 포함되는 경우
+    public Data_Manager.SkillStruct.SkillType skillType;
 }

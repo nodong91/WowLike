@@ -7,13 +7,6 @@ using Unity.VisualScripting;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    public enum ItemType
-    {
-        Empty,
-        Item,
-        Skill,
-        Unit
-    }
     public ItemType itemType;
     public enum SlotType
     {
@@ -326,108 +319,112 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public Vector2Int[] synergySlots;
     public List<UI_InvenSlot> addSynergy = new List<UI_InvenSlot>();
     public int empty, item, skill, unit;
+
+    // 유닛 옆에 아이템 혹은 스킬을 놓으면 해당 아이템의 시너지 영역 활성화
+    // 시너지 영역에 다른 아이템이 들어가면 다른 아이템의 시너지 영역 활성화
     public void AddSynergy(List<UI_InvenSlot> _addSynergy)
     {
+        empty = 0; item = 0; skill = 0; unit = 0;
         addSynergy = _addSynergy;
-        switch (itemType)
+        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
+        {
+            switch (itemType)
+            {
+                case ItemType.Empty:
+
+                    break;
+
+                case ItemType.Item:
+                    ItemTypeSlot(addSynergy[i]);
+                    break;
+
+                case ItemType.Skill:
+                    SkillTypeSlot(addSynergy[i]);
+                    break;
+
+                case ItemType.Unit:
+                    UnitTypeSlot(addSynergy[i]);
+                    break;
+            }
+        }
+    }
+
+    void ItemTypeSlot(UI_InvenSlot _slot)
+    {
+        if (itemStruct.synergyType.itemType != _slot.itemType)// 시너지 타입과 같지 않으면 넘김
+            return;
+
+        switch (_slot.itemType)
         {
             case ItemType.Empty:
-
+                // 빈칸도 시너지에 영향을 줄수도 있다.
+                empty++;
                 break;
 
             case ItemType.Item:
-                ItemTypeSlot();
+                item++;
                 break;
 
             case ItemType.Skill:
-                SkillTypeSlot();
+                // 영역 안의 타입이 '공격형' '스킬'인 경우 아이템 공격성능 개수만큼 성능 향상
+                skill++;
+                if (_slot.skillStruct.skillType == itemStruct.synergyType.skillType)// 같은 스킬타입
+                {
+
+                }
                 break;
 
             case ItemType.Unit:
-                UnitTypeSlot();
+                unit++;
+                break;
+        }
+        //}
+    }
+
+    void SkillTypeSlot(UI_InvenSlot _slot)
+    {
+        // 영역 안의 타입이 '공격형' '스킬'인 경우 아이템 공격성능 개수만큼 성능 향상
+        switch (_slot.itemType)
+        {
+            case ItemType.Empty:
+                // 빈칸도 시너지에 영향을 줄수도 있다.
+                empty++;
+                break;
+
+            case ItemType.Item:
+                item++;
+                break;
+
+            case ItemType.Skill:
+                skill++;
+                break;
+
+            case ItemType.Unit:
+                unit++;
                 break;
         }
     }
 
-    void UnitTypeSlot()// 자신이 유닛인 경우 영역 안의 아이템과 스킬의 능력을 받음
+    void UnitTypeSlot(UI_InvenSlot _slot)// 자신이 유닛인 경우 영역 안의 아이템과 스킬의 능력을 받음
     {
-        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
+        switch (_slot.itemType)
         {
-            switch (addSynergy[i].itemType)
-            {
-                case ItemType.Empty:
-                    // 빈칸도 시너지에 영향을 줄수도 있다.
-                    empty++;
-                    break;
+            case ItemType.Empty:
+                // 빈칸도 시너지에 영향을 줄수도 있다.
+                empty++;
+                break;
 
-                case ItemType.Item:
-                    item++;
-                    break;
+            case ItemType.Item:
+                item++;
+                break;
 
-                case ItemType.Skill:
-                    skill++;
-                    break;
+            case ItemType.Skill:
+                skill++;
+                break;
 
-                case ItemType.Unit:
-                    unit++;
-                    break;
-            }
-        }
-    }
-
-    void ItemTypeSlot()
-    {
-        empty = 0; item = 0; skill = 0; unit = 0;
-        // 영역 안의 타입이 '공격형' '스킬'인 경우 아이템 공격성능 개수만큼 성능 향상
-        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
-        {
-            switch (addSynergy[i].itemType)
-            {
-                case ItemType.Empty:
-                    // 빈칸도 시너지에 영향을 줄수도 있다.
-                    empty++;
-                    break;
-
-                case ItemType.Item:
-                    item++;
-                    break;
-
-                case ItemType.Skill:
-                    skill++;
-                    break;
-
-                case ItemType.Unit:
-                    unit++;
-                    break;
-            }
-        }
-    }
-
-    void SkillTypeSlot()
-    {
-        empty = 0; item = 0; skill = 0; unit = 0;
-        // 영역 안의 타입이 '공격형' '스킬'인 경우 아이템 공격성능 개수만큼 성능 향상
-        for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
-        {
-            switch (addSynergy[i].itemType)
-            {
-                case ItemType.Empty:
-                    // 빈칸도 시너지에 영향을 줄수도 있다.
-                    empty++;
-                    break;
-
-                case ItemType.Item:
-                    item++;
-                    break;
-
-                case ItemType.Skill:
-                    skill++;
-                    break;
-
-                case ItemType.Unit:
-                    unit++;
-                    break;
-            }
+            case ItemType.Unit:
+                unit++;
+                break;
         }
     }
 
@@ -435,6 +432,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     {
         for (int i = 0; i < addSynergy.Count; i++)// 에어리어 안의 슬롯
         {
+            addSynergy[i].icon.material.SetFloat("_FillAmount", _active ? 1f : 0f);
             addSynergy[i].selected.gameObject.SetActive(_active);
         }
     }
