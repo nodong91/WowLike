@@ -368,13 +368,18 @@ public class Game_Manager : MonoBehaviour
 
     void UnitRemove(Node _node)
     {
-        UI_InvenSlot emptySlot = instUIManager.GetInventory.TryEmptySlot();
-        if (emptySlot == null)// ºó½½·Ô È®ÀÎ
-        {
-            return;
-        }
+        //UI_InvenSlot emptySlot = instUIManager.GetInventory.TryEmptySlot();
+        //if (emptySlot == null)// ºó½½·Ô È®ÀÎ
+        //{
+        //    return;
+        //}
         // Á¦°Å
         Unit_AI unit = allUnitDict[_node.onObject];
+        if (instUIManager.GetInventory.AddInventory(unit.GetUnitStruct.ID) == false)
+        {
+            Debug.LogWarning("ºó ½½·ÔÀÌ ¾ø½À´Ï´Ù.");
+            return;
+        }
         instUIManager.RemoveFollowHP(unit.gameObject);
         unit.deadUnit -= DeadPlayer;// Á×À½ Ä«¿îÆ®
         players.Remove(unit);
@@ -382,7 +387,7 @@ public class Game_Manager : MonoBehaviour
         _node.UnitOnNode(null);
         // ÀÎº¥Åä¸®¿¡ »ý¼º
         //emptySlot.SetUnitSlot(unit.GetUnitStruct);
-        emptySlot.SetSlot(unit.GetUnitStruct.ID);
+        //emptySlot.SetSlot(unit.GetUnitStruct.ID);
 
         Destroy(unit.gameObject);
     }

@@ -17,7 +17,7 @@ public class UI_OpenCanvas : MonoBehaviour
 
     const float speed = 25f;
 
-    public void SetCanvas()
+    public virtual void SetCanvas()
     {
         rect = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();

@@ -75,8 +75,6 @@ public class UI_StartMenu : MonoBehaviour
     void SelectToggle(int index)
     {
         menuToggle[index].OpenCanvas();
-        //Toggle toggle = toggleGroup.GetFirstActiveToggle();
-        //Debug.LogWarning(toggle.name);
     }
 
     public CanvasGroup skillCanvas;

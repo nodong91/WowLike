@@ -6,11 +6,7 @@ public class UI_StartSet : MonoBehaviour
 {
     public Toggle toggle;
     public CanvasGroup canvasGroup;
-
-    void Start()
-    {
-
-    }
+    Coroutine canvasAction;
 
     public void OpenCanvas()
     {
@@ -19,7 +15,6 @@ public class UI_StartSet : MonoBehaviour
         canvasAction = StartCoroutine(CanvasAction());
     }
 
-    Coroutine canvasAction;
     IEnumerator CanvasAction()
     {
         float alpha = toggle.isOn == true ? 1f : 0f;

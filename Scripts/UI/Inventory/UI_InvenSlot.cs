@@ -3,7 +3,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -94,7 +93,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
 
 
-
+    public string structID;
     public Data_Manager.ItemStruct itemStruct;
     public Data_Manager.SkillStruct skillStruct;
     public Data_Manager.UnitStruct unitStruct;
@@ -140,6 +139,19 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
             case ItemType.Unit:
                 SetSlot(_slot.unitStruct.ID);
                 break;
+        }
+    }
+
+    public void LootingItem(string _id)
+    {
+        structID = _id;
+        if (structID.Contains('U'))
+        {
+
+        }
+        else if (structID.Contains('T'))
+        {
+
         }
     }
 
