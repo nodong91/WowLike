@@ -32,8 +32,6 @@ public class UI_SlotInfo : MonoBehaviour, IPointerClickHandler
     Coroutine showInfo;
     IEnumerator ShowInfomation(UI_InvenSlot _slot)
     {
-        yield return new WaitForSeconds(0.3f);
-
         string nameString = "";
         Sprite sprite = null;
         switch (_slot.itemType)
@@ -53,6 +51,8 @@ public class UI_SlotInfo : MonoBehaviour, IPointerClickHandler
                 sprite = _slot.unitStruct.unitIcon;
                 break;
         }
+        yield return null;
+
         typeText.text = _slot.itemType.ToString();
         nameText.text = nameString;
         iconImage.sprite = sprite;

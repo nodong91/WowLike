@@ -10983,12 +10983,6 @@
     "m_ChildObjectList": [
         {
             "m_Id": "bf32595687f8404eb7ac3f80a8f35a3a"
-        },
-        {
-            "m_Id": "848ca65834b34db4bdde3dee4c8883d3"
-        },
-        {
-            "m_Id": "2734614d745f4081ae2fb56a8715f707"
         }
     ]
 }
@@ -16084,7 +16078,7 @@
     "m_AdditionalMotionVectorMode": 0,
     "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
-    "m_CustomEditorGUI": "",
+    "m_CustomEditorGUI": "P01.Editor.Editor_Char_Object",
     "m_SupportVFX": false
 }
 
@@ -22330,10 +22324,16 @@
     "m_Name": "Main",
     "m_ChildObjectList": [
         {
+            "m_Id": "848ca65834b34db4bdde3dee4c8883d3"
+        },
+        {
             "m_Id": "4e52c9c53a244873827ed5a45058efb8"
         },
         {
             "m_Id": "95d61c5498a844db9381fa1d60718dc0"
+        },
+        {
+            "m_Id": "2734614d745f4081ae2fb56a8715f707"
         }
     ]
 }

@@ -223,7 +223,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "45f82927ce4547f28df47ed546a17a96"
+                    "m_Id": "7a5932b76ada489cad60d19c24ae1a86"
                 },
                 "m_SlotId": 0
             }
@@ -1440,7 +1440,7 @@
     "m_ObjectId": "3a50429d7ad8473b98aac23edf680eff",
     "m_Title": "UV",
     "m_Position": {
-        "x": -2355.000244140625,
+        "x": -2355.0,
         "y": 174.0
     }
 }

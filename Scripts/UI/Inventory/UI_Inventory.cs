@@ -186,6 +186,7 @@ public class UI_Inventory : MonoBehaviour
         {
             // 빠져 나올 때
             CheckSynergy(enterSlot, false);// 시너지 테스트
+            slotInfo.OnInfomation(null);
             return;
         }
 
@@ -282,6 +283,7 @@ public class UI_Inventory : MonoBehaviour
             //inst.quickSlotAction = delegate { Game_Manager.instance?.InputSlot(index); };
             quickSlots[index] = inst;
         }
+        OpenQuick();
     }
 
 
