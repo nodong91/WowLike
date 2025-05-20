@@ -1,23 +1,38 @@
 using UnityEngine;
+using System.Collections;
 
 public class ShakeObject : MonoBehaviour
 {
     public float shakeAmount;
-    public float rotateAmount;
+    public float rotateSpeed;
     public float duration;
     public GameObject shakeTarget;
 
-    void Start()
+    private void Start()
     {
-
+        StartCoroutine(ShakingObject());
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator ShakingObject()
     {
+        float delay = 0f;
+        float axisY = 0f;
+        bool shake = true;
         Vector3 randomPos = Random.insideUnitSphere * shakeAmount;
-        shakeTarget.transform.position = randomPos;
-
-        shakeTarget.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        Vector3 currentPos = shakeTarget.transform.position;
+        while (shake == true)
+        {
+            delay += Time.deltaTime / duration;
+            shakeTarget.transform.position = Vector3.Lerp(currentPos, randomPos, delay);
+            axisY += Time.deltaTime * rotateSpeed;
+            shakeTarget.transform.rotation = Quaternion.Euler(0f, axisY, 0f);
+            if (delay > 1f)
+            {
+                delay = 0f;
+                randomPos = Random.insideUnitSphere * shakeAmount;
+                currentPos = shakeTarget.transform.position;
+            }
+            yield return null;
+        }
     }
 }
