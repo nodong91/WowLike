@@ -95,8 +95,10 @@ namespace P01.Editor
         void SetRendererFeature()
         {
             var pipeline = ((UniversalRenderPipelineAsset)GraphicsSettings.defaultRenderPipeline);
+            if (pipeline == null)
+                return;
             var propertyInfo = pipeline.GetType().GetField("m_RendererDataList", BindingFlags.Instance | BindingFlags.NonPublic);
-            scriptableRendererData = ((ScriptableRendererData[])propertyInfo.GetValue(pipeline))[0];
+             scriptableRendererData = ((ScriptableRendererData[])propertyInfo.GetValue(pipeline))[0];
             Debug.LogWarning($"scriptableRendererData : {scriptableRendererData.rendererFeatures.Count}");
 
             fullScreenRendererFeature = (FullScreenPassRendererFeature)scriptableRendererData.rendererFeatures[featureIndex];

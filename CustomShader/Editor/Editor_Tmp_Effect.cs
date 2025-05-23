@@ -1,11 +1,10 @@
-using P01.Editor;
 using UnityEditor;
 using UnityEngine;
 
-//P01.Editor.Editor_Tmp_Test
+//P01.Editor.Editor_Tmp_Effect
 namespace P01.Editor
 {
-    public class Editor_Tmp_Test : Editor_Tmp_Base
+    public class Editor_Tmp_Effect : Editor_Tmp_Base
     {
         Vector2 scrollPosition;
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
@@ -74,14 +73,14 @@ namespace P01.Editor
 
             _WaveDistortion = FindProperty("_WaveDistortion", properties);
             materialEditor.ShaderProperty(_WaveDistortion, new GUIContent("WaveDistortion"));
-            _CartoonColor = FindProperty("_CartoonColor", properties);
-            materialEditor.ShaderProperty(_CartoonColor, new GUIContent("CartoonColor"));
-            _CartoonAngle = FindProperty("_CartoonAngle", properties);
-            materialEditor.ShaderProperty(_CartoonAngle, new GUIContent("CartoonAngle"));
-            _CartoonSize = FindProperty("_CartoonSize", properties);
-            materialEditor.ShaderProperty(_CartoonSize, new GUIContent("CartoonSize"));
-            _CartoonTile = FindProperty("_CartoonTile", properties);
-            materialEditor.ShaderProperty(_CartoonTile, new GUIContent("CartoonTile"));
+            //_CartoonColor = FindProperty("_CartoonColor", properties);
+            //materialEditor.ShaderProperty(_CartoonColor, new GUIContent("CartoonColor"));
+            //_CartoonAngle = FindProperty("_CartoonAngle", properties);
+            //materialEditor.ShaderProperty(_CartoonAngle, new GUIContent("CartoonAngle"));
+            //_CartoonSize = FindProperty("_CartoonSize", properties);
+            //materialEditor.ShaderProperty(_CartoonSize, new GUIContent("CartoonSize"));
+            //_CartoonTile = FindProperty("_CartoonTile", properties);
+            //materialEditor.ShaderProperty(_CartoonTile, new GUIContent("CartoonTile"));
             EditorGUILayout.EndVertical();
         }
     }
