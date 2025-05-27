@@ -238,12 +238,12 @@ public class Game_Manager : MonoBehaviour
 
                 break;
         }
-        Debug.LogWarning("Battle Start");
+        Debug.LogWarning($"Battle Start{players.Count} {monsters.Count}");
     }
 
     void InputBegin()
     {
-        if (EventSystem.current.IsPointerOverGameObject() == true)
+        if (EventSystem.current.IsPointerOverGameObject() == true)// ui클릭 확인
             return;
         Node node = null;
         if (RayCasting(out Vector3 hitPoint) != null)

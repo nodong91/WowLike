@@ -24,9 +24,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
     public OnSlotHandler onEndDrag;
     public OnSlotHandler onPointerEnter;
 
-    public delegate void OnCheck();
-    public OnCheck onCheck;
-
     public void OnPointerClick(PointerEventData eventData)
     {
         switch (eventData.button)
@@ -242,7 +239,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
             icon.gameObject.SetActive(false);
             itemIndex.gameObject.SetActive(false);
             selected.gameObject.SetActive(false);
-            synergySlots = default;
             return;
         }
 
@@ -253,7 +249,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
                 itemType = ItemType.Skill;
                 skillStruct = Singleton_Data.INSTANCE.Dict_Skill[_id];
                 icon.sprite = skillStruct.icon;
-                synergySlots = skillStruct.synergy;// 시너지 슬롯
                 itemIndex.gameObject.SetActive(false);
                 break;
 
@@ -261,7 +256,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
                 itemType = ItemType.Item;
                 itemStruct = Singleton_Data.INSTANCE.Dict_Item[_id];
                 icon.sprite = itemStruct.itemIcon;
-                synergySlots = itemStruct.synergy;// 시너지 슬롯
                 itemIndex.gameObject.SetActive(true);
                 break;
 
@@ -269,11 +263,9 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
                 itemType = ItemType.Unit;
                 unitStruct = Singleton_Data.INSTANCE.Dict_Unit[_id];
                 icon.sprite = unitStruct.unitIcon;
-                synergySlots = unitStruct.synergy;// 시너지 슬롯
                 itemIndex.gameObject.SetActive(false);
                 break;
         }
-        onCheck?.Invoke();// 슬롯 위치가 바꼈으니까 인벤토리 다시 체크
     }
 
     public void InDistance(bool _inDist)
@@ -328,7 +320,6 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     private Vector2Int inventoryNum;
     public Vector2Int InventoryNum { get => inventoryNum; set => inventoryNum = value; }
-    public Vector2Int[] synergySlots;
     public List<UI_InvenSlot> addSynergy = new List<UI_InvenSlot>();
     public int empty, item, skill, unit;
 

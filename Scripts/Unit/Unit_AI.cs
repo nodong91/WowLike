@@ -9,6 +9,7 @@ using UnityEditor;
 
 public class Unit_AI : MonoBehaviour
 {
+    public bool dummy;
     public string unitID;
     public NavMeshAgent agent;
     //public NavMeshObstacle obstacle;
@@ -16,11 +17,11 @@ public class Unit_AI : MonoBehaviour
     Dictionary<Unit_AI, float> aggroDict = new Dictionary<Unit_AI, float>();
     Data_Manager.UnitStruct unitStruct;
     public Data_Manager.UnitStruct GetUnitStruct { get { return unitStruct; } }
-    Data_Manager.UnitStruct.UnitAttributes unitAttributes;
+    Data_Manager.UnitStruct.UnitStatus unitStatus;
+    public Vector2Int[] synergy;
 
     public delegate List<Unit_AI> DeleUnitList();
     public DeleUnitList playerList, monsterList;
-    public bool dummy;
 
     public Unit_Animation unitAnimation;
 
@@ -95,9 +96,9 @@ public class Unit_AI : MonoBehaviour
     {
         get
         {
-            float ap = unitAttributes.AttackPower;
-            float sp = unitAttributes.SpellPower;
-            float rp = unitAttributes.RangePower;
+            float ap = unitStatus.AttackPower;
+            float sp = unitStatus.SpellPower;
+            float rp = unitStatus.RangePower;
             return currentSkill.skillStruct.GetDamage(ap, sp, rp);
         }
     }
@@ -127,7 +128,8 @@ public class Unit_AI : MonoBehaviour
         //obstacle.enabled = false;
 
         unitStruct = Singleton_Data.INSTANCE.Dict_Unit[unitID];
-        unitAttributes = unitStruct.TryAttributes();
+        unitStatus = unitStruct.TryStatus();// 스탯 속성
+        synergy = unitStruct.synergy;
         ResetUnit();
 
         //castingImage.material = Instantiate(castingImage.material);
@@ -136,8 +138,8 @@ public class Unit_AI : MonoBehaviour
         AddSkill(unitStruct.defaultSkill01);
         AddSkill(unitStruct.defaultSkill02);
 
-        healthPoint = unitAttributes.Health;
-        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health, false);// 세팅
+        healthPoint = unitStatus.Health;
+        deleUpdateHP?.Invoke(healthPoint, unitStatus.Health, false);// 세팅
 
         renderers = GetComponentsInChildren<Renderer>();
     }
@@ -158,7 +160,7 @@ public class Unit_AI : MonoBehaviour
 
     public void ResetUnit()// 첫소환 또는 부활 때 사용
     {
-        healthPoint = unitAttributes.Health;
+        healthPoint = unitStatus.Health;
 
         if (state == State.Dead)
         {
@@ -310,7 +312,7 @@ public class Unit_AI : MonoBehaviour
 
     void State_Move()
     {
-        agent.speed = unitAttributes.MoveSpeed;
+        agent.speed = unitStatus.MoveSpeed;
         stateAction = StartCoroutine(State_Moving());
     }
 
@@ -338,7 +340,7 @@ public class Unit_AI : MonoBehaviour
 
     void State_Patrol()
     {
-        agent.speed = unitAttributes.MoveSpeed * 0.3f;
+        agent.speed = unitStatus.MoveSpeed * 0.3f;
         stateAction = StartCoroutine(State_Patroling());
     }
 
@@ -534,7 +536,7 @@ public class Unit_AI : MonoBehaviour
         Debug.Log($"{_from.gameObject.name} : {_damage}");
         //Vector3 hitPoint = transform.position;
         healthPoint -= _damage;
-        deleUpdateHP?.Invoke(healthPoint, unitAttributes.Health, true);// 데미지 바
+        deleUpdateHP?.Invoke(healthPoint, unitStatus.Health, true);// 데미지 바
         deleDamage?.Invoke(this.transform, _damage.ToString());// 데미지 폰트
 
         if (healthPoint <= 0)

@@ -213,7 +213,6 @@ public class Data_Parse : MonoBehaviour
 
     public Vector2 Parse_Vector2(string _str)
     {
-        //string temp = "-1;0/0;0/1;0/0;0";
         string[] subStrings = _str.Split(';');
         float[] subInt = new float[subStrings.Length];
         for (int i = 0; i < subStrings.Length; i++)
@@ -226,7 +225,6 @@ public class Data_Parse : MonoBehaviour
 
     public Vector3 Parse_Vector3(string _str)
     {
-        //string temp = "-1;0/0;0/1;0/0;0";
         string[] subStrings = _str.Split(';');
         float[] subInt = new float[subStrings.Length];
         for (int i = 0; i < subStrings.Length; i++)

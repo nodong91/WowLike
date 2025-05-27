@@ -60,7 +60,6 @@ public class UI_Inventory : MonoBehaviour
         inst.onEndDrag += OnEndDrag;
         inst.onPointerEnter += OnPointerEnter;
         inst.deleClockAction += SlotClick;
-        inst.onCheck += CheckItemInventory;
         inst.SetSlot(null);
 
         Vector2Int inventoryNum = new Vector2Int(_x, _y);
@@ -86,7 +85,6 @@ public class UI_Inventory : MonoBehaviour
             string id = IDS[Random.Range(0, IDS.Count)];
             AddInventory(id);
         }
-        CheckItemInventory();
     }
 
     void SlotClick(UI_InvenSlot _slot)
@@ -170,7 +168,6 @@ public class UI_Inventory : MonoBehaviour
         if (_slot == null)
         {
             // 빠져 나올 때
-            CheckSynergy(enterSlot, false);// 시너지 테스트
             slotInfo.OnInfomation(null);
             return;
         }
@@ -178,8 +175,6 @@ public class UI_Inventory : MonoBehaviour
         enterSlot = _slot;
         if (dragSlot != null)
             return;
-
-        CheckSynergy(_slot, true);// 시너지 테스트
     }
 
 
@@ -312,15 +307,6 @@ public class UI_Inventory : MonoBehaviour
 
 
 
-    // 시너지 체크
-    void CheckSynergy(UI_InvenSlot _slot, bool _enter)
-    {
-        if (_slot == null || _slot.synergySlots == null)
-            return;
-
-        _slot.SynergySelect(_enter);
-        Debug.LogWarning(_slot.synergySlots.Length);
-    }
 
 
 
@@ -357,30 +343,5 @@ public class UI_Inventory : MonoBehaviour
                 return slot;
         }
         return null;
-    }
-
-    public void CheckItemInventory()
-    {
-        foreach (UI_InvenSlot child in inventoryItems)
-        {
-            List<UI_InvenSlot> addSynergy = new List<UI_InvenSlot>();
-            Vector2Int slotNum = child.InventoryNum;
-            if (child.synergySlots == null)// 빈슬롯
-                continue;
-
-            for (int i = 0; i < child.synergySlots.Length; i++)// 에어리어 안의 슬롯
-            {
-                int synergyX = slotNum.x + (int)child.synergySlots[i].x;
-                int synergyY = slotNum.y + (int)child.synergySlots[i].y;
-
-                if (synergyX < 0 || synergyY < 0 || synergyX >= inventorySize.x || synergyY >= inventorySize.y)
-                    continue;
-
-                //Debug.LogWarning($"클릭 : {slotNum} >> 시너지 슬롯 : {temp.InventoryNum}");
-                UI_InvenSlot synergySlot = inventoryItems[synergyX, synergyY];
-                addSynergy.Add(synergySlot);
-            }
-            child.AddSynergy(addSynergy);
-        }
     }
 }

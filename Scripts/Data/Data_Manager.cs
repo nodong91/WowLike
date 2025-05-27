@@ -119,23 +119,20 @@ public class Data_Manager : Data_Parse
                 skillDescription = elements[2],
                 animationType = (Unit_Animation.AnimationType)Enum.Parse(typeof(Unit_Animation.AnimationType), elements[3]),
                 icon = FindSprite(elements[4].Trim()),
-                synergy = Parse_Vector2Int(elements[5].Trim()),
-                level = IntTryParse(elements[6]),
-                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[7]),// 기본 데미지의 몇%
-                ccType = (SkillStruct.CCType)Enum.Parse(typeof(SkillStruct.CCType), elements[8]),// 기본 데미지의 몇%
-                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[9]),// 기본 에너지의 몇%
-                energyAmount = FloatTryParse(elements[10]),
-                castingTime = FloatTryParse(elements[11]),// 0일 경우 즉시시전
-                coolingTime = FloatTryParse(elements[12]),
-                range = Parse_Vector2(elements[13]),
-                //range = new Vector2(FloatTryParse(elements[13]), FloatTryParse(elements[14])),
-                influence = Parse_Vector3(elements[14]),
-                //influence = new Vector3(FloatTryParse(elements[14]), FloatTryParse(elements[16]), FloatTryParse(elements[17])),
-                aggro = FloatTryParse(elements[15]),
-                skillSet = elements[16].Trim(),
-                splashRange = FloatTryParse(elements[17]),
-                splashAngle = FloatTryParse(elements[18]),
-                projectileSpeed = FloatTryParse(elements[19]),
+                level = IntTryParse(elements[5]),
+                skillType = (SkillStruct.SkillType)Enum.Parse(typeof(SkillStruct.SkillType), elements[6]),// 
+                ccType = (SkillStruct.CCType)Enum.Parse(typeof(SkillStruct.CCType), elements[7]),// 
+                energyType = (SkillStruct.EnergyType)Enum.Parse(typeof(SkillStruct.EnergyType), elements[8]),// 
+                energyAmount = FloatTryParse(elements[9]),
+                castingTime = FloatTryParse(elements[10]),// 0일 경우 즉시시전
+                coolingTime = FloatTryParse(elements[11]),
+                range = Parse_Vector2(elements[12]),
+                influence = Parse_Vector3(elements[13]),
+                aggro = FloatTryParse(elements[14]),
+                skillSet = elements[15].Trim(),
+                splashRange = FloatTryParse(elements[16]),
+                splashAngle = FloatTryParse(elements[17]),
+                projectileSpeed = FloatTryParse(elements[18]),
             };
             skillStruct.Add(tempData);
         }
@@ -152,19 +149,22 @@ public class Data_Manager : Data_Parse
             UnitStruct tempData = new UnitStruct
             {
                 ID = elements[0].Trim(),
+                unitProp = FindUnit(elements[0].Trim()),
                 unitName = elements[1].Trim(),
                 unitDescription = elements[2].Trim(),
                 unitIcon = FindSprite(elements[3].Trim()),
-                synergy = Parse_Vector2Int(elements[4].Trim()),
-                unitProp = FindUnit(elements[0].Trim()),
-                unitSize = FloatTryParse(elements[5].Trim()),
-                defaultSkill01 = elements[6].Trim(),
-                defaultSkill02 = elements[7].Trim(),
+                synergy = Parse_Vector2Int(elements[4].Trim()),// 시너지
+                unitType = (UnitStruct.UnitType)Enum.Parse(typeof(UnitStruct.UnitType), elements[5]),
+                unitAttribute = (UnitStruct.UnitAttribute)Enum.Parse(typeof(UnitStruct.UnitAttribute), elements[6]),
+
+                unitSize = FloatTryParse(elements[7].Trim()),
+                defaultSkill01 = elements[8].Trim(),
+                defaultSkill02 = elements[9].Trim(),
                 // 능력치
-                strength = FloatTryParse(elements[8]),
-                agility = FloatTryParse(elements[9]),
-                intelligence = FloatTryParse(elements[10]),
-                constitution = FloatTryParse(elements[11]),
+                strength = FloatTryParse(elements[10]),
+                agility = FloatTryParse(elements[11]),
+                intelligence = FloatTryParse(elements[12]),
+                constitution = FloatTryParse(elements[13]),
             };
             unitStruct.Add(tempData);
         }
@@ -184,7 +184,6 @@ public class Data_Manager : Data_Parse
                 itemName = elements[1].Trim(),
                 itemDescription = elements[2].Trim(),
                 itemIcon = FindSprite(elements[3].Trim()),
-                synergy = Parse_Vector2Int(elements[4].Trim()),
             };
             itemStruct.Add(tempData);
         }
@@ -248,7 +247,6 @@ public class Data_Manager : Data_Parse
         public Unit_Animation.AnimationType animationType;
         public Sprite icon;
         public int level;
-        public Vector2Int[] synergy;
         public SynergyType synergyType;
 
         public enum SkillType
@@ -298,7 +296,6 @@ public class Data_Manager : Data_Parse
         [TextArea]
         public string itemDescription;
         public Sprite itemIcon;
-        public Vector2Int[] synergy;
         public SynergyType synergyType;
     }
     public List<ItemStruct> itemStruct = new List<ItemStruct>();
@@ -310,11 +307,30 @@ public class Data_Manager : Data_Parse
         public string unitName;
         public string unitDescription;// 설명
         public Sprite unitIcon;
-        public Unit_Animation unitProp;
+        public Unit_Animation unitProp;// 아이디와 동일
+        public Vector2Int[] synergy;
+        public enum UnitType
+        {
+            Beast,
+            Dragon,
+            Undead,
+            Plant,
+            Elemental,
+            Machine,
+            Devil
+        }
+        public UnitType unitType;
+        public enum UnitAttribute
+        {
+            Fire,
+            Water,
+            Earth
+        }
+        public UnitAttribute unitAttribute;
+
         public float unitSize;
         public string defaultSkill01;
         public string defaultSkill02;
-        public Vector2Int[] synergy;
 
         //General
         public float strength;
@@ -322,7 +338,7 @@ public class Data_Manager : Data_Parse
         public float intelligence;
         public float constitution;
         [System.Serializable]
-        public struct UnitAttributes
+        public struct UnitStatus
         {
             public float Health;// 체력
             public float Mana;// 마나
@@ -333,9 +349,9 @@ public class Data_Manager : Data_Parse
             public float MoveSpeed;
         }
 
-        public UnitAttributes TryAttributes()
+        public UnitStatus TryStatus()
         {
-            UnitAttributes attributes = new UnitAttributes
+            UnitStatus status = new UnitStatus
             {
                 Health = constitution * 10f,
                 Mana = intelligence,
@@ -345,7 +361,7 @@ public class Data_Manager : Data_Parse
                 RangePower = agility,
                 MoveSpeed = agility,
             };
-            return attributes;
+            return status;
         }
     }
     public List<UnitStruct> unitStruct = new List<UnitStruct>();
