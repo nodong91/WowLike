@@ -38,12 +38,13 @@ namespace P01.Editor
             properties = _properties;
 
             GUILayout.Label("Å÷ Ä³¸¯ÅÍ", EditorStyles.boldLabel);
-            //EditorGUILayout.Space(10f);
+            EditorGUILayout.Space(10f);
 
             EditorGUILayout.Space(0f);
-            FlexibleViewWidth = GUILayoutUtility.GetLastRect().width + 37f;
-            CurrentViewWidth = EditorGUIUtility.currentViewWidth;
-            isScroll = FlexibleViewWidth == CurrentViewWidth ? 30f : 56f;
+            //FlexibleViewWidth = GUILayoutUtility.GetLastRect().width + 37f;
+            //CurrentViewWidth = EditorGUIUtility.currentViewWidth;
+            //isScroll = FlexibleViewWidth == CurrentViewWidth ? 30f : 56f;
+            //GUILayout.Label(FlexibleViewWidth + " = " + CurrentViewWidth + " ? " + isScroll, EditorStyles.boldLabel);
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             {
@@ -87,7 +88,6 @@ namespace P01.Editor
                 EditorGUILayout.EndVertical();
             }
             EditorGUILayout.EndScrollView();
-            GUILayout.Label(FlexibleViewWidth + " = " + CurrentViewWidth + " ? " + isScroll, EditorStyles.boldLabel);
 
             EditorGUILayout.Space(10f);
             materialEditor.RenderQueueField();
