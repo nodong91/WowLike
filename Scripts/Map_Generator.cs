@@ -397,7 +397,7 @@ public class Node
     }
     public NodeType nodeType;
     public Vector3 worldPosition;
-    public GameObject onObject;
+    public GameObject onObject;// 유닛이 아니라 다른게 올라올 수도??
     public string neighbours;
 
     public Vector2Int grid;

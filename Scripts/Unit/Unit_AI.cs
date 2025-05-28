@@ -681,20 +681,13 @@ public class Unit_AI : MonoBehaviour
             if (value > 0f)
             {
                 tempDict[unit] = value;
-                //TestAggro test = new TestAggro
-                //{
-                //    name = unit.gameObject.name,
-                //    Unit = unit,
-                //    Value = value,
-                //};
-                //testAggro.Add(test);
             }
         }
         aggroDict = tempDict;
     }
-    public List<TestAggro> testAggro = new List<TestAggro>();
+    public List<AggroStruct> debugAggro = new List<AggroStruct>();
     [System.Serializable]
-    public class TestAggro
+    public class AggroStruct
     {
         public string name;
         public Unit_AI Unit;
@@ -707,7 +700,7 @@ public class Unit_AI : MonoBehaviour
         while (aggroDict.Count > 0 && state != State.Dead)
         {
             Dictionary<Unit_AI, float> tempDict = new Dictionary<Unit_AI, float>();
-            testAggro.Clear();
+            debugAggro.Clear();
             foreach (var child in aggroDict)
             {
                 Unit_AI unit = child.Key;
@@ -715,13 +708,13 @@ public class Unit_AI : MonoBehaviour
                 if (value > 0f)
                 {
                     tempDict[unit] = value;
-                    TestAggro test = new TestAggro
+                    AggroStruct test = new AggroStruct
                     {
                         name = unit.gameObject.name,
                         Unit = unit,
                         Value = value,
                     };
-                    testAggro.Add(test);
+                    debugAggro.Add(test);
                 }
             }
             aggroDict = tempDict;

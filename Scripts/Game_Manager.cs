@@ -1,21 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Game_Manager : MonoBehaviour
+public class Game_Manager : Unit_Generator
 {
+    public float timeScale = 1f;
+    public int targetFrameRate = 60;
+
     [SerializeField] UI_Manager uiManager;
     UI_Manager instUIManager;
     [SerializeField] Map_Generator mapGenerator;
     Map_Generator instMapGenerator;
     public Map_Generator GetMapGenerator { get { return instMapGenerator; } }
+
     public enum SpawnType
     {
         Normal,
         Ambush
     }
     public SpawnType spawnType = SpawnType.Normal;
+
     public enum CurrentMode
     {
         None,
@@ -23,10 +29,9 @@ public class Game_Manager : MonoBehaviour
     }
     public CurrentMode currentMode;
 
-    public float timeScale = 1f;
-    public int targetFrameRate = 60;
-
     private List<Unit_AI> players, monsters;
+    public Unit_AI unitBase;
+    GameObject unitParent;
 
     public List<Unit_AI> PlayerList()
     {
@@ -38,19 +43,16 @@ public class Game_Manager : MonoBehaviour
         return monsters;
     }
 
-    private Dictionary<GameObject, Unit_AI> allUnitDict = new Dictionary<GameObject, Unit_AI>();
+    Dictionary<GameObject, Unit_AI> allUnitDict = new Dictionary<GameObject, Unit_AI>();
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return allUnitDict; } }
 
     private List<Node> randomNodes;// 매복
     public Data_Spawn spawnData;
 
     public GameObject asdfadsf;
-    public Unit_AI unitBase;
     //[SerializeField] 
-    Node selectedNode;
+    Node selectedNode, displayNode;
     UI_InvenSlot dragSlot;
-
-    Coroutine cameraInput;
 
     public static Game_Manager current;
 
@@ -58,7 +60,7 @@ public class Game_Manager : MonoBehaviour
     {
         current = this;
     }
-    GameObject unitParent;
+
     private void Start()
     {
         Application.targetFrameRate = targetFrameRate;
@@ -77,6 +79,7 @@ public class Game_Manager : MonoBehaviour
         if (unitParent != null)
             Destroy(unitParent);
         unitParent = new GameObject("[ Unit Parnet ]");
+
         players = new List<Unit_AI>();
         monsters = new List<Unit_AI>();
         switch (spawnType)
@@ -113,6 +116,17 @@ public class Game_Manager : MonoBehaviour
         {
             InputIng();
             instUIManager.ShakingUI(asdfadsf);
+        }
+        // 유닛 배치할 때만 사용 (버프가능 노드 확인용)
+        Vector3 hitPoint = RayCasting();
+        if (hitPoint != Vector3.zero)
+        {
+            Node node = instMapGenerator.GetNodeFromPosition(hitPoint);
+            if (displayNode != node)
+            {
+                displayNode = node;
+                OnBuff(node);
+            }
         }
     }
 
@@ -247,7 +261,8 @@ public class Game_Manager : MonoBehaviour
         if (EventSystem.current.IsPointerOverGameObject() == true)// ui클릭 확인
             return;
         Node node = null;
-        if (RayCasting(out Vector3 hitPoint) != null)
+        Vector3 hitPoint = RayCasting();
+        if (hitPoint != Vector3.zero)
         {
             node = instMapGenerator.GetNodeFromPosition(hitPoint);
             instMapGenerator.ClickNode(node);// 테스트용
@@ -264,7 +279,8 @@ public class Game_Manager : MonoBehaviour
         dragSlot = instUIManager.GetInventory.GetDragSlot;
         bool moveUnit = (dragSlot?.itemType == ItemType.Unit) || (selectedNode?.onObject != null);
         Node node = null;
-        if (RayCasting(out Vector3 hitPoint) != null)
+        Vector3 hitPoint = RayCasting();
+        if (hitPoint != Vector3.zero)
         {
             node = instMapGenerator.GetNodeFromPosition(hitPoint);
             instMapGenerator.ClickNode(node);// 테스트용
@@ -280,7 +296,8 @@ public class Game_Manager : MonoBehaviour
     void InputEnd()
     {
         Node node = null;
-        if (RayCasting(out Vector3 hitPoint) != null)
+        Vector3 hitPoint = RayCasting();
+        if (hitPoint != Vector3.zero)
         {
             node = instMapGenerator.GetNodeFromPosition(hitPoint);
             //if (_input == true)
@@ -336,44 +353,21 @@ public class Game_Manager : MonoBehaviour
         selectedNode = default;
     }
 
-    Node RayCasting(bool _input)
+    Vector3 RayCasting()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int layerMask = 1 << 0;
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
-            Node node = instMapGenerator.GetNodeFromPosition(hit.point);
-            if (_input == true)
-            {
-                instMapGenerator.ClickNode(node);// 테스트용
-            }
             Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red, 0.3f);
             Debug.LogWarning(hit.transform.name);
-            return node;
+            return hit.point;
         }
-        return null;
-    }
-
-    Transform RayCasting(out Vector3 _vector3)
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        int layerMask = 1 << 0;
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
-        {
-            _vector3 = hit.point;
-            return hit.transform;
-        }
-        _vector3 = default;
-        return null;
+        return Vector3.zero;
     }
 
     void UnitRemove(Node _node)
     {
-        //UI_InvenSlot emptySlot = instUIManager.GetInventory.TryEmptySlot();
-        //if (emptySlot == null)// 빈슬롯 확인
-        //{
-        //    return;
-        //}
         // 제거
         Unit_AI unit = allUnitDict[_node.onObject];
         if (instUIManager.GetInventory.AddInventory(unit.GetUnitStruct.ID) == false)
@@ -386,9 +380,6 @@ public class Game_Manager : MonoBehaviour
         players.Remove(unit);
         allUnitDict.Remove(unit.gameObject);
         _node.UnitOnNode(null);
-        // 인벤토리에 생성
-        //emptySlot.SetUnitSlot(unit.GetUnitStruct);
-        //emptySlot.SetSlot(unit.GetUnitStruct.ID);
 
         Destroy(unit.gameObject);
     }
@@ -446,6 +437,7 @@ public class Game_Manager : MonoBehaviour
             GameOver(false);
         }
     }
+
     public List<string> resultItems = new List<string>();
     void DeadMonster(Unit_AI _unit)
     {
