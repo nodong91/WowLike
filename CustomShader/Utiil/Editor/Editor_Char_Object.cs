@@ -29,22 +29,16 @@ namespace P01.Editor
         public MaterialProperty _Splat_Main, _SubShadowChannel, _Sub_ShadowColor, _MatCap_Channel, _MatCap_Value, _MatCapBlend_MSO;
         public MaterialProperty _MatCap_Color, _MatCap_Texture, _OcclusionChannel, _OcclusionStrength;
 
-        private float CurrentViewWidth { get; set; }
-        private float FlexibleViewWidth { get; set; }
-        float isScroll;
         public override void OnGUI(MaterialEditor _materialEditor, MaterialProperty[] _properties)
         {
             materialEditor = _materialEditor;
             properties = _properties;
 
-            GUILayout.Label("�� ĳ����", EditorStyles.boldLabel);
+            string explain = "- 셀 방식의 캐릭터, 오브젝트 등에 활용";
+            GUILayout.Label(explain, EditorStyles.boldLabel);
             EditorGUILayout.Space(10f);
 
-            EditorGUILayout.Space(0f);
-            //FlexibleViewWidth = GUILayoutUtility.GetLastRect().width + 37f;
-            //CurrentViewWidth = EditorGUIUtility.currentViewWidth;
-            //isScroll = FlexibleViewWidth == CurrentViewWidth ? 30f : 56f;
-            //GUILayout.Label(FlexibleViewWidth + " = " + CurrentViewWidth + " ? " + isScroll, EditorStyles.boldLabel);
+            //EditorGUILayout.Space(0f);
 
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             {
@@ -89,10 +83,18 @@ namespace P01.Editor
             }
             EditorGUILayout.EndScrollView();
 
+            OptionStruct();
+            //base.OnGUI(materialEditor, properties);
+        }
+
+        void OptionStruct()
+        {
+            EditorGUILayout.BeginVertical("box");
             EditorGUILayout.Space(10f);
             materialEditor.RenderQueueField();
+            materialEditor.EnableInstancingField();
             materialEditor.DoubleSidedGIField();
-            //base.OnGUI(materialEditor, properties);
+            EditorGUILayout.EndVertical();
         }
 
         void ButtonStruct()
@@ -173,8 +175,8 @@ namespace P01.Editor
 
         bool SetButton(string _name, GUIStyle _style, float _index)
         {
-            float currentViewWidth = (EditorGUIUtility.currentViewWidth - isScroll);
-            float width = ((currentViewWidth - (_index - 1f) * 3f) / _index);
+            //GUILayout.Label( currentViewWidth.ToString(), EditorStyles.boldLabel);
+            float width = ((EditorGUIUtility.currentViewWidth - 45f) - ((_index - 1f) * 3f)) / _index;
             return GUILayout.Button(_name, _style, GUILayout.Width(width), GUILayout.Height(25));
         }
 

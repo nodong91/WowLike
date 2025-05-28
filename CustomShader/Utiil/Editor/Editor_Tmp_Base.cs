@@ -255,6 +255,16 @@ namespace P01.Editor
             EditorGUILayout.EndVertical();
         }
 
+        public void OptionStruct(MaterialEditor _materialEditor)
+        {
+            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.Space(10f);
+            _materialEditor.RenderQueueField();
+            _materialEditor.EnableInstancingField();
+            _materialEditor.DoubleSidedGIField();
+            EditorGUILayout.EndVertical();
+        }
+
         public void FaceStruct()
         {
             bool isOn = (displayType == DisplayType.Face);

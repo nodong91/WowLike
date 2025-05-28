@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UI_PattonScroll
+  m_Name: UI_PattonScroll_Off
   m_Shader: {fileID: -6465566751694194690, guid: 0825a668d3d93474e958f9054bf8e85e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -50,26 +50,29 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Boolean: 0
+    - _Boolean: 1
     - _ColorMask: 15
     - _Float: 0.25
     - _Float_1: 5.66
     - _Index: 4
+    - _Patton: 0
     - _Speed: 1.51
     - _SpritIndex: 4
+    - _SpritIndex_1: 0
     - _SpritSpeed: 1
+    - _SpritSpeed_1: 1
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
     - _TEXTURETYPE: 1
-    - _TileSize: 3.17
+    - _TileSize: 3
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _FlipTile: {r: 2, g: 2, b: 0, a: 0}
     - _Offset: {r: 1, g: 1, b: 0, a: 0}
     - _OffsetSpeed: {r: 0.1, g: 0.1, b: 0, a: 0}

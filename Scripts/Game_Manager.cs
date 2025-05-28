@@ -9,6 +9,7 @@ public class Game_Manager : MonoBehaviour
     UI_Manager instUIManager;
     [SerializeField] Map_Generator mapGenerator;
     Map_Generator instMapGenerator;
+    public Map_Generator GetMapGenerator { get { return instMapGenerator; } }
     public enum SpawnType
     {
         Normal,

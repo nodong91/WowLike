@@ -32,10 +32,7 @@ namespace P01.Editor
                 SetCustom(materialEditor, properties);
             EditorGUILayout.EndScrollView();
 
-            EditorGUILayout.Space(10f);
-            materialEditor.RenderQueueField();
-            materialEditor.DoubleSidedGIField();
-            //base.OnGUI(materialEditor, properties);
+            OptionStruct(materialEditor);
         }
 
         MaterialProperty _BurnAmount, _BurnPoint, _BurnNoise;

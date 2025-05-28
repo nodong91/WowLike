@@ -27986,6 +27986,7 @@
     "m_SourceType": 0,
     "m_FunctionName": "AdditionalLights",
     "m_FunctionSource": "2bdbb59f2ebde2a45875b51b73ac761f",
+    "m_FunctionSourceUsePragmas": true,
     "m_FunctionBody": "Enter function body here..."
 }
 

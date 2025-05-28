@@ -1,3 +1,4 @@
+using Codice.Client.BaseCommands.BranchExplorer.Layout;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,10 +33,7 @@ namespace P01.Editor
                 SetCustom(materialEditor, properties);
             EditorGUILayout.EndScrollView();
 
-            EditorGUILayout.Space(10f);
-            materialEditor.RenderQueueField();
-            materialEditor.DoubleSidedGIField();
-            //base.OnGUI(materialEditor, properties);
+            OptionStruct(materialEditor);
         }
 
         MaterialProperty FramePerSecond, DISTORTIONTYPE, OutlineOffset, LineSpeed, LineSize;

@@ -32,15 +32,10 @@ namespace P01.Editor
                 SetCustom(materialEditor, properties);
             EditorGUILayout.EndScrollView();
 
-            EditorGUILayout.Space(10f);
-            materialEditor.RenderQueueField();
-            materialEditor.DoubleSidedGIField();
-            //base.OnGUI(materialEditor, properties);
+            OptionStruct(materialEditor);
         }
 
-        MaterialProperty FramePerSecond, DISTORTIONTYPE, OutlineOffset, LineSpeed, LineSize;
-        MaterialProperty  _LineRotate, _LineFraction, _LineDistortion, _WaveSpeed, _WaveSize;
-        MaterialProperty _WaveDistortion, _CartoonColor, _CartoonAngle, _CartoonSize, _CartoonTile;
+        MaterialProperty _CartoonColor, _CartoonAngle, _CartoonSize, _CartoonTile;
         void SetCustom(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
             EditorGUILayout.BeginVertical("box");

@@ -43,12 +43,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _CellSize: 10
-    - _FadeOut: 0.0246446
+    - _FadeOut: 0.24257968
     - _Float: 0.01
     - _Float_1: 0.66
     - _MosaicArea: 1
-    - _MosaicCell: 24.6446
+    - _MosaicCell: 242.57968
     - _MosaicRadius: 1.95
+    - _ScreenOffset: 0
+    - _ScreenScale: 0
     - _TEXTURETYPE: 0
     - _thiness: 0.02462555
     m_Colors:
