@@ -11,7 +11,6 @@ public class DamageFont : MonoBehaviour
     public RectTransform followUI;
     public TMPro.TMP_Text damageText;
     public Image critical;
-    Coroutine damageTextAction;
     public float hitRadius = 100f;
     public float shakeSize, shakeDuration;
     public enum FontType
@@ -60,19 +59,32 @@ public class DamageFont : MonoBehaviour
         centerPosition = uiCamera.ViewportToScreenPoint(Vector2.one * 0.5f);
     }
 
-    TextPooling instTexttest;
     Vector3 localScale;
+    public void DamageDisplay(int _damage, Transform _target = null)
+    {
+        TextPooling instText = TryInstanceText();
+        instText.damageText.text = _damage.ToString();
+        StartCoroutine(DamageTextAction(instText, _target));
+        if (_target == null)
+        {
+            FollowUI(instText, Input.mousePosition);
+        }
+        else
+        {
+            FollowWorld(instText, _target);
+        }
+    }
 
     public void DisplayDamage(int _damage)
     {
         TextPooling instText = TryInstanceText();
-        bool critical = (_damage > 1000);
-        float alpha = critical ? 1f : 0f;
-        instText.critical.CrossFadeAlpha(alpha, 0f, false);
-        instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
-        localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
+        //bool critical = (_damage > 1000);
+        //float alpha = critical ? 1f : 0f;
+        //instText.critical.CrossFadeAlpha(alpha, 0f, false);
+        //instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
+        //localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
         instText.damageText.text = _damage.ToString();
-        StartCoroutine(DamageTextAction(instText, null));
+        //StartCoroutine(DamageTextAction(instText, null));
         FollowUI(instText, Input.mousePosition);
     }
 
@@ -100,7 +112,6 @@ public class DamageFont : MonoBehaviour
         }
         // »ý¼º
         RectTransform instFollowUI = Instantiate(followUI, this.transform);
-        CanvasGroup instCanvasGroup = instFollowUI.GetComponent<CanvasGroup>();
         TMPro.TMP_Text instDamageText = Instantiate(damageText, instFollowUI.transform);
         instDamageText.rectTransform.anchoredPosition = Vector3.zero;
         Image instCritical = Instantiate(critical, instDamageText.transform);
@@ -108,7 +119,7 @@ public class DamageFont : MonoBehaviour
         TextPooling inst = new TextPooling
         {
             followUI = instFollowUI,
-            canvasGroup = instCanvasGroup,
+            canvasGroup = instFollowUI.GetComponent<CanvasGroup>(),
             damageText = instDamageText,
             critical = instCritical,
         };
@@ -118,11 +129,10 @@ public class DamageFont : MonoBehaviour
     void FollowUI(TextPooling _instText, Vector3 _point)
     {
         Vector2 randomCircle = Random.insideUnitCircle * hitRadius;
-        Vector2 screenPosition = uiCamera.ViewportToScreenPoint(_point);
+        Vector2 screenPosition = Camera.main.ViewportToScreenPoint(_point);
         Vector2 followPosition = uiCamera.ScreenToViewportPoint(screenPosition);
-        followPosition -= centerPosition;
-
-        _instText.followUI.anchoredPosition = followPosition + randomCircle;
+        _instText.damageText.rectTransform.anchoredPosition = followPosition;
+        //_instText.followUI.anchoredPosition = followPosition - centerPosition + randomCircle;
     }
 
     void FollowWorld(TextPooling _instText, Transform _target)
@@ -130,7 +140,7 @@ public class DamageFont : MonoBehaviour
         Vector3 randomCircle = Random.insideUnitCircle * hitRadius;
         Vector3 screenPosition = Camera.main.WorldToScreenPoint(_target.position);
         Vector3 followPosition = uiCamera.ScreenToWorldPoint(screenPosition);
-        _instText.followUI.transform.position = followPosition + randomCircle;
+        _instText.damageText.rectTransform.anchoredPosition = followPosition + randomCircle;
     }
 
     IEnumerator DamageTextAction(TextPooling _instText, Transform _target)

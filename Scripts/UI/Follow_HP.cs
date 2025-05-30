@@ -1,10 +1,10 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Follow_HP : Follow_Target
 {
+    [Header(" [ Follow_HP ]")]
     [SerializeField] Unit_AI unit;
     public Unit_AI SetUnit { set { unit = value; } }
     //public TMPro.TMP_Text m_Text;

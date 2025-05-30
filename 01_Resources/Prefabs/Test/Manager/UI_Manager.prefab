@@ -747,7 +747,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4360751a4e813d54880be0dad50e4b88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UICamera: {fileID: 6879073604153750063}
   timeScaleButtons:
   - {fileID: 6746374746411550377}
   - {fileID: 5297148791668208844}
@@ -759,13 +758,8 @@ MonoBehaviour:
   allButton: {fileID: 897243806076320325}
   lootingButton: {fileID: 1576318111193771030}
   overlayCanvas: {fileID: 794071526707390897}
-  cameraCanvas: {fileID: 4241395252834390132}
   inventory: {fileID: 5086590950796159585, guid: 6f3edbd77d98c904aa4ef81611731689, type: 3}
-  followTarget: {fileID: 2284505594287797807, guid: d8381fa901e337b4b9b6f24b40e96cf9, type: 3}
-  followHP: {fileID: 412826457065594327, guid: ac589df527b82c54198d68c80eb48492, type: 3}
-  followParent: {fileID: 4241395252834390132}
   followManager: {fileID: 4978533816336179959}
-  baseDamage: {fileID: 955756388553591673}
 --- !u!114 &4978533816336179959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -778,8 +772,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ed6fcb83590b7459e7d6faef4ce2c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiCamera: {fileID: 6879073604153750063}
+  UICamera: {fileID: 6879073604153750063}
   offset: {x: 0, y: 1, z: 0}
+  followTarget: {fileID: 2284505594287797807, guid: d8381fa901e337b4b9b6f24b40e96cf9, type: 3}
+  followHP: {fileID: 412826457065594327, guid: ac589df527b82c54198d68c80eb48492, type: 3}
+  followParent: {fileID: 4241395252834390132}
+  cameraCanvas: {fileID: 4241395252834390132}
+  baseDamage: {fileID: 955756388553591673}
 --- !u!114 &3608974577553001409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1107,8 +1106,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2014847193804774287}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 8467.62}
-  m_LocalScale: {x: 10.059224, y: 10.059224, z: 10.059224}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6851175956724244455}
@@ -1118,7 +1117,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -82617.16}
+  m_AnchoredPosition: {x: 0, y: 500}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2038524561794320400

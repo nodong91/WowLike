@@ -192,36 +192,29 @@ public class Game_Manager : Unit_Generator
 
         Unit_AI inst = InstnaceUnit(_node);
         inst.gameObject.name = $"{_layer} : {_node.grid}";
+        inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
+        instUIManager.AddFollowHP(inst);
 
-        Color teamColor = Color.white;
         switch (_layer)
         {
             case "Player":
-                teamColor = Color.red;
                 inst.deadUnit += DeadPlayer;// 죽음 카운트
                 players.Add(inst);
                 break;
 
             case "Monster":
-                teamColor = Color.blue;
                 inst.deadUnit += DeadMonster;
                 monsters.Add(inst);
                 break;
         }
-        // 유아이 세팅
-        Follow_HP hp = instUIManager.AddFollow_Unit(inst);
-        hp.sliderImage.color = teamColor;
-        inst.deleUpdateHP = hp.SetHP;// 체력 바
-        inst.deleUpdateAction = hp.SetAction;// 액션 바
-        inst.deleDamage = instUIManager.DamageText;// 데미지
-        inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
     }
 
     Unit_AI InstnaceUnit(Node _node)
     {
         Unit_AI inst = Instantiate(unitBase, unitParent.transform);
-        inst.transform.position = _node.worldPosition;
-        inst.transform.rotation = Quaternion.Euler(_node.worldPosition);
+        Vector3 pos = _node.worldPosition;
+        Quaternion rot = Quaternion.Euler(_node.worldPosition);
+        inst.transform.SetPositionAndRotation(pos, rot);
         inst.playerList = PlayerList;// 타겟을 찾기 위해
         inst.monsterList = MonsterList;// 타겟을 찾기 위해
         inst.tryPoint = TryUnitPoint;// 타겟 포인트에 갈 수 있는지 체크
@@ -375,7 +368,7 @@ public class Game_Manager : Unit_Generator
             Debug.LogWarning("빈 슬롯이 없습니다.");
             return;
         }
-        instUIManager.RemoveFollowHP(unit.gameObject);
+        instUIManager.RemoveFollow(unit.gameObject);
         unit.deadUnit -= DeadPlayer;// 죽음 카운트
         players.Remove(unit);
         allUnitDict.Remove(unit.gameObject);

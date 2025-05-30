@@ -7,59 +7,12 @@ public class Follow_Target : MonoBehaviour
     public enum FollowType
     {
         Overlay,
-        Camera,
-        HP
+        Camera
     }
     public FollowType followType;
-    private Transform followTarget;
     public Vector3 followOffset;
     public CanvasGroup shakeCanvas;
-    public RectTransform canvasRect;
-
-
-
-
-    //public TMPro.TMP_Text tmpText;
-    //Material tmpMaterial;
-
-
-    //[ColorUsage(true, true)]
-    //public Color _FaceColor;
-    //[Range(0f, 60f)]
-    //public float _FramePerSecond;
-    //public float _LineSpeed;
-    //public float _LineSize;
-    //[Range(0f, 360f)]
-    //public float _LineRotate;
-    //[Range(0f, 1f)]
-    //public float _LineFraction;
-    //public Vector2 _LineDistortion;
-    //public float _WaveSpeed;
-    //public float _WaveSize;
-    //[Range(0f, 10f)]
-    //public float _WaveDistortion;
-
-    //void Start()
-    //{
-    //    tmpMaterial = tmpText.fontMaterial;
-    //}
-
-    //void Update()
-    //{
-    //    if (tmpMaterial != null)
-    //    {
-    //        tmpMaterial.SetColor("_FaceColor", _FaceColor);
-    //        tmpMaterial.SetFloat("_FramePerSecond", _FramePerSecond);
-    //        tmpMaterial.SetFloat("_LineSpeed", _LineSpeed);
-    //        tmpMaterial.SetFloat("_LineSize", _LineSize);
-    //        tmpMaterial.SetFloat("_LineRotate", _LineRotate);
-    //        tmpMaterial.SetFloat("_LineFraction", _LineFraction);
-    //        tmpMaterial.SetVector("_LineDistortion", _LineDistortion);
-    //        tmpMaterial.SetFloat("_WaveSpeed", _WaveSpeed);
-    //        tmpMaterial.SetFloat("_WaveSize", _WaveSize);
-    //        tmpMaterial.SetFloat("_WaveDistortion", _WaveDistortion);
-    //    }
-    //}
+    private RectTransform canvasRect;
 
     public virtual void SetFollow()
     {
@@ -95,8 +48,6 @@ public class Follow_Target : MonoBehaviour
             Vector2 randomCircle = Random.insideUnitCircle * shakeSize * curveTime;
             Vector2 randomPos = new Vector3(randomCircle.x, randomCircle.y);
             canvasRect.anchoredPosition = prevPosition + randomPos;
-            //tmpText.alpha = curveTime;
-            //tmpMaterial.SetFloat("_LineFraction", curveTime);
             yield return null;
         }
     }
