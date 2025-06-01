@@ -22,6 +22,7 @@ namespace P01.Editor
         const string three = "Project Prefab(Missing)";
         const string four = "Selected Prefab(Missing)";
         const string five = "Scene Prefab(String)";
+        const string six = "Project Prefab(Script)";
 
         public struct MissingPrefab
         {
@@ -42,7 +43,7 @@ namespace P01.Editor
                 alignment = TextAnchor.MiddleCenter
             };
 
-            float amount = 5f;
+            float amount = 3f;
             float width = (position.width - 5f * (amount - 1f)) / amount;
 
             GUI.color = Color.green;
@@ -52,11 +53,18 @@ namespace P01.Editor
                 FindSceneObject();
             }
 
-            if (GUILayout.Button(one, buttonText, GUILayout.Width(width), GUILayout.Height(30f)))
+            if (GUILayout.Button(six, buttonText, GUILayout.Width(width), GUILayout.Height(30f)))
+            {
+                
+            }
+
+            if (GUILayout.Button(one, buttonText, GUILayout.Height(30f)))
             {
                 FindSceneScript();
             }
+            EditorGUILayout.EndHorizontal();
 
+            EditorGUILayout.BeginHorizontal();
             GUI.color = Color.yellow;
             if (GUILayout.Button(two, buttonText, GUILayout.Width(width), GUILayout.Height(30f)))
             {
@@ -68,7 +76,7 @@ namespace P01.Editor
                 FindMissing();
             }
 
-            if (GUILayout.Button(four, buttonText, GUILayout.Width(width), GUILayout.Height(30f)))
+            if (GUILayout.Button(four, buttonText, GUILayout.Height(30f)))
             {
                 FindChild();
             }

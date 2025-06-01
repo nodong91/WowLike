@@ -5,23 +5,25 @@ using UnityEngine.UI;
 public class Follow_HP : Follow_Target
 {
     [Header(" [ Follow_HP ]")]
-    [SerializeField] Unit_AI unit;
-    public Unit_AI SetUnit { set { unit = value; } }
-    //public TMPro.TMP_Text m_Text;
 
-    public Slider hpSlider, actionSlider;
+    public Slider hpSlider;
+    public Slider actionSlider;
     CanvasGroup actionGroup;
     public Image sliderImage;
+    //[SerializeField] 
+    Unit_AI unit;
+    public Unit_AI SetUnit { set { unit = value; } }
+    //public TMPro.TMP_Text m_Text;
 
     public void SetFollowUnit(Unit_AI _unit)
     {
         unit = _unit;
-        SetFollow();
+        SetFollowCamera();
     }
 
-    public override void SetFollow()
+    public override void SetFollowCamera()
     {
-        base.SetFollow();
+        base.SetFollowCamera();
         actionGroup = actionSlider.GetComponent<CanvasGroup>();
         //actionGroup.alpha = 0f;
     }

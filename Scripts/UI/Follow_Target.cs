@@ -12,20 +12,19 @@ public class Follow_Target : MonoBehaviour
     public FollowType followType;
     public Vector3 followOffset;
     public CanvasGroup shakeCanvas;
-    private RectTransform canvasRect;
-
-    public virtual void SetFollow()
-    {
-        followType = FollowType.Camera;
-        //followOffset = new Vector3(0f, 1.5f, 0f);
-        canvasRect = shakeCanvas.GetComponent<RectTransform>();
-    }
+    private RectTransform shakeRect;
 
     public float duration;
     public AnimationCurve durationCurve;
     Coroutine shakining;
     public Vector2 shakeSize;
     Vector2 prevPosition;
+
+    public virtual void SetFollowCamera()
+    {
+        //followType = FollowType.Camera;
+        shakeRect = shakeCanvas.GetComponent<RectTransform>();
+    }
 
     public void ShakeStart()
     {
@@ -47,7 +46,7 @@ public class Follow_Target : MonoBehaviour
 
             Vector2 randomCircle = Random.insideUnitCircle * shakeSize * curveTime;
             Vector2 randomPos = new Vector3(randomCircle.x, randomCircle.y);
-            canvasRect.anchoredPosition = prevPosition + randomPos;
+            shakeRect.anchoredPosition = prevPosition + randomPos;
             yield return null;
         }
     }

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class UI_Manager : MonoBehaviour
@@ -89,8 +88,18 @@ public class UI_Manager : MonoBehaviour
         followManager.AddFollowHP(_target);
     }
 
-    public void RemoveFollow(GameObject _target)
+    public void RemoveFollowHP(GameObject _target)
     {
-        followManager.RemoveFollow(_target);
+        followManager.RemoveFollowHP(_target);
+    }
+  
+    public void AddVectorFollow(Vector3 _point)
+    {
+        followManager.AddFollowVector(_point);
+    }
+
+    public void RemoveVectorFollow()
+    {
+        //followManager.RemoveVectorFollow(_target);
     }
 }

@@ -5,9 +5,6 @@ using UnityEngine.UI;
 
 public class DamageFont : MonoBehaviour
 {
-    public Camera uiCamera;
-    private Vector2 centerPosition;
-
     public RectTransform followUI;
     public TMPro.TMP_Text damageText;
     public Image critical;
@@ -51,54 +48,34 @@ public class DamageFont : MonoBehaviour
     public Queue<TextPooling> textPoolingQueue;
     public int targetFrameRate = 60;
     public Material normalMaterial, criticalMaterial;
-
-
-    void Start()
-    {
-        //uiCamera.fieldOfView = Camera.main.fieldOfView;
-        centerPosition = uiCamera.ViewportToScreenPoint(Vector2.one * 0.5f);
-    }
-
     Vector3 localScale;
-    public void DamageDisplay(int _damage, Transform _target = null)
+
+    public void FollowUI(int _damage, Vector3 _followPosition)
     {
-        TextPooling instText = TryInstanceText();
-        instText.damageText.text = _damage.ToString();
-        StartCoroutine(DamageTextAction(instText, _target));
-        if (_target == null)
-        {
-            FollowUI(instText, Input.mousePosition);
-        }
-        else
-        {
-            FollowWorld(instText, _target);
-        }
+        Vector3 randomCircle = Random.insideUnitCircle * hitRadius;
+        SetDamageText(_damage).anchoredPosition = _followPosition + randomCircle;
     }
 
-    public void DisplayDamage(int _damage)
+    public void FollowWorld(int _damage, Vector3 _followPosition)
     {
-        TextPooling instText = TryInstanceText();
-        //bool critical = (_damage > 1000);
-        //float alpha = critical ? 1f : 0f;
-        //instText.critical.CrossFadeAlpha(alpha, 0f, false);
-        //instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
-        //localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
-        instText.damageText.text = _damage.ToString();
-        //StartCoroutine(DamageTextAction(instText, null));
-        FollowUI(instText, Input.mousePosition);
+        Vector3 randomCircle = Random.insideUnitCircle * hitRadius;
+        SetDamageText(_damage).transform.position = _followPosition + randomCircle;
     }
 
-    public void DisplayDamage(Transform _target, string _damage)
+    RectTransform SetDamageText(int _damage)
     {
         TextPooling instText = TryInstanceText();
+
         bool critical = Random.Range(0, 10) > 7;
         float alpha = critical ? 1f : 0f;
         instText.critical.CrossFadeAlpha(alpha, 0f, false);// 크리티컬 이미지
         instText.damageText.fontMaterial = critical ? criticalMaterial : normalMaterial;
-        localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
         instText.damageText.text = _damage.ToString();
-        StartCoroutine(DamageTextAction(instText, _target));
-        FollowWorld(instText, _target);
+
+        localScale = critical ? Vector3.one * 0.3f : Vector3.zero;
+        StartCoroutine(DamageTextAction(instText));
+
+        return instText.followUI;
     }
 
     TextPooling TryInstanceText()
@@ -126,24 +103,7 @@ public class DamageFont : MonoBehaviour
         return inst;
     }
 
-    void FollowUI(TextPooling _instText, Vector3 _point)
-    {
-        Vector2 randomCircle = Random.insideUnitCircle * hitRadius;
-        Vector2 screenPosition = Camera.main.ViewportToScreenPoint(_point);
-        Vector2 followPosition = uiCamera.ScreenToViewportPoint(screenPosition);
-        _instText.damageText.rectTransform.anchoredPosition = followPosition;
-        //_instText.followUI.anchoredPosition = followPosition - centerPosition + randomCircle;
-    }
-
-    void FollowWorld(TextPooling _instText, Transform _target)
-    {
-        Vector3 randomCircle = Random.insideUnitCircle * hitRadius;
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_target.position);
-        Vector3 followPosition = uiCamera.ScreenToWorldPoint(screenPosition);
-        _instText.damageText.rectTransform.anchoredPosition = followPosition + randomCircle;
-    }
-
-    IEnumerator DamageTextAction(TextPooling _instText, Transform _target)
+    IEnumerator DamageTextAction(TextPooling _instText)
     {
         _instText.canvasGroup.alpha = 1f;
         _instText.followUI.localScale = Vector3.one + localScale;

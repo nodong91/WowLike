@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -259,8 +258,8 @@ public class Game_Manager : Unit_Generator
         {
             node = instMapGenerator.GetNodeFromPosition(hitPoint);
             instMapGenerator.ClickNode(node);// 테스트용
+            instUIManager.followManager.AddFollowVector(node.worldPosition);// 테스트
         }
-        //Node node = RayCasting(true);
         selectedNode = node;
     }
 
@@ -293,10 +292,6 @@ public class Game_Manager : Unit_Generator
         if (hitPoint != Vector3.zero)
         {
             node = instMapGenerator.GetNodeFromPosition(hitPoint);
-            //if (_input == true)
-            //{
-            //    instMapGenerator.ClickNode(node);// 테스트용
-            //}
         }
 
         //Node node = RayCasting(false);
@@ -368,7 +363,7 @@ public class Game_Manager : Unit_Generator
             Debug.LogWarning("빈 슬롯이 없습니다.");
             return;
         }
-        instUIManager.RemoveFollow(unit.gameObject);
+        instUIManager.RemoveFollowHP(unit.gameObject);
         unit.deadUnit -= DeadPlayer;// 죽음 카운트
         players.Remove(unit);
         allUnitDict.Remove(unit.gameObject);
