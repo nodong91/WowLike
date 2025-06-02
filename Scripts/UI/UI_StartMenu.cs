@@ -12,7 +12,7 @@ public class UI_StartMenu : MonoBehaviour
     public TMPro.TMP_Text unitName;
     public UI_StartSet[] menuToggle;
 
-    void Start()
+    public void SetStartMenu()
     {
         RandomUnit();
         TestTest();

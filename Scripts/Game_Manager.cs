@@ -7,7 +7,8 @@ public class Game_Manager : Unit_Generator
 {
     public float timeScale = 1f;
     public int targetFrameRate = 60;
-
+    [SerializeField] UI_StartMenu uiStartMenu;
+    UI_StartMenu instUIStartMenu;
     [SerializeField] UI_Manager uiManager;
     UI_Manager instUIManager;
     [SerializeField] Map_Generator mapGenerator;
@@ -65,6 +66,11 @@ public class Game_Manager : Unit_Generator
         Application.targetFrameRate = targetFrameRate;
 
         SetTimeScale(timeScale);
+        
+        if (instUIStartMenu == null)
+            instUIStartMenu = Instantiate(uiStartMenu, transform);
+        instUIStartMenu.SetStartMenu();
+
         if (instMapGenerator == null)
             instMapGenerator = Instantiate(mapGenerator, transform);
         instMapGenerator.SetMapGrid(spawnData);
