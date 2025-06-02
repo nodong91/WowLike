@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class ParabolaTest : MonoBehaviour
@@ -42,10 +41,10 @@ public class ParabolaTest : MonoBehaviour
             Vector3 newPosition = new Vector3(x, y, 0f);
 
             // 궤적 선 그리기
-            Debug.DrawLine(currentPosition, currentPosition+newPosition, Color.red, 1f);
+            Debug.DrawLine(currentPosition, currentPosition + newPosition, Color.red, 1f);
 
             // 현재 위치 갱신
-            currentPosition = currentPosition+newPosition;
+            currentPosition = currentPosition + newPosition;
         }
     }
 }
