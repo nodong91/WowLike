@@ -85,7 +85,7 @@ public class Follow_Manager : MonoBehaviour
                 switch (child.Value.followType)// 카메라 캔버스인 경우
                 {
                     case Follow_Target.FollowType.Overlay:
-                        followUI.transform.SetParent(followParent);
+                        followUI.transform.SetParent(overlayParent);
                         followUI.transform.position = screenPosition;
                         break;
 
@@ -125,7 +125,7 @@ public class Follow_Manager : MonoBehaviour
     [Header(" [ Follow ]")]
     public Follow_Target followTarget;
     public Follow_HP followHP;
-    public RectTransform followParent;
+    public RectTransform overlayParent;
     private Queue<Follow_HP> followHPQueue = new Queue<Follow_HP>();
     private Queue<Follow_Target> followQueue = new Queue<Follow_Target>();
 
@@ -137,7 +137,7 @@ public class Follow_Manager : MonoBehaviour
             follow.gameObject.SetActive(true);
             return follow;
         }
-        Follow_HP instTarget = Instantiate(followHP, followParent);
+        Follow_HP instTarget = Instantiate(followHP, overlayParent);
         return instTarget;
     }
 
@@ -149,7 +149,7 @@ public class Follow_Manager : MonoBehaviour
             follow.gameObject.SetActive(true);
             return follow;
         }
-        Follow_Target instTarget = Instantiate(followTarget, followParent);
+        Follow_Target instTarget = Instantiate(followTarget, overlayParent);
         instTarget.SetFollowCamera();
 
         return instTarget;

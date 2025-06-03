@@ -2,12 +2,14 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Map_MissonIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class Map_MissionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public RectTransform iconRect;
     public CanvasGroup canvas;
     Coroutine iconAct;
     bool open;
+    public delegate void DeleClickAction(Map_MissionIcon _map);
+    public DeleClickAction deleClickAction;
 
     void Start()
     {
@@ -51,6 +53,6 @@ public class Map_MissonIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerClick(PointerEventData eventData)
     {
-
+        deleClickAction?.Invoke(this);
     }
 }

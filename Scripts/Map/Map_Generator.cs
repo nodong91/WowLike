@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 //[ExecuteInEditMode]
 public class Map_Generator : Map_Tile
@@ -377,7 +376,7 @@ public class Map_Generator : Map_Tile
                     alignment = TextAnchor.MiddleCenter,
                     fontStyle = FontStyle.Bold,
                 };
-                Handles.Label(n.worldPosition, $"{n.grid.x}/{n.grid.y}", fontStyle);
+                UnityEditor.Handles.Label(n.worldPosition, $"{n.grid.x}/{n.grid.y}", fontStyle);
             }
         }
     }

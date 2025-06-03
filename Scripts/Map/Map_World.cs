@@ -1,5 +1,5 @@
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class Map_World : MonoBehaviour
@@ -13,7 +13,6 @@ public class Map_World : MonoBehaviour
     List<Node> allNodes = new List<Node>();
     void Start()
     {
-
         worldSize = (Vector2)worldGrid * nodeSize;
 
         nodeMap = new Node[worldGrid.x, worldGrid.y];
@@ -30,11 +29,40 @@ public class Map_World : MonoBehaviour
                 Vector2Int grid = new Vector2Int(x, y);
                 nodeMap[x, y] = new Node(worldPoint, grid);
                 allNodes.Add(nodeMap[x, y]);
+
+                Map_MissionIcon inst = Instantiate(missonIcon, missonParent);
+                inst.deleClickAction = ClickAction;
+                dictMisson[inst] = worldPoint;
             }
+        }
+        StartCoroutine(SetMisson());
+    }
+
+    void ClickAction(Map_MissionIcon _mission)
+    {
+
+    }
+    public Map_MissionIcon missonIcon;
+    public RectTransform missonParent;
+    public Dictionary<Map_MissionIcon, Vector3> dictMisson = new Dictionary<Map_MissionIcon, Vector3>();
+    IEnumerator SetMisson()
+    {
+        //foreach (var child in dictMisson)
+        //{
+        //    Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value);
+        //    child.Key.transform.position = screenPosition;
+        //}
+        while (true)
+        {
+            foreach (var child in dictMisson)
+            {
+                Vector3 screenPosition = Camera.main.WorldToScreenPoint(child.Value);
+                child.Key.transform.position = screenPosition;
+            }
+            yield return null;
         }
     }
 
-    
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -66,7 +94,7 @@ public class Map_World : MonoBehaviour
                     alignment = TextAnchor.MiddleCenter,
                     fontStyle = FontStyle.Bold,
                 };
-                Handles.Label(n.worldPosition, $"{n.grid.x}/{n.grid.y}", fontStyle);
+                UnityEditor.Handles.Label(n.worldPosition, $"{n.grid.x}/{n.grid.y}", fontStyle);
             }
         }
     }
