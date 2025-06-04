@@ -92,14 +92,4 @@ public class UI_Manager : MonoBehaviour
     {
         followManager.RemoveFollowHP(_target);
     }
-  
-    public void AddVectorFollow(Vector3 _point)
-    {
-        followManager.AddFollowVector(_point);
-    }
-
-    public void RemoveVectorFollow()
-    {
-        //followManager.RemoveVectorFollow(_target);
-    }
 }

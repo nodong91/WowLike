@@ -163,19 +163,49 @@ public class Follow_Manager : MonoBehaviour
     // 노드 위에 아이콘 올리기
     public Dictionary<GameObject, Vector3> followVectors = new Dictionary<GameObject, Vector3>();
     Coroutine vectorFollow;
-    public GameObject test;
+    public GameObject followBuff;
+    public Queue<GameObject> buffQueue = new Queue<GameObject>();
 
-    public void AddFollowVector(Vector3 _point)
+    public void OnBuff(Node _node)
     {
-        GameObject inst = Instantiate(test, cameraParent);
-        followVectors[inst] = _point;
-        VectorFollow();
+        BuffClear();
+        if (_node.nodeType == Node.NodeType.Player && _node.onObject != null)
+        {
+            Unit_AI unit = Game_Manager.current.GetUnitDict[_node.onObject];
+            if (unit != null)
+            {
+                for (int i = 0; i < unit.synergy.Length; i++)
+                {
+                    Vector2Int grid = _node.grid + unit.synergy[i];
+                    Node synergy = Game_Manager.current.GetMapGenerator.nodeMap[grid.x, grid.y];
+                    GameObject inst = TryFollowBuff();
+                    followVectors[inst] = synergy.worldPosition;
+                    VectorFollow();
+                }
+            }
+        }
     }
 
-    public void RemoveFollowVector(GameObject _ui)
+    GameObject TryFollowBuff()
     {
-        followVectors.Remove(_ui);
-        VectorFollow();
+        if (buffQueue.Count > 0)
+        {
+            GameObject buff = buffQueue.Dequeue();
+            buff.gameObject.SetActive(true);
+            return buff;
+        }
+        GameObject inst = Instantiate(followBuff, cameraParent);
+        return inst;
+    }
+
+    public void BuffClear()
+    {
+        foreach (var child in followVectors)
+        {
+            buffQueue.Enqueue(child.Key);
+            child.Key.SetActive(false);
+        }
+        followVectors.Clear();
     }
 
     void VectorFollow()
@@ -204,7 +234,6 @@ public class Follow_Manager : MonoBehaviour
 
 
 
-
     public RectTransform cameraParent;
     public DamageFont damageFont;
 
@@ -213,8 +242,8 @@ public class Follow_Manager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             int index = Random.Range(0, 1500);
-            Vector3 screenPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition) - Vector3.one * 0.5f;
-            Vector3 followPosition = UICamera.ViewportToScreenPoint(screenPosition);
+            Vector3 screenPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            Vector3 followPosition = UICamera.ViewportToScreenPoint((screenPosition - Vector3.one * 0.5f) * 2f);
             damageFont.FollowUI(index, followPosition);
         }
     }

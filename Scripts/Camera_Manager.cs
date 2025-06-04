@@ -54,7 +54,6 @@ public class Camera_Manager : MonoBehaviour
         cinemachineBasicMultiChannelPerlin = cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
         rotationComposer = cinemachineCamera.GetComponent<CinemachineRotationComposer>();
         SetDefault();
-        //GetTarget(target);
     }
 
     void SetDefault()

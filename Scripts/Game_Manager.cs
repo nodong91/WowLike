@@ -66,7 +66,7 @@ public class Game_Manager : Unit_Generator
         Application.targetFrameRate = targetFrameRate;
 
         SetTimeScale(timeScale);
-        
+
         if (instUIStartMenu == null)
             instUIStartMenu = Instantiate(uiStartMenu, transform);
         instUIStartMenu.SetStartMenu();
@@ -130,7 +130,7 @@ public class Game_Manager : Unit_Generator
             if (displayNode != node)
             {
                 displayNode = node;
-                OnBuff(node);
+                instUIManager.followManager.OnBuff(node);
             }
         }
     }
@@ -264,7 +264,6 @@ public class Game_Manager : Unit_Generator
         {
             node = instMapGenerator.GetNodeFromPosition(hitPoint);
             instMapGenerator.ClickNode(node);// 테스트용
-            instUIManager.followManager.AddFollowVector(node.worldPosition);// 테스트
         }
         selectedNode = node;
     }
