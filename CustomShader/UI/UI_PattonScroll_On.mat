@@ -62,11 +62,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Angle: 123
     - _Boolean: 0
     - _ColorMask: 15
-    - _Float: 0.25
-    - _Float_1: 5.66
+    - _Float: 1
+    - _Float_1: -0.22
+    - _Float_2: 45
     - _Index: 4
+    - _NoiseSize: 0
+    - _Normalize: 1
     - _Patton: 1
     - _Speed: 1.51
     - _SpritIndex: 4
@@ -92,11 +96,12 @@ Material:
     - _UIMaskSoftnessY: 1
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
+    - _Color: {r: 0, g: 0.21015166, b: 0.5294118, a: 1}
     - _FlipTile: {r: 2, g: 2, b: 0, a: 0}
+    - _NoiseSpeed: {r: 0, g: 0, b: 0, a: 0}
     - _Offset: {r: 1, g: 1, b: 0, a: 0}
-    - _OffsetSpeed: {r: 0.1, g: 0.1, b: 0, a: 0}
-    - _Vector2: {r: 0, g: 0, b: 0, a: 0}
+    - _OffsetSpeed: {r: 1, g: 1, b: 0, a: 0}
+    - _Vector2: {r: -0.25, g: 0, b: 0, a: 0}
     - _Vector2_1: {r: 2, g: 2, b: 0, a: 0}
     - _Vector2_2: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
