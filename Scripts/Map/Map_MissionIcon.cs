@@ -43,7 +43,7 @@ public class Map_MissionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExit
         float normalize = 0f;
         while (normalize < 1f)
         {
-            normalize += Time.deltaTime * 10f;
+            normalize += Time.deltaTime * 15f;
             Vector2 setSize = Vector2.Lerp(prev, target, normalize);
             iconRect.sizeDelta = setSize;
             canvas.alpha = Mathf.Lerp(canvas.alpha, targetAlpha, normalize);

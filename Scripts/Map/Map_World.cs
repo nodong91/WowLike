@@ -40,7 +40,7 @@ public class Map_World : MonoBehaviour
 
     void ClickAction(Map_MissionIcon _mission)
     {
-
+        Debug.LogWarning("Mission Click!!!!!!!!!!");
     }
     public Map_MissionIcon missonIcon;
     public RectTransform missonParent;

@@ -24,9 +24,9 @@ public class Controll_Manager : MonoBehaviour
 
     void SetMouse()
     {
-        Singleton_Controller.INSTANCE.key_MouseLeft = InputMouseLeft;
-        Singleton_Controller.INSTANCE.key_MouseRight = InputMouseRight;
-        Singleton_Controller.INSTANCE.key_MouseWheel = InputMouseWheel;
+        Singleton_Controller.INSTANCE.key_MouseLeft += InputMouseLeft;
+        Singleton_Controller.INSTANCE.key_MouseRight += InputMouseRight;
+        Singleton_Controller.INSTANCE.key_MouseWheel += InputMouseWheel;
     }
 
     void InputMouseLeft(bool _input)
@@ -55,7 +55,7 @@ public class Controll_Manager : MonoBehaviour
     IEnumerator MouseLeftDrag(bool _input)
     {
         rotateType = RotateType.Normal;
-        Camera_Manager.instance.InputRotate(_input);
+        Camera_Manager.instance?.InputRotate(_input);
         if (_input == true)
         {
             isLeftDrag = false;
@@ -83,13 +83,12 @@ public class Controll_Manager : MonoBehaviour
         //{
         //    rotateType = RotateType.Normal;
         //}
-        Camera_Manager.instance.InputRotate(_input);
+        Camera_Manager.instance?.InputRotate(_input);
     }
 
     void InputMouseWheel(bool _input)
     {
         float input = _input ? -0.1f : 0.1f;
-        Camera_Manager.instance.delegateInputScroll(input);
+        Camera_Manager.instance?.delegateInputScroll(input);
     }
-
 }

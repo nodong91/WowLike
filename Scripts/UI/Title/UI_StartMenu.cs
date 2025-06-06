@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UI_StartMenu : MonoBehaviour
 {
+    public UI_Title title;
     public CanvasGroup unitCanvas;
     public Button startButton;
     public Button[] unitButton;

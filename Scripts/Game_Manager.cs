@@ -97,43 +97,54 @@ public class Game_Manager : Unit_Generator
                 AmbushSpawn();
                 break;
         }
+        SetMouse();
     }
-
-    private void Update()
+    void SetMouse()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (timeScale > 0)
-                SetTimeScale(0f);
-            else
-                SetTimeScale(1f);
-        }
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            InputBegin();
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            InputEnd();
-        }
-        if (Input.GetMouseButton(0))
-        {
-            InputIng();
-            instUIManager.ShakingUI(asdfadsf);
-        }
-        // 유닛 배치할 때만 사용 (버프가능 노드 확인용)
-        Vector3 hitPoint = RayCasting();
-        if (hitPoint != Vector3.zero)
-        {
-            Node node = instMapGenerator.GetNodeFromPosition(hitPoint);
-            if (displayNode != node)
-            {
-                displayNode = node;
-                instUIManager.followManager.OnBuff(node);
-            }
-        }
+        Singleton_Controller.INSTANCE.key_MouseLeft += InputMousetLeft;
+        //Singleton_Controller.INSTANCE.key_MouseRight += InputMouseRight;
+        //Singleton_Controller.INSTANCE.key_MouseWheel += InputMouseWheel;
     }
+
+    void SetControll()
+    {
+
+    }
+
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        if (timeScale > 0)
+    //            SetTimeScale(0f);
+    //        else
+    //            SetTimeScale(1f);
+    //    }
+
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //        InputBegin();
+    //    }
+    //    else if (Input.GetMouseButtonUp(0))
+    //    {
+    //        InputEnd();
+    //    }
+    //    if (Input.GetMouseButton(0))
+    //    {
+    //        InputIng();
+    //    }
+    //    // 유닛 배치할 때만 사용 (버프가능 노드 확인용)
+    //    Vector3 hitPoint = RayCasting();
+    //    if (hitPoint != Vector3.zero)
+    //    {
+    //        Node node = instMapGenerator.GetNodeFromPosition(hitPoint);
+    //        if (displayNode != node)
+    //        {
+    //            displayNode = node;
+    //            instUIManager.followManager.OnBuff(node);
+    //        }
+    //    }
+    //}
 
     public void SetTimeScale(float _timeScale)
     {
@@ -253,11 +264,25 @@ public class Game_Manager : Unit_Generator
         }
         Debug.LogWarning($"Battle Start{players.Count} {monsters.Count}");
     }
+    Coroutine leftClick;
+    void InputMousetLeft(bool _input)
+    {
+        Debug.LogWarning("oijoeif");
+        if (_input == true)
+        {
+            InputBegin();
+        }
+        else
+        {
+            InputEnd();
+        }
+    }
 
     void InputBegin()
     {
-        if (EventSystem.current.IsPointerOverGameObject() == true)// ui클릭 확인
-            return;
+        leftClick= StartCoroutine(InputIng());
+        //if (EventSystem.current.IsPointerOverGameObject() == true)// ui클릭 확인
+        //    return;
         Node node = null;
         Vector3 hitPoint = RayCasting();
         if (hitPoint != Vector3.zero)
@@ -268,30 +293,42 @@ public class Game_Manager : Unit_Generator
         selectedNode = node;
     }
 
-    void InputIng()
+    IEnumerator InputIng()
     {
-        if (EventSystem.current.IsPointerOverGameObject() == true)
-            return;
+        instUIManager.ShakingUI(asdfadsf);
+        while (true)
+        {
+            dragSlot = instUIManager.GetInventory.GetDragSlot;
+            bool moveUnit = (dragSlot?.itemType == ItemType.Unit) || (selectedNode?.onObject != null);
+            Node node = null;
+            Vector3 hitPoint = RayCasting();
+            if (hitPoint != Vector3.zero)
+            {
+                node = instMapGenerator.GetNodeFromPosition(hitPoint);
+                instMapGenerator.ClickNode(node);// 테스트용
+                                                 // 유닛 배치할 때만 사용 (버프가능 노드 확인용)
+                if (displayNode != node)
+                {
+                    displayNode = node;
+                    instUIManager.followManager.OnBuff(node);
+                }
+            }
 
-        dragSlot = instUIManager.GetInventory.GetDragSlot;
-        bool moveUnit = (dragSlot?.itemType == ItemType.Unit) || (selectedNode?.onObject != null);
-        Node node = null;
-        Vector3 hitPoint = RayCasting();
-        if (hitPoint != Vector3.zero)
-        {
-            node = instMapGenerator.GetNodeFromPosition(hitPoint);
-            instMapGenerator.ClickNode(node);// 테스트용
-        }
-        //Node node = RayCasting(true);
-        if (node != null)
-        {
-            asdfadsf.gameObject.SetActive(moveUnit);
-            asdfadsf.transform.position = node.worldPosition;
+            if (node != null)
+            {
+                asdfadsf.gameObject.SetActive(moveUnit);
+                asdfadsf.transform.position = node.worldPosition;
+            }
+            yield return null;
+            Debug.LogWarning("oij");
         }
     }
 
     void InputEnd()
     {
+        if (leftClick != null)
+            StopCoroutine(leftClick);
+
         Node node = null;
         Vector3 hitPoint = RayCasting();
         if (hitPoint != Vector3.zero)
