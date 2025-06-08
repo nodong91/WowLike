@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Game_Manager : Unit_Generator
 {
@@ -31,7 +32,8 @@ public class Game_Manager : Unit_Generator
 
     private List<Unit_AI> players, monsters;
     public Unit_AI unitBase;
-    GameObject unitParent;
+    GameObject instParent;
+    public Transform GetInstParent { get { return instParent.transform; } }
 
     public List<Unit_AI> PlayerList()
     {
@@ -81,12 +83,13 @@ public class Game_Manager : Unit_Generator
         instUIManager.deleBattleStart = StartBattle;
         instUIManager.AddFollow(asdfadsf);// 임시 테스트
 
-        if (unitParent != null)
-            Destroy(unitParent);
-        unitParent = new GameObject("[ Unit Parnet ]");
+        if (instParent != null)
+            Destroy(instParent);
+        instParent = new GameObject("[ Instance Parnet ]");
 
         players = new List<Unit_AI>();
         monsters = new List<Unit_AI>();
+        SetPlayer();
         switch (spawnType)
         {
             case SpawnType.Normal:
@@ -179,6 +182,7 @@ public class Game_Manager : Unit_Generator
         {
             queueNodes.Enqueue(randomNodes[i]);
         }
+
         // 테스트
         for (int i = 0; i < 3; i++)
         {
@@ -189,6 +193,22 @@ public class Game_Manager : Unit_Generator
         {
             SpawnMonster(queueNodes.Dequeue(), "U10012");
         }
+    }
+
+    public Unit_Player unitPlayer;
+    void SetPlayer()
+    {
+        unitPlayer.SetUnit("U10012", LayerMask.NameToLayer("Player"));
+        instUIManager.AddFollowHP(unitPlayer);
+        unitPlayer.deadUnit += DeadPlayer;// 죽음 카운트
+        players.Add(unitPlayer);
+        unitPlayer.playerList = PlayerList;// 타겟을 찾기 위해
+        unitPlayer.monsterList = MonsterList;// 타겟을 찾기 위해
+        unitPlayer.tryPoint = TryUnitPoint;// 타겟 포인트에 갈 수 있는지 체크
+        unitPlayer.SetPlayer();
+
+        allUnitDict[unitPlayer.gameObject] = unitPlayer;
+        battleOver += unitPlayer.BattleOver;
     }
 
     void SpawnPlayer(Node _node, string _unitID)
@@ -227,7 +247,7 @@ public class Game_Manager : Unit_Generator
 
     Unit_AI InstnaceUnit(Node _node)
     {
-        Unit_AI inst = Instantiate(unitBase, unitParent.transform);
+        Unit_AI inst = Instantiate(unitBase, GetInstParent);
         Vector3 pos = _node.worldPosition;
         Quaternion rot = Quaternion.Euler(_node.worldPosition);
         inst.transform.SetPositionAndRotation(pos, rot);
@@ -267,7 +287,6 @@ public class Game_Manager : Unit_Generator
     Coroutine leftClick;
     void InputMousetLeft(bool _input)
     {
-        Debug.LogWarning("oijoeif");
         if (_input == true)
         {
             InputBegin();
@@ -278,9 +297,9 @@ public class Game_Manager : Unit_Generator
         }
     }
 
-    void InputBegin()
+    public void InputBegin()
     {
-        leftClick= StartCoroutine(InputIng());
+        leftClick = StartCoroutine(InputIng());
         //if (EventSystem.current.IsPointerOverGameObject() == true)// ui클릭 확인
         //    return;
         Node node = null;
@@ -296,19 +315,19 @@ public class Game_Manager : Unit_Generator
     IEnumerator InputIng()
     {
         instUIManager.ShakingUI(asdfadsf);
+        dragSlot = instUIManager.GetInventory.GetDragSlot;
+        bool moveUnit = (dragSlot?.itemType == ItemType.Unit) || (selectedNode?.onObject != null);
         while (true)
         {
-            dragSlot = instUIManager.GetInventory.GetDragSlot;
-            bool moveUnit = (dragSlot?.itemType == ItemType.Unit) || (selectedNode?.onObject != null);
             Node node = null;
             Vector3 hitPoint = RayCasting();
             if (hitPoint != Vector3.zero)
             {
                 node = instMapGenerator.GetNodeFromPosition(hitPoint);
                 instMapGenerator.ClickNode(node);// 테스트용
-                                                 // 유닛 배치할 때만 사용 (버프가능 노드 확인용)
                 if (displayNode != node)
                 {
+                    // 유닛 배치할 때만 사용 (버프가능 노드 확인용)
                     displayNode = node;
                     instUIManager.followManager.OnBuff(node);
                 }
@@ -335,17 +354,11 @@ public class Game_Manager : Unit_Generator
         {
             node = instMapGenerator.GetNodeFromPosition(hitPoint);
         }
-
-        //Node node = RayCasting(false);
         asdfadsf.gameObject.SetActive(false);
-
-        if (EventSystem.current.IsPointerOverGameObject() == true || node == null)
-        {
-            return;
-        }
 
         if (selectedNode?.onObject != null)
         {
+            // 노드 이동
             Debug.LogWarning($"놓을 수{node.grid}  {selectedNode.onObject.layer}");
             if (selectedNode.onObject.layer == LayerMask.NameToLayer("Player"))// 플레이어 선택
             {
@@ -378,7 +391,7 @@ public class Game_Manager : Unit_Generator
         }
         else
         {
-            Debug.LogWarning($"인벤토리도 아니고{node.grid}");
+            Debug.LogWarning($"인벤토리도 아니고{node?.grid}");
         }
         selectedNode = default;
     }

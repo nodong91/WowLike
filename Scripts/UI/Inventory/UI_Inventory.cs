@@ -8,7 +8,7 @@ public class UI_Inventory : MonoBehaviour
     public UI_InvenGroup inventoryParent;
     public UI_OpenCanvas lootingParent, quickParent;
     public UI_InvenSlot baseSlot;
-    private UI_InvenSlot dragSlot, enterSlot;
+  [ SerializeField]  private UI_InvenSlot dragSlot, enterSlot;
     public UI_InvenSlot GetDragSlot { get { return dragSlot; } }
     public UI_InvenSlot[] invenSlots, lootingSlots, quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
@@ -126,10 +126,14 @@ public class UI_Inventory : MonoBehaviour
         dragSlot = _slot.itemType == ItemType.Empty ? null : _slot;
         if (dragSlot != null)
         {
+            Debug.LogWarning(_slot.itemType);
+            if(dragSlot.itemType == ItemType.Unit)
+            {
+                Game_Manager.current.InputBegin();
+            }
             dragIcon.sprite = _slot.icon.sprite;
             dragIcon.gameObject.SetActive(true);
         }
-        Camera_Manager.instance.enabled = false;
     }
 
     private void OnDrag(Vector3 _position)
@@ -144,21 +148,18 @@ public class UI_Inventory : MonoBehaviour
     public void OnEndDrag(UI_InvenSlot _slot)
     {
         if (dragSlot == null)
-        {
             return;
-        }
+
         dragSlot.ChangeSlot(enterSlot);
         dragSlot = null;
         dragIcon.gameObject.SetActive(false);
-        Camera_Manager.instance.enabled = true;
     }
 
     public void OnEndDrag_Quick(UI_InvenSlot _slot)
     {
         if (dragSlot == null)
-        {
             return;
-        }
+        
         dragSlot.ChangeSlot(enterSlot);
         dragIcon.gameObject.SetActive(false);
     }

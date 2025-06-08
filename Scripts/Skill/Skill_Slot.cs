@@ -91,7 +91,7 @@ public class Skill_Set : MonoBehaviour
     void TargetHIt(Unit_AI _target, Transform _lastProjcetile)
     {
         float damage = fromUnit.GetDamage;
-        _target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);
+        _target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);// Å¸°Ù
     }
 
     void SplashArea(Transform _lastProjcetile)
@@ -103,7 +103,7 @@ public class Skill_Set : MonoBehaviour
             {
                 //Debug.LogError($"Hit Unit : {target.name}");
                 float damage = fromUnit.GetDamage;
-                target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);
+                target.TakeDamage(fromUnit, _lastProjcetile.position, damage, skillStruct);// ±¤¿ª
             }
         }
     }

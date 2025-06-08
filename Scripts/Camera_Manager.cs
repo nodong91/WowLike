@@ -18,7 +18,7 @@ public class Camera_Manager : MonoBehaviour
 
     Coroutine stoping, zooming, shaking;
     Coroutine onRotate;
-    float x, y;
+    [SerializeField] float x, y;
     public float smoothSpeed = 10f;
     public float shakeValue = 5f;
     public float shakeTime = 1f;
@@ -31,11 +31,11 @@ public class Camera_Manager : MonoBehaviour
 
     CinemachineBrain brain;
 
-    public static Camera_Manager instance;
+    public static Camera_Manager current;
 
     private void Awake()
     {
-        instance = this;
+        current = this;
     }
 
     private void Start()
@@ -150,6 +150,10 @@ public class Camera_Manager : MonoBehaviour
         float speed = Time.deltaTime * smoothSpeed;
         orbitalFollow.HorizontalAxis.Value = Mathf.Lerp(orbitalFollow.HorizontalAxis.Value, x, speed);
         orbitalFollow.VerticalAxis.Value = Mathf.Lerp(orbitalFollow.VerticalAxis.Value, y, speed);
+
+        Vector3 camPos = cinemachineCamera.transform.position;
+        Vector3 offset = (transform.position - new Vector3(camPos.x, transform.position.y, camPos.z));
+        transform.rotation = Quaternion.LookRotation(offset, Vector3.up);
     }
 
     void InputScroll(float _input)

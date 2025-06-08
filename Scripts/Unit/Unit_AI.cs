@@ -117,7 +117,7 @@ public class Unit_AI : MonoBehaviour
         Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[unitID].unitProp;
         unitAnimation = Instantiate(unit, this.transform);
         unitAnimation.SetAnimator();
-        unitAnimation.attackEvent = Event_Attack;// 애니메이션 이벤트 받아올
+        unitAnimation.attackEvent = Attacking;// 애니메이션 이벤트 받아올
         lootings = unitAnimation.GetComponent<Unit_Looting>().GetLooting(3);// 루팅 아이템
 
         Debug.Log("유닛 생성 : " + unitID);
@@ -220,7 +220,7 @@ public class Unit_AI : MonoBehaviour
         StateMachine(State.Idle);
     }
 
-    void StateMachine(State _state)
+    public virtual void StateMachine(State _state)
     {
         if (dummy == true || state == State.Dead)
             return;
@@ -232,7 +232,7 @@ public class Unit_AI : MonoBehaviour
         switch (state)
         {
             case State.None:
-
+                Destination(transform.position);
                 break;
 
             case State.Idle:
@@ -365,7 +365,6 @@ public class Unit_AI : MonoBehaviour
 
     void Destination(Vector3 _point)
     {
-        //if (agent.enabled == true)
         agent.SetDestination(_point);
     }
 
@@ -459,7 +458,7 @@ public class Unit_AI : MonoBehaviour
             }
             yield return null;
         }
-        //deleUpdateAction(0f);
+        deleUpdateAction(0f);
     }
 
     void Attacking()
@@ -471,7 +470,7 @@ public class Unit_AI : MonoBehaviour
             Data_Manager.SkillStruct skill = Singleton_Data.INSTANCE.Dict_Skill[skillID];
             //Debug.LogWarningFormat(skill.skillSet);
             Skill_Set slot = Singleton_Data.INSTANCE.Dict_SkillSet[skill.skillSet];
-            Skill_Set inst = Instantiate(slot, transform);
+            Skill_Set inst = Instantiate(slot, Game_Manager.current.GetInstParent);
             inst.gameObject.name = skillID;
             inst.SetSkillSlot(this, currentSkill.skillStruct);
             dictSkillSlot[skillID] = inst;
@@ -491,10 +490,6 @@ public class Unit_AI : MonoBehaviour
         globalCooling = true;
         yield return new WaitForSeconds(1f);
         globalCooling = false;
-    }
-    void Event_Attack()
-    {
-        Attacking();
     }
 
     void CoolingSkill()
@@ -526,15 +521,12 @@ public class Unit_AI : MonoBehaviour
 
     public void TakeDamage(Unit_AI _from, Vector3 _center, float _damage, Data_Manager.SkillStruct _skillStruct)
     {
+        // _from 때린 유닛
+        // _center 맞은 포인트
         if (state == State.Dead)
             return;
 
-        Destination(transform.position);
-        // _from 때린 유닛
-        // _center 맞은 포인트
-
         Debug.Log($"{_from.gameObject.name} : {_damage}");
-        //Vector3 hitPoint = transform.position;
         healthPoint -= _damage;
         deleUpdateHP?.Invoke(healthPoint, unitStatus.Health, true);// 데미지 바
         deleDamage?.Invoke((int)_damage, this.transform);// 데미지 폰트
@@ -579,6 +571,11 @@ public class Unit_AI : MonoBehaviour
         }
     }
 
+    public virtual void DamageAction()
+    {
+
+    }
+
     IEnumerator HoldAction(float _hold)
     {
         StateMachine(State.None);
@@ -600,11 +597,10 @@ public class Unit_AI : MonoBehaviour
         unitAnimation.transform.localPosition = Vector3.zero;
     }
 
-    void DeadState()
+    public void DeadState()
     {
         unitAnimation.PlayAnimation(7);// 애니메이션
         deadUnit?.Invoke(this);
-        //agent.enabled = false;
     }
 
     void SetRanderer()
