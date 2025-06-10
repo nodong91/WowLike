@@ -35,7 +35,7 @@ public class Unit_AI : MonoBehaviour
         Move,
         Patrol,
         Damage,
-        End
+        End,
     }
     public State state = State.None;
     float distance;

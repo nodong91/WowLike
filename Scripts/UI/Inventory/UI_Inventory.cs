@@ -8,9 +8,10 @@ public class UI_Inventory : MonoBehaviour
     public UI_InvenGroup inventoryParent;
     public UI_OpenCanvas lootingParent, quickParent;
     public UI_InvenSlot baseSlot;
-  [ SerializeField]  private UI_InvenSlot dragSlot, enterSlot;
+    [SerializeField] private UI_InvenSlot dragSlot, enterSlot;
     public UI_InvenSlot GetDragSlot { get { return dragSlot; } }
-    public UI_InvenSlot[] invenSlots, lootingSlots, quickSlots;
+    public UI_InvenSlot[] invenSlots, lootingSlots;
+    UI_InvenSlot[] quickSlots;
     public UI_InvenSlot[] GetQuickSlot { get { return quickSlots; } }
     public int inventoryAmount = 25;
 
@@ -103,20 +104,12 @@ public class UI_Inventory : MonoBehaviour
                     Debug.LogWarning("ºó ½½·ÔÀÌ ¾ø½À´Ï´Ù.");
                     return;
                 }
-                //UI_InvenSlot emptySlot = TryEmptySlot();
-                //if (emptySlot == null)
-                //{
-                //    Debug.LogWarning("ºó ½½·ÔÀÌ ¾ø½À´Ï´Ù.");
-                //    return;
-                //}
-
-                //emptySlot.LootingItem(_slot);
-                //Debug.LogWarning(_slot.itemType);
                 _slot.SetSlot(null);// ±âÁ¸ ½½·Ô ºñ¿ì±â
                 break;
 
             case UI_InvenSlot.SlotType.Quick:
                 // »ç¿ë
+                Debug.LogWarning("Quick ½½·Ô »ç¿ë");
                 break;
         }
     }
@@ -127,7 +120,7 @@ public class UI_Inventory : MonoBehaviour
         if (dragSlot != null)
         {
             Debug.LogWarning(_slot.itemType);
-            if(dragSlot.itemType == ItemType.Unit)
+            if (dragSlot.itemType == ItemType.Unit)
             {
                 Game_Manager.current.InputBegin();
             }
@@ -159,7 +152,7 @@ public class UI_Inventory : MonoBehaviour
     {
         if (dragSlot == null)
             return;
-        
+
         dragSlot.ChangeSlot(enterSlot);
         dragIcon.gameObject.SetActive(false);
     }
@@ -249,9 +242,10 @@ public class UI_Inventory : MonoBehaviour
             inst.deleClockAction += SlotClick;
 
             int index = i;
-            //inst.quickSlotAction = delegate { Game_Manager.instance?.InputSlot(index); };
+            inst.quickSlotAction = delegate { Game_Manager.current.QuickSlotAction(index); };
             quickSlots[index] = inst;
         }
+        Game_Manager.current.SetQuickSlots = quickSlots;
         OpenQuick();
     }
 
@@ -265,7 +259,7 @@ public class UI_Inventory : MonoBehaviour
 
 
 
-
+    // Äµ¹ö½º ¿­±â
 
     public void OpenAllCanvas()
     {

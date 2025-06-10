@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Unit_Player : Unit_AI
 {
@@ -29,6 +27,8 @@ public class Unit_Player : Unit_AI
         Singleton_Controller.INSTANCE.key_D = Direction_Right;
 
         Singleton_Controller.INSTANCE.key_SpaceBar = Key_SpaceBar;
+
+        Singleton_Controller.INSTANCE.key_1 = Key_1;
     }
 
     void RemoveKeyCode()
@@ -102,6 +102,17 @@ public class Unit_Player : Unit_AI
     }
     public Vector2Int dirction;
 
+    void Key_1(bool _input)
+    {
+        if (_input == true)
+            QuickSlot(0);
+    }
+ 
+    public void QuickSlot(int _index)
+    {
+        Game_Manager.current.QuickSlotAction(_index);
+    }
+
     void Key_SpaceBar(bool _input)
     {
         if (_input == true)
@@ -109,14 +120,17 @@ public class Unit_Player : Unit_AI
             StateEscape();
         }
     }
+
     public float currentSpeed;
     void Update()
     {
-        if (controllDirection != ControllDirection.None)
-        {
+        if (state == State.Move)
             Moving();
+
+        if (state != State.None)
+        {
+            RotateMousePosition();
         }
-        RotateMousePosition();
     }
 
     public override void StateMachine(State _state)
@@ -125,11 +139,12 @@ public class Unit_Player : Unit_AI
         switch (state)
         {
             case State.None:
+                controllDirection = ControllDirection.None;
                 break;
             case State.Dead:
                 RemoveKeyCode();
                 DeadState();
-                controllDirection = ControllDirection.None;
+                StateMachine(State.None);
                 break;
             case State.Attack:
                 break;
@@ -152,40 +167,23 @@ public class Unit_Player : Unit_AI
     {
         if (state != State.None)
         {
-            if (controllDirection == ControllDirection.None)
-            {
-                state = State.Idle;
-            }
-            else
-            {
-                state = State.Move;
-            }
+            StateMachine(State.Move);
         }
-    }
-    void Moving()
-    {
-        if (state == State.None)
-            return;
-
-        Camera_Manager.current.transform.position = transform.position;
-        Vector3 dir = new Vector3(dirction.x, 0f, dirction.y);
-        Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(dir).normalized;
-        transform.position = Vector3.Lerp(transform.position, target, currentSpeed);
-        Vector3 offset = (target - transform.position).normalized;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), currentSpeed * 5f);
     }
 
     Coroutine moveEscape;
+    float moveSpeed = 0.05f;
+
     void StateEscape()
     {
         if (moveEscape != null)
             StopCoroutine(moveEscape);
         moveEscape = StartCoroutine(MoveEscape());
     }
-    float moveSpeed = 0.05f;
-    IEnumerator MoveEscape()
+
+    IEnumerator MoveEscape()// ≈ª√‚ (»∏««)
     {
-        state = State.Escape;
+        StateMachine(State.None);
         float normalize = 0f;
         while (normalize < 1f)
         {
@@ -194,16 +192,38 @@ public class Unit_Player : Unit_AI
             currentSpeed = Mathf.Lerp(0.3f, moveSpeed, normalize);
             yield return null;
         }
-        state = State.Idle;
+        StateMachine(State.Move);
         currentSpeed = moveSpeed;
     }
 
-    public RectTransform test1,test2;
+    void Moving()
+    {
+        Camera_Manager.current.transform.position = transform.position;
+        Vector3 dir = new Vector3(dirction.x, 0f, dirction.y);
+        Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(dir).normalized;
+        transform.position = Vector3.Lerp(transform.position, target, currentSpeed);
+        if (state == State.None)
+        {
+            RotateDirection(target);
+        }
+    }
+
+    void RotateDirection(Vector3 _target)
+    {
+        Vector3 offset = (_target - transform.position).normalized;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), currentSpeed * 5f);
+    }
+
     void RotateMousePosition()
     {
         Vector3 playerPosition = Camera.main.WorldToScreenPoint(transform.position);
         Vector3 mousePosition = Input.mousePosition;
-        test1.position = playerPosition;
-        test2.position = mousePosition;
+
+        Vector3 uiOffset = (mousePosition - playerPosition).normalized;
+        Vector3 dir = new Vector3(uiOffset.x, 0f, uiOffset.y);
+
+        Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(dir).normalized;
+        Vector3 offset = (target - transform.position).normalized;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), currentSpeed * 5f);
     }
 }

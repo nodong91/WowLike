@@ -497,6 +497,14 @@ public class Game_Manager : Unit_Generator
         }
     }
 
+    UI_InvenSlot[] quickSlots;
+    public UI_InvenSlot[] SetQuickSlots { set { quickSlots = value; } }
+    public void QuickSlotAction(int _index)
+    {
+        UI_InvenSlot _slot = quickSlots[_index];
+        Debug.LogWarning("Äü½½·Ô »ç¿ë!!!!!!!!!!! : " + _slot.name);
+    }
+
     public delegate void DeleBattleOver();
     public DeleBattleOver battleOver;
 

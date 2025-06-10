@@ -169,6 +169,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     }
 
+    // 슬롯 아이템 변경
     public void ChangeSlot(UI_InvenSlot _enterSlot)
     {
         if (_enterSlot == null)
@@ -230,7 +231,7 @@ public class UI_InvenSlot : MonoBehaviour, IPointerClickHandler, IBeginDragHandl
 
     public void SetSlot(string _id)
     {
-        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);// 퀵슬롯 번호 확인
+        quickIndex.gameObject.SetActive(slotType == SlotType.Quick);// 퀵슬롯 번호 출력
         if (_id == null)
         {
             itemType = ItemType.Empty;
