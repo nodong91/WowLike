@@ -245,11 +245,11 @@ public class UI_Inventory : MonoBehaviour
             inst.quickSlotAction = delegate { Game_Manager.current.QuickSlotAction(index); };
             quickSlots[index] = inst;
         }
-        Game_Manager.current.SetQuickSlots = quickSlots;
+        Game_Manager.current.getQuickSlots = SetQuickSlots;
         OpenQuick();
     }
 
-
+    UI_InvenSlot[] SetQuickSlots() { return quickSlots; }
 
 
 

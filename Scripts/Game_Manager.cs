@@ -30,20 +30,14 @@ public class Game_Manager : Unit_Generator
     }
     public CurrentMode currentMode;
 
-    private List<Unit_AI> players, monsters;
     public Unit_AI unitBase;
     GameObject instParent;
     public Transform GetInstParent { get { return instParent.transform; } }
 
-    public List<Unit_AI> PlayerList()
-    {
-        return players;
-    }
-
-    public List<Unit_AI> MonsterList()
-    {
-        return monsters;
-    }
+    public Unit_Player unitPlayer;
+    private List<Unit_AI> players, monsters;
+    public List<Unit_AI> PlayerList() { return players; }
+    public List<Unit_AI> MonsterList() { return monsters; }
 
     Dictionary<GameObject, Unit_AI> allUnitDict = new Dictionary<GameObject, Unit_AI>();
     public Dictionary<GameObject, Unit_AI> GetUnitDict { get { return allUnitDict; } }
@@ -109,46 +103,6 @@ public class Game_Manager : Unit_Generator
         //Singleton_Controller.INSTANCE.key_MouseWheel += InputMouseWheel;
     }
 
-    void SetControll()
-    {
-
-    }
-
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Space))
-    //    {
-    //        if (timeScale > 0)
-    //            SetTimeScale(0f);
-    //        else
-    //            SetTimeScale(1f);
-    //    }
-
-    //    if (Input.GetMouseButtonDown(0))
-    //    {
-    //        InputBegin();
-    //    }
-    //    else if (Input.GetMouseButtonUp(0))
-    //    {
-    //        InputEnd();
-    //    }
-    //    if (Input.GetMouseButton(0))
-    //    {
-    //        InputIng();
-    //    }
-    //    // 유닛 배치할 때만 사용 (버프가능 노드 확인용)
-    //    Vector3 hitPoint = RayCasting();
-    //    if (hitPoint != Vector3.zero)
-    //    {
-    //        Node node = instMapGenerator.GetNodeFromPosition(hitPoint);
-    //        if (displayNode != node)
-    //        {
-    //            displayNode = node;
-    //            instUIManager.followManager.OnBuff(node);
-    //        }
-    //    }
-    //}
-
     public void SetTimeScale(float _timeScale)
     {
         timeScale = _timeScale;
@@ -195,7 +149,6 @@ public class Game_Manager : Unit_Generator
         }
     }
 
-    public Unit_Player unitPlayer;
     void SetPlayer()
     {
         unitPlayer.SetUnit("U10012", LayerMask.NameToLayer("Player"));
@@ -497,12 +450,12 @@ public class Game_Manager : Unit_Generator
         }
     }
 
-    UI_InvenSlot[] quickSlots;
-    public UI_InvenSlot[] SetQuickSlots { set { quickSlots = value; } }
+    public delegate UI_InvenSlot[] GetQuickSlots();
+    public GetQuickSlots getQuickSlots;
     public void QuickSlotAction(int _index)
     {
-        UI_InvenSlot _slot = quickSlots[_index];
-        Debug.LogWarning("퀵슬롯 사용!!!!!!!!!!! : " + _slot.name);
+        UI_InvenSlot slot = getQuickSlots()[_index];
+        Debug.LogWarning("퀵슬롯 사용!!!!!!!!!!! : " + slot.name);
     }
 
     public delegate void DeleBattleOver();

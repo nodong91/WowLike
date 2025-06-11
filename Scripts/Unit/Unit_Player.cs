@@ -11,6 +11,11 @@ public class Unit_Player : Unit_AI
         None = 0, W = 1 << 0, A = 1 << 1, S = 1 << 2, D = 1 << 3
     }
     public ControllDirection controllDirection = ControllDirection.None;
+    public Vector2Int dirction;
+    public float currentSpeed;
+
+    Coroutine moveEscape;
+    float moveSpeed = 0.05f;
 
     public void SetPlayer()
     {
@@ -27,7 +32,6 @@ public class Unit_Player : Unit_AI
         Singleton_Controller.INSTANCE.key_D = Direction_Right;
 
         Singleton_Controller.INSTANCE.key_SpaceBar = Key_SpaceBar;
-
         Singleton_Controller.INSTANCE.key_1 = Key_1;
     }
 
@@ -39,6 +43,7 @@ public class Unit_Player : Unit_AI
         Singleton_Controller.INSTANCE.key_D -= Direction_Right;
 
         Singleton_Controller.INSTANCE.key_SpaceBar -= Key_SpaceBar;
+        Singleton_Controller.INSTANCE.key_1 -= Key_1;
     }
 
     void Direction_UP(bool _input)
@@ -100,14 +105,19 @@ public class Unit_Player : Unit_AI
         }
         StateMove();
     }
-    public Vector2Int dirction;
 
     void Key_1(bool _input)
     {
         if (_input == true)
             QuickSlot(0);
     }
- 
+
+    void Key_2(bool _input)
+    {
+        if (_input == true)
+            QuickSlot(1);
+    }
+
     public void QuickSlot(int _index)
     {
         Game_Manager.current.QuickSlotAction(_index);
@@ -121,7 +131,6 @@ public class Unit_Player : Unit_AI
         }
     }
 
-    public float currentSpeed;
     void Update()
     {
         if (state == State.Move)
@@ -170,9 +179,6 @@ public class Unit_Player : Unit_AI
             StateMachine(State.Move);
         }
     }
-
-    Coroutine moveEscape;
-    float moveSpeed = 0.05f;
 
     void StateEscape()
     {
