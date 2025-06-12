@@ -24,7 +24,7 @@ public class Controll_Manager : MonoBehaviour
 
     void SetMouse()
     {
-        Singleton_Controller.INSTANCE.key_MouseLeft += InputMouseLeft;
+        //Singleton_Controller.INSTANCE.key_MouseLeft += InputMouseLeft;
         Singleton_Controller.INSTANCE.key_MouseRight += InputMouseRight;
         Singleton_Controller.INSTANCE.key_MouseWheel += InputMouseWheel;
     }

@@ -96,6 +96,7 @@ public class Game_Manager : Unit_Generator
         }
         SetMouse();
     }
+
     void SetMouse()
     {
         Singleton_Controller.INSTANCE.key_MouseLeft += InputMousetLeft;
@@ -151,7 +152,7 @@ public class Game_Manager : Unit_Generator
 
     void SetPlayer()
     {
-        unitPlayer.SetUnit("U10012", LayerMask.NameToLayer("Player"));
+        unitPlayer.SetUnit(unitPlayer.unitID, LayerMask.NameToLayer("Player"));
         instUIManager.AddFollowHP(unitPlayer);
         unitPlayer.deadUnit += DeadPlayer;// Á×À½ Ä«¿îÆ®
         players.Add(unitPlayer);

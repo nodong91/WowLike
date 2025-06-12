@@ -29,7 +29,7 @@ public class Unit_AI : MonoBehaviour
     {
         None,
         Dead,
-        Attack,
+        Action,
         Idle,
         Escape,
         Move,
@@ -69,7 +69,7 @@ public class Unit_AI : MonoBehaviour
     public delegate void DeadUnit(Unit_AI _unit);
     public DeadUnit deadUnit;
 
-    SkillStruct currentSkill;
+    public SkillStruct currentSkill;
 
     [System.Serializable]
     public class SkillStruct
@@ -105,7 +105,7 @@ public class Unit_AI : MonoBehaviour
     public Vector2 GetSkillRange { get { return currentSkill.skillStruct.range; } }
 
     Dictionary<string, Skill_Set> dictSkillSlot = new Dictionary<string, Skill_Set>();
-    bool skillCasting;
+    public bool skillCasting;
     public SpriteRenderer castingImage;
 
     public void SetUnit(string _unitID, LayerMask _layerMask)// 첫세팅
@@ -117,7 +117,7 @@ public class Unit_AI : MonoBehaviour
         Unit_Animation unit = Singleton_Data.INSTANCE.Dict_Unit[unitID].unitProp;
         unitAnimation = Instantiate(unit, this.transform);
         unitAnimation.SetAnimator();
-        unitAnimation.attackEvent = Attacking;// 애니메이션 이벤트 받아올
+        unitAnimation.deleEvent_Action = EventAction;// 애니메이션 이벤트 받아올
         lootings = unitAnimation.GetComponent<Unit_Looting>().GetLooting(3);// 루팅 아이템
 
         Debug.Log("유닛 생성 : " + unitID);
@@ -251,8 +251,8 @@ public class Unit_AI : MonoBehaviour
 
                 break;
 
-            case State.Attack:
-                State_Attack();
+            case State.Action:
+                State_Action();
                 break;
 
             case State.Damage:
@@ -332,7 +332,7 @@ public class Unit_AI : MonoBehaviour
             if (distance < setDistance)
             {
                 moving = false;
-                StateMachine(State.Attack);
+                StateMachine(State.Action);
             }
             yield return new WaitForSeconds(deleyTime);
         }
@@ -417,12 +417,12 @@ public class Unit_AI : MonoBehaviour
         return new Vector3(Mathf.Sin(_angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(_angleInDegrees * Mathf.Deg2Rad));
     }
 
-    void State_Attack()
+    void State_Action()
     {
-        stateAction = StartCoroutine(State_Attacking());
+        stateAction = StartCoroutine(State_Acting());
     }
 
-    IEnumerator State_Attacking()
+    IEnumerator State_Acting()
     {
         Destination(transform.position);// 제자리에 정지
         float castingTime = currentSkill.skillStruct.castingTime;
@@ -461,14 +461,14 @@ public class Unit_AI : MonoBehaviour
         deleUpdateAction(0f);
     }
 
-    void Attacking()
+    void EventAction()// 어택 이벤트
     {
+        Debug.LogWarning("EventAction");
         string skillID = currentSkill.skillStruct.ID;
         if (dictSkillSlot.ContainsKey(skillID) == false)
         {
             // 스킬 이펙트 생성
             Data_Manager.SkillStruct skill = Singleton_Data.INSTANCE.Dict_Skill[skillID];
-            //Debug.LogWarningFormat(skill.skillSet);
             Skill_Set slot = Singleton_Data.INSTANCE.Dict_SkillSet[skill.skillSet];
             Skill_Set inst = Instantiate(slot, Game_Manager.current.GetInstParent);
             inst.gameObject.name = skillID;

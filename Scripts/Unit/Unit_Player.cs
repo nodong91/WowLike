@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 public class Unit_Player : Unit_AI
@@ -14,14 +13,41 @@ public class Unit_Player : Unit_AI
     public Vector2Int dirction;
     public float currentSpeed;
 
-    Coroutine moveEscape;
     float moveSpeed = 0.05f;
 
     public void SetPlayer()
     {
         state = State.Idle;
         currentSpeed = moveSpeed;
+        SetMouse();
         SetKeyCode();
+    }
+
+    void SetMouse()
+    {
+        Singleton_Controller.INSTANCE.key_MouseLeft += InputMousetLeft;
+        //Singleton_Controller.INSTANCE.key_MouseRight += InputMouseRight;
+        //Singleton_Controller.INSTANCE.key_MouseWheel += InputMouseWheel;
+    }
+
+    void RemoveMouse()
+    {
+        Singleton_Controller.INSTANCE.key_MouseLeft -= InputMousetLeft;
+        //Singleton_Controller.INSTANCE.key_MouseRight += InputMouseRight;
+        //Singleton_Controller.INSTANCE.key_MouseWheel += InputMouseWheel;
+    }
+
+    void InputMousetLeft(bool _input)
+    {
+        if (_input == true)
+        {
+
+        }
+        else
+        {
+
+        }
+        State_Attack(_input);
     }
 
     void SetKeyCode()
@@ -33,6 +59,7 @@ public class Unit_Player : Unit_AI
 
         Singleton_Controller.INSTANCE.key_SpaceBar = Key_SpaceBar;
         Singleton_Controller.INSTANCE.key_1 = Key_1;
+        Singleton_Controller.INSTANCE.key_2 = Key_2;
     }
 
     void RemoveKeyCode()
@@ -44,6 +71,7 @@ public class Unit_Player : Unit_AI
 
         Singleton_Controller.INSTANCE.key_SpaceBar -= Key_SpaceBar;
         Singleton_Controller.INSTANCE.key_1 -= Key_1;
+        Singleton_Controller.INSTANCE.key_2 -= Key_2;
     }
 
     void Direction_UP(bool _input)
@@ -125,6 +153,11 @@ public class Unit_Player : Unit_AI
 
     void Key_SpaceBar(bool _input)
     {
+        // 방어 스킬
+        // 방패를 가진 무기는 방패막기
+        // 양손검은 패링
+        // 한손검은 구르기
+        // 무기 특징
         if (_input == true)
         {
             StateEscape();
@@ -145,19 +178,25 @@ public class Unit_Player : Unit_AI
     public override void StateMachine(State _state)
     {
         state = _state;
+
+        if (stateAction != null)
+            StopCoroutine(stateAction);
+
         switch (state)
         {
             case State.None:
-                controllDirection = ControllDirection.None;
+                //controllDirection = ControllDirection.None;
                 break;
             case State.Dead:
                 RemoveKeyCode();
                 DeadState();
                 StateMachine(State.None);
                 break;
-            case State.Attack:
+            case State.Action:
                 break;
             case State.Idle:
+                if (controllDirection != ControllDirection.None)
+                    StateMachine(State.Move);
                 break;
             case State.Escape:
                 break;
@@ -174,22 +213,24 @@ public class Unit_Player : Unit_AI
 
     void StateMove()
     {
-        if (state != State.None)
+        if (state == State.Idle)
         {
             StateMachine(State.Move);
+        }
+        if (state == State.Move && controllDirection == ControllDirection.None)
+        {
+            StateMachine(State.Idle);
         }
     }
 
     void StateEscape()
     {
-        if (moveEscape != null)
-            StopCoroutine(moveEscape);
-        moveEscape = StartCoroutine(MoveEscape());
+        stateAction = StartCoroutine(MoveEscape());
     }
 
     IEnumerator MoveEscape()// 탈출 (회피)
     {
-        StateMachine(State.None);
+        StateMachine(State.Escape);
         float normalize = 0f;
         while (normalize < 1f)
         {
@@ -197,8 +238,11 @@ public class Unit_Player : Unit_AI
             Moving();
             currentSpeed = Mathf.Lerp(0.3f, moveSpeed, normalize);
             yield return null;
+
+            float actionTime = unitAnimation.PlayAnimation(4);// 애니메이션
+            //yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
         }
-        StateMachine(State.Move);
+        StateMachine(State.Idle);
         currentSpeed = moveSpeed;
     }
 
@@ -208,7 +252,7 @@ public class Unit_Player : Unit_AI
         Vector3 dir = new Vector3(dirction.x, 0f, dirction.y);
         Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(dir).normalized;
         transform.position = Vector3.Lerp(transform.position, target, currentSpeed);
-        if (state == State.None)
+        if (state == State.None && controllDirection != ControllDirection.None)
         {
             RotateDirection(target);
         }
@@ -231,5 +275,72 @@ public class Unit_Player : Unit_AI
         Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(dir).normalized;
         Vector3 offset = (target - transform.position).normalized;
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), currentSpeed * 5f);
+    }
+
+
+
+
+
+
+
+
+
+
+    Coroutine stateAction;
+    void State_Attack(bool _input)
+    {
+        if (_input == true)
+        {
+            if (state == State.Idle || state == State.Move)
+            {
+                StateMachine(State.Action);
+                stateAction = StartCoroutine(State_Attacking());
+            }
+        }
+        else
+        {
+            //skillCasting = false;
+            //StateMachine(State.Idle);
+        }
+    }
+
+    IEnumerator State_Attacking()
+    {
+        string key = GetUnitStruct.defaultSkill01;// 스킬 선택
+        if (Singleton_Data.INSTANCE.Dict_Skill.ContainsKey(key))
+        {
+            SkillStruct skill = new SkillStruct
+            {
+                skillID = Singleton_Data.INSTANCE.Dict_Skill[key].ID,
+                startTime = 0,
+                skillStruct = Singleton_Data.INSTANCE.Dict_Skill[key]
+            };
+            currentSkill = skill;
+        }
+        float castingTime = currentSkill.skillStruct.castingTime;
+        yield return StartCoroutine(SkillCasting(castingTime));// 캐스팅
+
+        float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
+        yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
+
+        StateMachine(State.Idle);
+    }
+
+    IEnumerator SkillCasting(float _castingTime)
+    {
+        float casting = 0f;
+        skillCasting = true;
+        while (skillCasting == true)
+        {
+            casting += Time.deltaTime;
+
+            deleUpdateAction(casting / _castingTime);
+            if (casting > _castingTime)
+            {
+                skillCasting = false;
+            }
+            yield return null;
+        }
+        deleUpdateAction(0f);
     }
 }

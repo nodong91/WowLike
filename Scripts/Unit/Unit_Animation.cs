@@ -115,14 +115,14 @@ public class Unit_Animation : MonoBehaviour
         animator.SetFloat("F_Move_X", _moveX);
         animator.SetFloat("F_Move_Y", _moveY);
     }
-    public delegate void DeleEvent_Attack();
-    public DeleEvent_Attack attackEvent;
+    public delegate void DeleEvent_Action();
+    public DeleEvent_Action deleEvent_Action;
     public delegate void DeleEvent_FX(string _id);
     public DeleEvent_FX fxEvent;
 
     public void Event_Attack()
     {
-        attackEvent?.Invoke();
+        deleEvent_Action?.Invoke();
     }
 
     public void Event_FX(string _id)
