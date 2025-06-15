@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using static Data_DialogType;
 
 public class Unit_Player : Unit_AI
 {
@@ -11,14 +12,20 @@ public class Unit_Player : Unit_AI
     }
     public ControllDirection controllDirection = ControllDirection.None;
     public Vector2Int dirction;
-    public float currentSpeed;
 
     float moveSpeed = 0.05f;
+
+    void Update()
+    {
+        if (outOfControll == false)
+        {
+            RotateMousePosition();
+        }
+    }
 
     public void SetPlayer()
     {
         state = State.Idle;
-        currentSpeed = moveSpeed;
         SetMouse();
         SetKeyCode();
     }
@@ -39,15 +46,7 @@ public class Unit_Player : Unit_AI
 
     void InputMousetLeft(bool _input)
     {
-        if (_input == true)
-        {
-
-        }
-        else
-        {
-
-        }
-        State_Attack(_input);
+        State_Action(_input);
     }
 
     void SetKeyCode()
@@ -164,17 +163,6 @@ public class Unit_Player : Unit_AI
         }
     }
 
-    void Update()
-    {
-        if (state == State.Move)
-            Moving();
-
-        if (state != State.None)
-        {
-            RotateMousePosition();
-        }
-    }
-
     public override void StateMachine(State _state)
     {
         state = _state;
@@ -185,12 +173,11 @@ public class Unit_Player : Unit_AI
         switch (state)
         {
             case State.None:
-                //controllDirection = ControllDirection.None;
                 break;
             case State.Dead:
                 RemoveKeyCode();
                 DeadState();
-                StateMachine(State.None);
+                outOfControll = true;
                 break;
             case State.Action:
                 break;
@@ -198,70 +185,84 @@ public class Unit_Player : Unit_AI
                 if (controllDirection != ControllDirection.None)
                     StateMachine(State.Move);
                 break;
-            case State.Escape:
-                break;
             case State.Move:
+                stateAction = StartCoroutine(Moving());
                 break;
-            case State.Patrol:
+            case State.Escape:
+                stateAction = StartCoroutine(MoveEscape());
                 break;
             case State.Damage:
-                break;
-            case State.End:
                 break;
         }
     }
 
+    //================================================================================================================================================
+    // 이동
+    //================================================================================================================================================
+
     void StateMove()
     {
+        if (outOfControll == true)
+            return;
+
         if (state == State.Idle)
         {
             StateMachine(State.Move);
         }
-        if (state == State.Move && controllDirection == ControllDirection.None)
+        if (state == State.Move)// 공격이나 회피가 있을 수 있으니
         {
-            StateMachine(State.Idle);
+            if (controllDirection == ControllDirection.None)
+                StateMachine(State.Idle);
         }
     }
 
-    void StateEscape()
+    IEnumerator Moving()
     {
-        stateAction = StartCoroutine(MoveEscape());
-    }
-
-    IEnumerator MoveEscape()// 탈출 (회피)
-    {
-        StateMachine(State.Escape);
-        float normalize = 0f;
-        while (normalize < 1f)
+        while (state == State.Move)
         {
-            normalize += Time.deltaTime * 5f;
-            Moving();
-            currentSpeed = Mathf.Lerp(0.3f, moveSpeed, normalize);
+            SetMoving();
             yield return null;
-
-            float actionTime = unitAnimation.PlayAnimation(4);// 애니메이션
-            //yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
+            CheckClosestUnit();
         }
-        StateMachine(State.Idle);
-        currentSpeed = moveSpeed;
+    }
+    public GameObject closestTarget;
+    public float closestDistance;
+    void CheckClosestUnit()// 아이템이나 채집 같은거 하기 위한 테스트
+    {
+        //playerList, monsterList
+        //for (int i = 0; i < playerList().Count; i++)
+        //{
+
+        //}
+        closestDistance = float.MaxValue;
+        GameObject tempTarget = null;
+        for (int i = 0; i < monsterList().Count; i++)
+        {
+            float offsetDist = (monsterList()[i].transform.position - transform.position).sqrMagnitude;
+            if (closestDistance > offsetDist)
+            {
+                closestDistance = offsetDist;
+                tempTarget = monsterList()[i].gameObject;
+            }
+        }
+
+        if (closestTarget != tempTarget)
+        {
+            closestTarget = tempTarget;
+            Game_Manager.current.FollowClosestTarget(closestTarget);
+        }
+        Debug.LogWarning("이동중~" + monsterList().Count);
     }
 
-    void Moving()
+    void SetMoving()
     {
+        if (outOfControll == true)
+            return;
+
         Camera_Manager.current.transform.position = transform.position;
         Vector3 dir = new Vector3(dirction.x, 0f, dirction.y);
         Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(dir).normalized;
-        transform.position = Vector3.Lerp(transform.position, target, currentSpeed);
-        if (state == State.None && controllDirection != ControllDirection.None)
-        {
-            RotateDirection(target);
-        }
-    }
-
-    void RotateDirection(Vector3 _target)
-    {
-        Vector3 offset = (_target - transform.position).normalized;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), currentSpeed * 5f);
+        transform.position = Vector3.Lerp(transform.position, target, moveSpeed);
     }
 
     void RotateMousePosition()
@@ -274,56 +275,106 @@ public class Unit_Player : Unit_AI
 
         Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(dir).normalized;
         Vector3 offset = (target - transform.position).normalized;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), currentSpeed * 5f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), moveSpeed * 5f);
     }
 
+    //================================================================================================================================================
+    // 회피
+    //================================================================================================================================================
 
+    void StateEscape()
+    {
+        StateMachine(State.Escape);
+    }
 
+    IEnumerator MoveEscape()// 탈출 (회피)
+    {
+        float normalize = 0f;
+        float actionTime = unitAnimation.PlayAnimation(4);// 애니메이션 길이만큼 대기
+        OutOfControll(actionTime + 0.5f);// 대기 시간 0.5f
+        Vector3 dir = new Vector3(dirction.x, 0f, dirction.y);
+        while (normalize < actionTime)
+        {
+            normalize += Time.deltaTime;
+            float escapeSpeed = Mathf.Lerp(0.3f, 0f, normalize * 5f);
+            SetMoveEscape(dir, escapeSpeed);
+            yield return null;
+        }
+        StateMachine(State.Idle);
+    }
 
+    void SetMoveEscape(Vector3 _dir, float _escapeSpeed)
+    {
+        Camera_Manager.current.transform.position = transform.position;
+        Vector3 target = transform.position + Camera_Manager.current.transform.TransformDirection(_dir).normalized;
+        transform.position = Vector3.Lerp(transform.position, target, _escapeSpeed);
 
+        Vector3 offset = (target - transform.position).normalized;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(offset), _escapeSpeed * 5f);
+    }
 
-
-
-
+    //================================================================================================================================================
+    // 공격
+    //================================================================================================================================================
 
     Coroutine stateAction;
-    void State_Attack(bool _input)
+    bool action = false;
+
+    public override void EventAction()// 어택 이벤트
+    {
+        InstancingAction();
+    }
+
+    void State_Action(bool _input)
     {
         if (_input == true)
         {
-            if (state == State.Idle || state == State.Move)
-            {
-                StateMachine(State.Action);
-                stateAction = StartCoroutine(State_Attacking());
-            }
+            if (outOfControll == true)
+                return;
+
+            currentSkill = readySkills[0];
+            if (Time.time < currentSkill.startTime)
+                return;
+
+            StateMachine(State.Action);
+            stateAction = StartCoroutine(State_Acting());
         }
         else
         {
-            //skillCasting = false;
-            //StateMachine(State.Idle);
+            stateAction = StartCoroutine(State_StopActing());
         }
     }
 
-    IEnumerator State_Attacking()
+    IEnumerator State_Acting()
     {
-        string key = GetUnitStruct.defaultSkill01;// 스킬 선택
-        if (Singleton_Data.INSTANCE.Dict_Skill.ContainsKey(key))
+        action = true;
+        while (action == true)
         {
-            SkillStruct skill = new SkillStruct
-            {
-                skillID = Singleton_Data.INSTANCE.Dict_Skill[key].ID,
-                startTime = 0,
-                skillStruct = Singleton_Data.INSTANCE.Dict_Skill[key]
-            };
-            currentSkill = skill;
+            float castingTime = currentSkill.skillStruct.castingTime;
+            if (castingTime > 0f)
+                yield return StartCoroutine(SkillCasting(castingTime));// 캐스팅
+
+            float coolingTime = currentSkill.skillStruct.coolingTime;
+            currentSkill.startTime = Time.time + coolingTime;
+            Debug.LogWarning("State_Attacking!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
+            OutOfControll(actionTime);// 공격하는 동안 대기
+            yield return new WaitForSeconds(coolingTime);
+
+            //float coolingTime = currentSkill.skillStruct.coolingTime;
+            //yield return new WaitForSeconds(coolingTime);
         }
-        float castingTime = currentSkill.skillStruct.castingTime;
-        yield return StartCoroutine(SkillCasting(castingTime));// 캐스팅
+    }
 
-        float actionTime = unitAnimation.PlayAnimation(3);// 애니메이션
-        yield return new WaitForSeconds(actionTime);// 애니메이션 길이만큼 대기
-
-        StateMachine(State.Idle);
+    IEnumerator State_StopActing()
+    {
+        action = false;
+        while (state == State.Action)
+        {
+            if (outOfControll == false)
+                StateMachine(State.Idle);
+            yield return null;
+        }
     }
 
     IEnumerator SkillCasting(float _castingTime)
@@ -342,5 +393,22 @@ public class Unit_Player : Unit_AI
             yield return null;
         }
         deleUpdateAction(0f);
+    }
+
+    //================================================================================================================================================
+    // 홀드
+    //================================================================================================================================================
+
+    public bool outOfControll = false;
+    void OutOfControll(float _time)
+    {
+        StartCoroutine(HoldControll(_time));
+    }
+
+    IEnumerator HoldControll(float _time)
+    {
+        outOfControll = true;
+        yield return new WaitForSeconds(_time);
+        outOfControll = false;
     }
 }

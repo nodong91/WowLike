@@ -70,12 +70,7 @@ public class Game_Manager : Unit_Generator
         if (instMapGenerator == null)
             instMapGenerator = Instantiate(mapGenerator, transform);
         instMapGenerator.SetMapGrid(spawnData);
-
-        if (instUIManager == null)
-            instUIManager = Instantiate(uiManager, transform);
-        instUIManager.deleTimeScale = SetTimeScale;
-        instUIManager.deleBattleStart = StartBattle;
-        instUIManager.AddFollow(asdfadsf);// 임시 테스트
+        SetInstUIManager();
 
         if (instParent != null)
             Destroy(instParent);
@@ -95,6 +90,32 @@ public class Game_Manager : Unit_Generator
                 break;
         }
         SetMouse();
+    }
+
+    public delegate void DeleUITarget(GameObject _target);
+    public DeleUITarget deleShakingUI;
+    public DeleUITarget deleAddFollowUI;
+    public DeleUITarget deleRemoveFollowHP;
+    public DeleUITarget deleFollowClosestTarget;
+
+    public delegate void DeleUnitTarget(Unit_AI _target);
+    public DeleUnitTarget deleAddFollowHP;
+
+    void SetInstUIManager()
+    {
+        if (instUIManager == null)
+            instUIManager = Instantiate(uiManager, transform);
+        instUIManager.deleTimeScale = SetTimeScale;
+        instUIManager.deleBattleStart = StartBattle;
+
+        deleShakingUI = instUIManager.followManager.ShakingUI;
+        deleAddFollowUI = instUIManager.followManager.AddFollowUI;
+        deleAddFollowHP = instUIManager.followManager.AddFollowHP;
+        deleRemoveFollowHP = instUIManager.followManager.RemoveFollowHP;
+        deleFollowClosestTarget = instUIManager.followManager.FollowClosestTarget;
+
+
+        deleAddFollowUI(asdfadsf);// 임시 테스트
     }
 
     void SetMouse()
@@ -153,7 +174,7 @@ public class Game_Manager : Unit_Generator
     void SetPlayer()
     {
         unitPlayer.SetUnit(unitPlayer.unitID, LayerMask.NameToLayer("Player"));
-        instUIManager.AddFollowHP(unitPlayer);
+        deleAddFollowHP(unitPlayer);
         unitPlayer.deadUnit += DeadPlayer;// 죽음 카운트
         players.Add(unitPlayer);
         unitPlayer.playerList = PlayerList;// 타겟을 찾기 위해
@@ -183,7 +204,7 @@ public class Game_Manager : Unit_Generator
         Unit_AI inst = InstnaceUnit(_node);
         inst.gameObject.name = $"{_layer} : {_node.grid}";
         inst.SetUnit(_unitID, LayerMask.NameToLayer(_layer));
-        instUIManager.AddFollowHP(inst);
+        deleAddFollowHP(inst);
 
         switch (_layer)
         {
@@ -268,7 +289,7 @@ public class Game_Manager : Unit_Generator
 
     IEnumerator InputIng()
     {
-        instUIManager.ShakingUI(asdfadsf);
+        deleShakingUI(asdfadsf);
         dragSlot = instUIManager.GetInventory.GetDragSlot;
         bool moveUnit = (dragSlot?.itemType == ItemType.Unit) || (selectedNode?.onObject != null);
         while (true)
@@ -372,7 +393,7 @@ public class Game_Manager : Unit_Generator
             Debug.LogWarning("빈 슬롯이 없습니다.");
             return;
         }
-        instUIManager.RemoveFollowHP(unit.gameObject);
+        deleRemoveFollowHP(unit.gameObject);
         unit.deadUnit -= DeadPlayer;// 죽음 카운트
         players.Remove(unit);
         allUnitDict.Remove(unit.gameObject);
@@ -473,5 +494,22 @@ public class Game_Manager : Unit_Generator
     void Reward()
     {
         instUIManager.GetInventory.AddLooting(resultItems);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void FollowClosestTarget(GameObject _target)
+    {
+        deleFollowClosestTarget(_target);
     }
 }

@@ -72,24 +72,4 @@ public class UI_Manager : MonoBehaviour
     {
         instInventory.CloseAllCanvas();
     }
-
-    public void ShakingUI(GameObject _target)
-    {
-        followManager.ShakingUI(_target);
-    }
-
-    public void AddFollow(GameObject _target)
-    {
-        followManager.AddFollowUI(_target.gameObject);
-    }
-
-    public void AddFollowHP(Unit_AI _target)
-    {
-        followManager.AddFollowHP(_target);
-    }
-
-    public void RemoveFollowHP(GameObject _target)
-    {
-        followManager.RemoveFollowHP(_target);
-    }
 }

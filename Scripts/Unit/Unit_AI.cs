@@ -78,7 +78,7 @@ public class Unit_AI : MonoBehaviour
         public float startTime;
         public Data_Manager.SkillStruct skillStruct;
     }
-    [SerializeField] List<SkillStruct> readySkills = new List<SkillStruct>();
+    public List<SkillStruct> readySkills = new List<SkillStruct>();
     [SerializeField] List<SkillStruct> coolingSkills = new List<SkillStruct>();
     const float globalTime = 1f;
     public float GetUnitSize { get { return unitStruct.unitSize; } }
@@ -461,9 +461,21 @@ public class Unit_AI : MonoBehaviour
         deleUpdateAction(0f);
     }
 
-    void EventAction()// 어택 이벤트
+    public virtual void EventAction()// 어택 이벤트
     {
         Debug.LogWarning("EventAction");
+
+        InstancingAction();
+        readySkills.Remove(currentSkill);
+        currentSkill.startTime = Time.time + currentSkill.skillStruct.coolingTime;
+        coolingSkills.Add(currentSkill);
+        CoolingSkill();
+
+        StartCoroutine(GlobalCooling());
+    }
+
+    public void InstancingAction()
+    {
         string skillID = currentSkill.skillStruct.ID;
         if (dictSkillSlot.ContainsKey(skillID) == false)
         {
@@ -476,13 +488,6 @@ public class Unit_AI : MonoBehaviour
             dictSkillSlot[skillID] = inst;
         }
         dictSkillSlot[skillID].PlayAction(target);
-
-        readySkills.Remove(currentSkill);
-        currentSkill.startTime = Time.time;
-        coolingSkills.Add(currentSkill);
-        CoolingSkill();
-
-        StartCoroutine(GlobalCooling());
     }
 
     IEnumerator GlobalCooling()
@@ -503,10 +508,9 @@ public class Unit_AI : MonoBehaviour
     {
         while (coolingSkills.Count > 0)
         {
-            //List<SkillStruct> tempList = coolingSkills;
             for (int i = 0; i < coolingSkills.Count; i++)
             {
-                float cooling = coolingSkills[i].startTime + coolingSkills[i].skillStruct.coolingTime;
+                float cooling = coolingSkills[i].startTime;
                 if (cooling < Time.time)
                 {
                     readySkills.Add(coolingSkills[i]);
@@ -515,7 +519,6 @@ public class Unit_AI : MonoBehaviour
                 }
             }
             yield return null;
-            //coolingSkills = tempList;
         }
     }
 

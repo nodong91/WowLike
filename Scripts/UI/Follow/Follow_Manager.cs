@@ -62,6 +62,34 @@ public class Follow_Manager : MonoBehaviour
             StartFollowing();
         }
     }
+    Follow_Target closestFollow;
+    GameObject closestTarget;
+    Coroutine closest;
+    public void FollowClosestTarget(GameObject _object)
+    {
+        closestTarget = _object;
+        if (closestFollow == null)
+        {
+            closestFollow = TryFollowTarget();
+            closestFollow.followType = Follow_Target.FollowType.Overlay;
+            closestFollow.transform.SetParent(overlayParent);
+        }
+        if(closest!= null)
+            StopCoroutine(closest);
+        closest= StartCoroutine(FollowClosestTarget());
+    }
+
+    IEnumerator FollowClosestTarget()
+    {
+        while (closestTarget != null)
+        {
+            closestFollow.transform.localScale = Vector3.one;
+            Vector3 offset = closestFollow.followOffset;
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(closestTarget.transform.position + offset);
+            closestFollow.transform.position = screenPosition;
+            yield return null;
+        }
+    }
 
     void StartFollowing()
     {
@@ -80,9 +108,9 @@ public class Follow_Manager : MonoBehaviour
                 Follow_Target followUI = child.Value;
                 followUI.transform.localScale = Vector3.one;
 
-                Vector3 offset = child.Value.followOffset;
+                Vector3 offset = followUI.followOffset;
                 Vector3 screenPosition = Camera.main.WorldToScreenPoint(target.position + offset);
-                switch (child.Value.followType)// 카메라 캔버스인 경우
+                switch (followUI.followType)// 카메라 캔버스인 경우
                 {
                     case Follow_Target.FollowType.Overlay:
                         followUI.transform.SetParent(overlayParent);
