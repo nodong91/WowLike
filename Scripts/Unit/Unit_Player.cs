@@ -229,11 +229,6 @@ public class Unit_Player : Unit_AI
     public float closestDistance;
     void CheckClosestUnit()// 아이템이나 채집 같은거 하기 위한 테스트
     {
-        //playerList, monsterList
-        //for (int i = 0; i < playerList().Count; i++)
-        //{
-
-        //}
         closestDistance = float.MaxValue;
         GameObject tempTarget = null;
         for (int i = 0; i < monsterList().Count; i++)

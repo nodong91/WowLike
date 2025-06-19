@@ -179,42 +179,6 @@ public class Unit_AI : MonoBehaviour
         //StartCoroutine(DeadActing());
     }
 
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        if (currentSkill == null)
-            return;
-
-        Color color = Color.green;
-        GUIStyle fontStyle = new()
-        {
-            fontSize = 20,
-            normal = { textColor = color },
-            alignment = TextAnchor.MiddleCenter,
-            fontStyle = FontStyle.Bold,
-        };
-
-        if (state != State.Dead)
-        {
-            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize);
-
-            Handles.color = gameObject.layer == LayerMask.NameToLayer("Player") ? Color.red : Color.blue;
-            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.x);
-            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.y);
-
-            if (target != null)
-            {
-                Handles.color = Gizmos.color = color;
-                Handles.DrawLine(transform.position, target.transform.position);
-                Gizmos.DrawSphere(targetPosition, 0.3f);
-            }
-        }
-        string hp = healthPoint > 0 ? "00FF00" : "FFFFFF";
-        hp = $"<color=#{hp}>{state}\n{healthPoint:N2}</color>";
-        Handles.Label(transform.position, hp, fontStyle);
-    }
-#endif
-
     public void SetStart()
     {
         StateMachine(State.Idle);
@@ -758,4 +722,40 @@ public class Unit_AI : MonoBehaviour
         // 승리 포즈
         unitAnimation.PlayAnimation(4);// 애니메이션
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (currentSkill == null)
+            return;
+
+        Color color = Color.green;
+        GUIStyle fontStyle = new()
+        {
+            fontSize = 20,
+            normal = { textColor = color },
+            alignment = TextAnchor.MiddleCenter,
+            fontStyle = FontStyle.Bold,
+        };
+
+        if (state != State.Dead)
+        {
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize);
+
+            Handles.color = gameObject.layer == LayerMask.NameToLayer("Player") ? Color.red : Color.blue;
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.x);
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360f, GetUnitSize + GetSkillRange.y);
+
+            if (target != null)
+            {
+                Handles.color = Gizmos.color = color;
+                Handles.DrawLine(transform.position, target.transform.position);
+                Gizmos.DrawSphere(targetPosition, 0.3f);
+            }
+        }
+        string hp = healthPoint > 0 ? "00FF00" : "FFFFFF";
+        hp = $"<color=#{hp}>{state}\n{healthPoint:N2}</color>";
+        Handles.Label(transform.position, hp, fontStyle);
+    }
+#endif
 }
