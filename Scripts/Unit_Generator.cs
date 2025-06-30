@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Unit_Generator : MonoBehaviour
